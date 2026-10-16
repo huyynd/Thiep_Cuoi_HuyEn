@@ -10,6 +10,7 @@
   scroll-behavior: smooth;
 }
 * { box-sizing: border-box; }
+html, body { max-width: 100%; overflow-x: clip; }
 body { margin: 0; min-width: 320px; }
 a { color: inherit; }
 button { font: inherit; cursor: pointer; }
@@ -17,7 +18,8 @@ button:focus-visible, a:focus-visible { outline: 3px solid #ad607a; outline-offs
 .topline {
   height: 38px; background: #9a6478; color: #fffafc; text-align: center;
   letter-spacing: .19em; font-size: 10px; display: flex; justify-content: center;
-  align-items: center; gap: 17px; font-weight: 600;
+  align-items: center; gap: 17px; font-weight: 600; padding-inline: 14px; white-space: nowrap;
+  overflow: hidden;
 }
 .topline-dot { opacity: .7; }
 .hero {
@@ -42,6 +44,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid #ad607a; outline-offs
 .hero-rule { display: flex; justify-content: center; margin: 25px 0 5px; color: #b57487; }
 h1, h2, h3, p { margin-top: 0; }
 .hero h1 { margin: 14px 0 4px; display: flex; align-items: baseline; justify-content: center; gap: 25px; color: #855063; font: 500 clamp(55px, 10vw, 105px)/1.1 'Playfair Display', Georgia, serif; letter-spacing: -.05em; }
+.hero h1 span { min-width: 0; overflow-wrap: anywhere; }
 .hero h1 em { font: normal 500 clamp(56px, 9vw, 98px)/.8 'Great Vibes', cursive; color: #c68ea1; }
 .hero-subtitle { font-weight: 600; font-size: 11px; letter-spacing: .34em; color: #9d7b87; margin-top: 16px; }
 .nameplate { margin: 42px auto 0; padding: 20px 33px 24px; max-width: 510px; background: #ffffff9c; border: 1px solid #ffffff; box-shadow: 0 12px 50px #ad77851a; border-radius: 130px 130px 18px 18px / 40px 40px 18px 18px; }
@@ -94,8 +97,8 @@ h2 { font: 500 clamp(29px, 4vw, 43px)/1.35 'Playfair Display', Georgia, serif; l
 .counter-item span { font-size: 11px; color: #9d8790; }
 .memories { background: #fbf1f3; }
 .gallery-grid { max-width: 900px; margin: 35px auto 0; display: grid; gap: 14px; grid-template-columns: repeat(3, minmax(0,1fr)); }
-.gallery-photo { height: 320px; padding: 6px; background: white; box-shadow: 0 5px 16px #bb91a020; }
-.gallery-photo img { width: 100%; height: 100%; object-fit: cover; }
+.gallery-photo { aspect-ratio: 3 / 4; padding: 6px; background: white; box-shadow: 0 5px 16px #bb91a020; }
+.gallery-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .quote-panel { max-width: 750px; min-height: 245px; margin: 35px auto 0; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #e8cbd4; background: radial-gradient(ellipse at 18% 32%, #f3dce2, transparent 46%), #fffbfa; padding: 35px 28px; }
 .quote-spark { color: #bd8699; margin-bottom: 20px; }
 .quote-panel p { max-width: 520px; font: italic 500 clamp(18px, 2.6vw, 24px)/1.6 'Playfair Display', Georgia, serif; color: #8d5c70; }
@@ -115,7 +118,7 @@ footer { height: 53px; display: flex; align-items: center; justify-content: cent
 @media (max-width: 720px) {
   .topline { font-size: 8px; gap: 10px; letter-spacing: .08em; }
   .hero { min-height: 745px; min-height: min(830px, calc(100svh - 38px)); padding: 68px 16px 48px; }
-  .hero h1 { gap: 12px; }
+  .hero h1 { gap: 12px; font-size: clamp(42px, 14vw, 58px); }
   .hero-subtitle { font-size: 9px; letter-spacing: .16em; }
   .hero-kicker { font-size: 9px; letter-spacing: .19em; }
   .hero-kicker span { width: 20px; }
@@ -126,7 +129,52 @@ footer { height: 53px; display: flex; align-items: center; justify-content: cent
   .section-block { padding: 73px 19px; }
   .event-card { padding: 38px 22px; }
   .gallery-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
-  .gallery-photo { height: 230px; }
+  .gallery-photo { aspect-ratio: 4 / 5; }
+}
+@media (max-width: 480px) {
+  .topline { height: 34px; font-size: 7px; letter-spacing: .11em; gap: 8px; }
+  .hero {
+    min-height: 690px;
+    min-height: min(790px, calc(100svh - 34px));
+    padding: 54px 15px 38px;
+  }
+  .hero-fade { inset: 10px; }
+  .hero-kicker { font-size: 8px; gap: 10px; letter-spacing: .15em; }
+  .hero-kicker span { width: 16px; }
+  .hero-rule { margin-top: 20px; }
+  .hero h1 { margin-top: 11px; gap: 8px; font-size: clamp(39px, 13.5vw, 50px); }
+  .hero h1 em { font-size: clamp(42px, 13vw, 49px); }
+  .hero-subtitle { margin-top: 13px; font-size: 8px; letter-spacing: .11em; }
+  .nameplate { margin-top: 27px; padding: 20px 15px 19px; }
+  .nameplate > span { font-size: 12px; }
+  .nameplate > strong { font-size: clamp(21px, 7vw, 27px); line-height: 1.25; }
+  .nameplate > p { font-size: 11px; line-height: 1.65; }
+  .hero-date { margin-top: 23px; font-size: 13px; }
+  .down-arrow { margin-top: 14px; }
+  .section-block { padding: 62px 16px; }
+  .eyebrow { font-size: 9px; letter-spacing: .2em; }
+  h2 { font-size: clamp(27px, 8vw, 34px); margin-bottom: 21px; }
+  .intro { font-size: 15px; line-height: 1.9; }
+  .intro-small { font-size: 12px; }
+  .event-card { margin-top: 28px; padding: 34px 17px 29px; }
+  .event-card h3 { font-size: 21px; line-height: 1.35; }
+  .event-address { font-size: 13px; }
+  .event-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .btn { min-height: 44px; min-width: 0; padding: 9px 10px; font-size: 11px; }
+  .countdown-section { padding-top: 70px; padding-bottom: 74px; }
+  .counter-grid { gap: 7px; margin-top: 27px; }
+  .counter-item { flex: 1 1 0; width: auto; height: 78px; gap: 5px; }
+  .counter-item strong { font-size: 28px; }
+  .counter-item span { font-size: 10px; }
+  .gallery-grid { gap: 9px; margin-top: 28px; }
+  .gallery-photo { padding: 4px; }
+  .quote-panel { min-height: 220px; margin-top: 28px; padding: 28px 18px; }
+  .quote-panel p { font-size: 18px; }
+  .closing { padding-bottom: 82px; }
+  .closing > p { font-size: 14px; }
+  .signature { font-size: 46px; }
+  .music-button { right: max(14px, env(safe-area-inset-right)); bottom: max(14px, env(safe-area-inset-bottom)); width: 48px; height: 48px; }
+  footer { min-height: 53px; height: auto; padding: 14px 55px 14px 16px; text-align: center; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
