@@ -3,12 +3,12 @@
  * Các tên, thời gian, địa chỉ bên dưới là DỮ LIỆU MẪU.
  */
 export const wedding = {
-  groom: 'Minh',
-  bride: 'An',
+  groom: 'Đức Huy',
+  bride: 'Bùi Yến',
   // Thời gian chính thức. Giữ định dạng ISO và múi giờ Việt Nam (+07:00).
   dateISO: '2026-12-20T17:30:00+07:00',
   // Nội dung mô tả đẹp mắt xuất hiện trên thiệp:
-  dateLabel: 'Chủ Nhật · 20 tháng 12, 2026',
+  dateLabel: 'Chủ Nhật · 27 tháng 12, 2026',
   hourLabel: '17:30',
   venue: 'Địa điểm tổ chức tiệc cưới',
   address: 'Hãy cập nhật địa chỉ tổ chức tại src/config/wedding.js',
