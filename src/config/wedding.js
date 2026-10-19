@@ -34,7 +34,7 @@ export const wedding = {
   mapsUrl: 'https://maps.app.goo.gl/3EjJ7uw3DarNp7Py8',
   message: 'Sự hiện diện của bạn là niềm hạnh phúc và vinh dự lớn đối với gia đình chúng mình.',
   // URL Vercel CHÍNH THỨC sau khi triển khai (không có dấu / cuối).
-  siteUrl: 'https://thiep-cuoi-cua-ban.vercel.app',
+  siteUrl: 'https://thiep-cuoi-huy-en.vercel.app',
   // Đặt ảnh trong public/photos/ và nhập đường dẫn, ví dụ '/photos/anh-1.jpg'.
   photos: [],
   // Không tự phát nhạc: cần khách bấm nút theo quy định của trình duyệt.
