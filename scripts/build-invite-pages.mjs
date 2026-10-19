@@ -29,6 +29,11 @@ for (const guest of guests) {
   html = replaceTag(html, 'content="Trân trọng kính mời bạn đến chung vui cùng chúng mình."', `content="${escapeHtml(description)}"`);
   const imageTag = wedding.shareImageUrl ? `\n    <meta property="og:image" content="${escapeHtml(wedding.shareImageUrl)}" />` : '';
   html = replaceTag(html, '</head>', `    <meta property="og:url" content="${escapeHtml(url)}" />${imageTag}\n  </head>`);
-  fs.writeFileSync(path.join(destination, `${guest.slug}.html`), html, 'utf8');
+  // Generate an index page in each guest folder so the public URL
+  // `/moi/<guest-slug>` is resolved directly by Vercel (and other static
+  // hosts) without relying on their optional clean-URL behaviour.
+  const guestDirectory = path.join(destination, guest.slug);
+  fs.mkdirSync(guestDirectory, { recursive: true });
+  fs.writeFileSync(path.join(guestDirectory, 'index.html'), html, 'utf8');
 }
 console.log(`✓ Tạo ${guests.length} trang HTML tĩnh, mỗi trang có tiêu đề chia sẻ riêng.`);
