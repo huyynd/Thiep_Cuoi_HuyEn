@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   ArrowRight, CalendarDays, Check, ChevronDown, Clock3, Copy,
-  Heart, MapPin, Music2, Pause, Sparkles
+  ExternalLink, Heart, Home, MapPin, Music2, Pause, Sparkles
 } from 'lucide-react';
 import { wedding } from './config/wedding.js';
 import guests from './data/guests.generated.json';
@@ -52,6 +52,150 @@ function makeCalendarFile() {
   link.click();
   link.remove();
   setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+}
+
+function WeddingCalendar({
+  dateISO = wedding.dateISO,
+  partyDateLabel = wedding.partyDateLabel,
+  partyHourLabel = wedding.partyHourLabel,
+  ceremonyDateLabel = wedding.ceremonyDateLabel,
+  ceremonyHourLabel = wedding.ceremonyHourLabel
+}) {
+  const dateObj = new Date(dateISO);
+  const isValid = !Number.isNaN(dateObj.getTime());
+  const year = isValid ? dateObj.getFullYear() : 2026;
+  const month = isValid ? dateObj.getMonth() : 11;
+
+  // Party day: 27, Ceremony day: 28
+  const partyDay = 27;
+  const ceremonyDay = 28;
+
+  const monthTitle = `THÁNG ${month + 1} · ${year}`;
+
+  const weekDays = [
+    { key: 't2', label: 'T2' },
+    { key: 't3', label: 'T3' },
+    { key: 't4', label: 'T4' },
+    { key: 't5', label: 'T5' },
+    { key: 't6', label: 'T6' },
+    { key: 't7', label: 'T7' },
+    { key: 'cn', label: 'CN', isSunday: true },
+  ];
+
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDay = new Date(year, month, 1).getDay();
+  // Monday is index 0:
+  const leadingBlanks = (firstDay + 6) % 7;
+
+  const cells = [];
+  for (let i = 0; i < leadingBlanks; i++) {
+    cells.push({ key: `blank-start-${i}`, isBlank: true });
+  }
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dayOfWeek = (leadingBlanks + (day - 1)) % 7;
+    const isSunday = dayOfWeek === 6;
+    cells.push({
+      key: `day-${day}`,
+      day,
+      isParty: day === partyDay,
+      isCeremony: day === ceremonyDay,
+      isSunday,
+    });
+  }
+  const trailingBlanks = (7 - (cells.length % 7)) % 7;
+  for (let i = 0; i < trailingBlanks; i++) {
+    cells.push({ key: `blank-end-${i}`, isBlank: true });
+  }
+
+  return (
+    <div className="wedding-calendar-card" aria-label={`Lịch ngày cưới: Tháng ${month + 1} năm ${year}`}>
+      <div className="cal-header">
+        <div className="cal-header-leaf">✦</div>
+        <div className="cal-title">{monthTitle}</div>
+        <div className="cal-subtitle">SAVE OUR SPECIAL DAYS</div>
+      </div>
+
+      <div className="cal-grid">
+        <div className="cal-weekdays">
+          {weekDays.map((w) => (
+            <div key={w.key} className={`cal-weekday ${w.isSunday ? 'is-sunday' : ''}`}>
+              {w.label}
+            </div>
+          ))}
+        </div>
+
+        <div className="cal-days">
+          {cells.map((cell) => {
+            if (cell.isBlank) {
+              return <div key={cell.key} className="cal-day is-blank" aria-hidden="true" />;
+            }
+            if (cell.isParty) {
+              return (
+                <div
+                  key={cell.key}
+                  className="cal-day is-party-day"
+                  title={`Tiệc cưới chung vui: ${partyDateLabel} (${partyHourLabel})`}
+                >
+                  <div className="wedding-heart-badge party-badge">
+                    <Heart className="heart-icon-bg" size={32} fill="#d14d72" color="#d14d72" strokeWidth={0} />
+                    <span className="wedding-day-num">{cell.day}</span>
+                    <span className="heart-pulse-ring" />
+                  </div>
+                </div>
+              );
+            }
+            if (cell.isCeremony) {
+              return (
+                <div
+                  key={cell.key}
+                  className="cal-day is-ceremony-day"
+                  title={`Lễ thành hôn & đón dâu: ${ceremonyDateLabel}`}
+                >
+                  <div className="wedding-heart-badge ceremony-badge">
+                    <Heart className="heart-icon-bg" size={32} fill="#9a4763" color="#9a4763" strokeWidth={0} />
+                    <span className="wedding-day-num">{cell.day}</span>
+                    <span className="ceremony-ring-glow" />
+                  </div>
+                </div>
+              );
+            }
+            return (
+              <div
+                key={cell.key}
+                className={`cal-day ${cell.isSunday ? 'is-sunday' : ''}`}
+              >
+                <span>{cell.day}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="cal-schedule">
+        <div className="cal-schedule-item is-party">
+          <div className="cal-schedule-badge">
+            <Heart size={12} fill="#d14d72" color="#d14d72" />
+            <span>Tiệc cưới mời khách</span>
+          </div>
+          <div className="cal-schedule-date">
+            <strong>Chủ Nhật · 27.12.2026</strong> · {partyHourLabel}
+          </div>
+        </div>
+
+        <div className="cal-schedule-divider" />
+
+        <div className="cal-schedule-item is-ceremony">
+          <div className="cal-schedule-badge">
+            <Sparkles size={12} color="#9a4763" />
+            <span>Lễ thành hôn & đón dâu</span>
+          </div>
+          <div className="cal-schedule-date">
+            <strong>Thứ Hai · 28.12.2026</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function Gallery() {
@@ -140,7 +284,7 @@ export default function App() {
             <strong>{recipient}</strong>
             <p>Đến dự ngày vui và chung vui cùng gia đình chúng mình</p>
           </div>
-          <div className="hero-date">{wedding.dateLabel}</div>
+          <WeddingCalendar />
           <a className="down-arrow" href="#loi-moi" aria-label="Xem chi tiết thiệp mời"><ChevronDown size={22}/></a>
         </div>
       </section>
@@ -155,21 +299,90 @@ export default function App() {
 
       <section className="event-section section-block" id="thong-tin">
         <div className="eyebrow">THE CELEBRATION</div>
-        <h2>Thông tin buổi tiệc</h2>
+        <h2>Thông tin ngày vui</h2>
         <div className="event-card">
           <div className="corner-motif">✿</div>
-          <div className="event-icon"><CalendarDays size={23} strokeWidth={1.35} /></div>
-          <div className="event-label">NGÀY THÀNH HÔN</div>
-          <h3>{wedding.dateLabel}</h3>
-          <div className="detail-row"><Clock3 size={17} /> <span>{wedding.hourLabel}</span></div>
+          
+          <div className="event-timeline">
+            <div className="event-block is-party-block">
+              <div className="event-icon"><Heart size={21} fill="#d14d72" color="#d14d72" strokeWidth={0} /></div>
+              <div className="event-label">TIỆC CƯỚI (MỜI TIỆC)</div>
+              <h3>{wedding.partyDateLabel}</h3>
+              <div className="detail-row"><Clock3 size={16} /> <span>{wedding.partyHourLabel}</span></div>
+              <p className="event-role-desc">Trân trọng kính mời quý khách đến nâng ly chung vui</p>
+            </div>
+
+            <div className="event-timeline-sep">
+              <span className="sep-line" />
+              <Heart size={14} fill="#c88b9c" color="#c88b9c" className="sep-heart" />
+              <span className="sep-line" />
+            </div>
+
+            <div className="event-block is-ceremony-block">
+              <div className="event-icon ceremony-icon"><Sparkles size={21} strokeWidth={1.4} /></div>
+              <div className="event-label">LỄ THÀNH HÔN & ĐÓN DÂU</div>
+              <h3>{wedding.ceremonyDateLabel}</h3>
+              <div className="detail-row"><Clock3 size={16} /> <span>{wedding.ceremonyHourLabel}</span></div>
+              <p className="event-role-desc">Lễ rước dâu và thành hôn của hai chúng mình</p>
+            </div>
+          </div>
+
           <div className="event-divider" />
           <div className="event-label">ĐỊA ĐIỂM TỔ CHỨC</div>
-          <h3>{wedding.venue}</h3>
-          <p className="event-address"><MapPin size={17} />{wedding.address}</p>
+          <h3 className="venues-title">Chỉ đường đến ngày vui của hai gia đình</h3>
+
+          <div className="venues-grid">
+            {/* Tư gia nhà trai */}
+            <div className="venue-card is-groom-house">
+              <div className="venue-badge">
+                <Home size={13} />
+                <span>NHÀ TRAI</span>
+              </div>
+              <h4>{wedding.groomHouse?.title || 'Tư gia nhà trai'}</h4>
+              <p className="venue-host">{wedding.groomHouse?.host || `Nhà Chú Rể ${wedding.groom}`}</p>
+              {wedding.groomHouse?.address && (
+                <p className="venue-address-text"><MapPin size={14} />{wedding.groomHouse.address}</p>
+              )}
+              {wedding.groomHouse?.mapsUrl && (
+                <a
+                  className="btn btn-primary btn-venue-map"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  href={wedding.groomHouse.mapsUrl}
+                >
+                  <MapPin size={15} /> Chỉ đường Nhà Trai <ExternalLink size={13} />
+                </a>
+              )}
+            </div>
+
+            {/* Tư gia nhà gái */}
+            <div className="venue-card is-bride-house">
+              <div className="venue-badge">
+                <Home size={13} />
+                <span>NHÀ GÁI</span>
+              </div>
+              <h4>{wedding.brideHouse?.title || 'Tư gia nhà gái'}</h4>
+              <p className="venue-host">{wedding.brideHouse?.host || `Nhà Cô Dâu ${wedding.bride}`}</p>
+              {wedding.brideHouse?.address && (
+                <p className="venue-address-text"><MapPin size={14} />{wedding.brideHouse.address}</p>
+              )}
+              {wedding.brideHouse?.mapsUrl && (
+                <a
+                  className="btn btn-primary btn-venue-map"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  href={wedding.brideHouse.mapsUrl}
+                >
+                  <MapPin size={15} /> Chỉ đường Nhà Gái <ExternalLink size={13} />
+                </a>
+              )}
+            </div>
+          </div>
+
           <div className="event-actions">
-            <button className="btn btn-outline" type="button" onClick={makeCalendarFile}><CalendarDays size={16}/> Lưu lịch</button>
-            {wedding.mapsUrl && <a className="btn btn-primary" target="_blank" rel="noreferrer noopener" href={wedding.mapsUrl}>
-              <MapPin size={16} /> Chỉ đường</a>}
+            <button className="btn btn-outline" type="button" onClick={makeCalendarFile}>
+              <CalendarDays size={16}/> Lưu lịch tiệc vào điện thoại
+            </button>
           </div>
         </div>
       </section>
