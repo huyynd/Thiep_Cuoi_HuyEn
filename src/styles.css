@@ -15,6 +15,87 @@ body { margin: 0; min-width: 320px; }
 a { color: inherit; }
 button { font: inherit; cursor: pointer; }
 button:focus-visible, a:focus-visible { outline: 3px solid #ad607a; outline-offset: 3px; }
+.photo-cover {
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  color: #fff;
+  background: #756565;
+}
+.photo-cover-image, .photo-cover-shade, .photo-cover-frame { position: absolute; inset: 0; }
+.photo-cover-image { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.photo-cover-shade {
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(21, 15, 15, .25), transparent 28%, transparent 63%, rgba(16, 11, 12, .54));
+}
+.photo-cover-frame {
+  z-index: 2;
+  inset: clamp(9px, 1.2vw, 16px);
+  border: 1px solid rgba(255, 255, 255, .72);
+  pointer-events: none;
+}
+.photo-cover-heading {
+  position: absolute;
+  z-index: 3;
+  top: clamp(34px, 5vw, 62px);
+  left: clamp(32px, 5vw, 62px);
+  right: clamp(32px, 5vw, 62px);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font: 700 clamp(16px, 2.1vw, 25px)/1 'Playfair Display', Georgia, serif;
+  letter-spacing: .11em;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, .25);
+}
+.photo-cover-date {
+  position: relative;
+  z-index: 3;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 5vh;
+  color: #fff;
+  font: 600 clamp(106px, 20vw, 255px)/.66 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  letter-spacing: -.09em;
+  text-shadow: 0 3px 18px rgba(0, 0, 0, .23);
+  user-select: none;
+}
+.photo-cover-date span { display: block; }
+.photo-cover-date span + span { margin-top: -.01em; }
+.photo-cover-names {
+  position: absolute;
+  z-index: 3;
+  bottom: clamp(39px, 7vw, 80px);
+  left: clamp(32px, 5vw, 62px);
+  right: clamp(32px, 5vw, 62px);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font: 700 clamp(14px, 1.8vw, 22px)/1.2 'Playfair Display', Georgia, serif;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, .35);
+}
+.photo-cover-names span:last-child { text-align: right; }
+.photo-cover-scroll {
+  position: absolute;
+  z-index: 4;
+  right: clamp(25px, 3vw, 44px);
+  bottom: clamp(98px, 12vw, 126px);
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .78);
+  border-radius: 50%;
+  color: #fff;
+  animation: float 2.8s ease-in-out infinite;
+}
 .topline {
   height: 38px; background: #9a6478; color: #fffafc; text-align: center;
   letter-spacing: .19em; font-size: 10px; display: flex; justify-content: center;
@@ -532,6 +613,10 @@ footer { height: 53px; display: flex; align-items: center; justify-content: cent
   }
 }
 @media (max-width: 480px) {
+  .photo-cover-heading { top: 33px; left: 31px; right: 31px; font-size: 14px; letter-spacing: .08em; }
+  .photo-cover-date { margin-top: 3vh; font-size: clamp(96px, 30vw, 142px); }
+  .photo-cover-names { bottom: 40px; left: 31px; right: 31px; font-size: 13px; }
+  .photo-cover-scroll { right: 24px; bottom: 82px; width: 34px; height: 34px; }
   .topline { height: 34px; font-size: 7px; letter-spacing: .11em; gap: 8px; }
   .hero {
     min-height: 690px;

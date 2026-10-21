@@ -23,6 +23,11 @@ function getCountdown(dateString, now) {
     { label: 'Phút', value: m }, { label: 'Giây', value: s }];
 }
 
+function getCoverDate(dateString) {
+  const [year = '', month = '', day = ''] = dateString.slice(0, 10).split('-');
+  return { day, month, year: year.slice(-2), fullYear: year };
+}
+
 function FlowerOrnament({ className = '' }) {
   return <div className={`flower-ornament ${className}`} aria-hidden="true">
     <span /><span /><span /><span /><span /><i />
@@ -264,12 +269,34 @@ export default function App() {
   const countdown = getCountdown(wedding.dateISO, now);
   const isWeddingDay = countdown.every((x) => x.value === 0);
   const recipient = guest?.name || 'Quý khách';
+  const coverDate = getCoverDate(wedding.dateISO);
 
   return <>
     {wedding.musicUrl && <audio ref={audioRef} loop preload="none" src={wedding.musicUrl} />}
+    <section className="photo-cover" aria-label="Ảnh bìa thiệp cưới">
+      <img className="photo-cover-image" src="/photos/anh1.png" alt={`Ảnh ${wedding.groom} và ${wedding.bride}`} />
+      <div className="photo-cover-shade" aria-hidden="true" />
+      <div className="photo-cover-frame" aria-hidden="true" />
+      <div className="photo-cover-heading" aria-hidden="true">
+        <span>TO BE</span>
+        <span>TOGETHER</span>
+      </div>
+      <div className="photo-cover-date" aria-label={`Ngày cưới ${coverDate.day} tháng ${coverDate.month} năm ${coverDate.fullYear}`}>
+        <span>{coverDate.day}</span>
+        <span>{coverDate.month}</span>
+        <span>{coverDate.year}</span>
+      </div>
+      <div className="photo-cover-names">
+        <span>{wedding.groom}</span>
+        <span>{wedding.bride}</span>
+      </div>
+      <a className="photo-cover-scroll" href="#thiep-moi" aria-label="Xem thiệp mời">
+        <ChevronDown size={22} />
+      </a>
+    </section>
     <div className="topline">THE WEDDING INVITATION <span className="topline-dot">✦</span> A DAY TO REMEMBER</div>
     <main>
-      <section className="hero" aria-label="Thiệp mời đám cưới">
+      <section className="hero" id="thiep-moi" aria-label="Thiệp mời đám cưới">
         <div className="hero-fade" aria-hidden="true" />
         <FlowerOrnament className="flower-left" />
         <FlowerOrnament className="flower-right" />
