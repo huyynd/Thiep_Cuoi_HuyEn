@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  ArrowRight, CalendarDays, Check, ChevronDown, Clock3, Copy,
-  ExternalLink, Heart, Home, MapPin, Music2, Pause, Sparkles
+  ArrowRight, CalendarDays, Check, ChevronDown, Copy,
+  ExternalLink, Heart, MapPin, Music2, Pause, Sparkles
 } from 'lucide-react';
 import { wedding } from './config/wedding.js';
 import guests from './data/guests.generated.json';
@@ -209,6 +209,28 @@ function WeddingInfo() {
   </section>;
 }
 
+function VenueMap({ house, label }) {
+  if (!house) return null;
+  const title = house.title || label;
+  const query = house.mapQuery || house.address || title;
+  const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(query)}&z=17&output=embed`;
+
+  return <article className="venue-map-card">
+    <div className="venue-map-heading">
+      <span>{label}</span>
+      <h4>{title}</h4>
+      {house.host && <p className="venue-map-host">{house.host}</p>}
+      {house.address && <p className="venue-map-address"><MapPin size={17} />{house.address}</p>}
+    </div>
+    <div className="venue-map-frame">
+      <iframe title={`Bản đồ ${title}`} src={mapUrl} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+    </div>
+    {house.mapsUrl && <a className="btn btn-primary btn-venue-map" target="_blank" rel="noreferrer noopener" href={house.mapsUrl}>
+      <MapPin size={16} /> Chỉ đường đến {label.toLowerCase()} <ExternalLink size={14} />
+    </a>}
+  </article>;
+}
+
 function Gallery() {
   if (!wedding.photos?.length) {
     return <div className="quote-panel">
@@ -262,6 +284,24 @@ function MomentsCarousel() {
       </button>)}
     </div>
   </section>;
+}
+
+function InvitationEvent({ title, dateISO, time, note }) {
+  const [year = '2026', month = '12', day = '28'] = dateISO.slice(0, 10).split('-');
+  const weekDays = ['CHỦ NHẬT', 'THỨ HAI', 'THỨ BA', 'THỨ TƯ', 'THỨ NĂM', 'THỨ SÁU', 'THỨ BẢY'];
+  const weekDay = weekDays[new Date(Number(year), Number(month) - 1, Number(day)).getDay()];
+
+  return <article className="invitation-event">
+    <div className="invitation-event-title">{title}</div>
+    <div className={`invitation-event-time ${time.length > 8 ? 'is-text' : ''}`}>{time}</div>
+    <div className="invitation-event-date">
+      <span>{weekDay}</span>
+      <strong>{day}</strong>
+      <span>THÁNG <i className="invitation-month-number">{month}</i></span>
+    </div>
+    <div className="invitation-event-year">{year}</div>
+    <p>{note}</p>
+  </article>;
 }
 
 export default function App() {
@@ -377,7 +417,7 @@ export default function App() {
         <FlowerOrnament className="flower-right" />
         <div className="hero-content">
           <div className="hero-kicker"><span /> SAVE THE DATE <span /></div>
-          <div className="hero-rule"><Heart size={16} fill="#b57487" strokeWidth={1.4} /></div>
+          <div className="hero-rule"><Heart size={21} fill="#b57487" strokeWidth={1.4} /></div>
           <h1><span>{wedding.groom}</span><em>&</em><span>{wedding.bride}</span></h1>
           <p className="hero-subtitle">CHÚNG MÌNH SẮP VỀ CHUNG MỘT NHÀ</p>
           <div className="nameplate">
@@ -404,85 +444,33 @@ export default function App() {
       <MomentsCarousel />
 
       <section className="event-section section-block" id="thong-tin">
-        <div className="eyebrow">THE CELEBRATION</div>
-        <h2>Thông tin ngày vui</h2>
-        <div className="event-card">
+        <div className="eyebrow">WEDDING INVITATION</div>
+        <h2>Trân trọng kính mời</h2>
+        <div className="event-card event-card-invitation">
           <div className="corner-motif">✿</div>
-          
-          <div className="event-timeline">
-            <div className="event-block is-party-block">
-              <div className="event-icon"><Heart size={21} fill="#d14d72" color="#d14d72" strokeWidth={0} /></div>
-              <div className="event-label">TIỆC CƯỚI (MỜI TIỆC)</div>
-              <h3>{wedding.partyDateLabel}</h3>
-              <div className="detail-row"><Clock3 size={16} /> <span>{wedding.partyHourLabel}</span></div>
-              <p className="event-role-desc">Trân trọng kính mời quý khách đến nâng ly chung vui</p>
-            </div>
-
-            <div className="event-timeline-sep">
-              <span className="sep-line" />
-              <Heart size={14} fill="#c88b9c" color="#c88b9c" className="sep-heart" />
-              <span className="sep-line" />
-            </div>
-
-            <div className="event-block is-ceremony-block">
-              <div className="event-icon ceremony-icon"><Sparkles size={21} strokeWidth={1.4} /></div>
-              <div className="event-label">LỄ THÀNH HÔN & ĐÓN DÂU</div>
-              <h3>{wedding.ceremonyDateLabel}</h3>
-              <div className="detail-row"><Clock3 size={16} /> <span>{wedding.ceremonyHourLabel}</span></div>
-              <p className="event-role-desc">Lễ rước dâu và thành hôn của hai chúng mình</p>
-            </div>
+          <div className="wedding-invitation-events">
+            <InvitationEvent
+              title="TIỆC CƯỚI (MỜI TIỆC)"
+              dateISO={wedding.dateISO}
+              time={wedding.partyHourLabel}
+              note="Trân trọng kính mời quý khách đến nâng ly chung vui"
+            />
+            <div className="invitation-event-divider" aria-hidden="true" />
+            <InvitationEvent
+              title="LỄ THÀNH HÔN & ĐÓN DÂU"
+              dateISO={wedding.calendarDateISO || wedding.dateISO}
+              time={wedding.ceremonyHourLabel}
+              note="Lễ rước dâu và thành hôn của hai chúng mình"
+            />
           </div>
 
           <div className="event-divider" />
-          <div className="event-label">ĐỊA ĐIỂM TỔ CHỨC</div>
-          <h3 className="venues-title">Chỉ đường đến ngày vui của hai gia đình</h3>
+          <div className="event-label">LOCATION</div>
+          <h3 className="venues-title">Địa điểm tổ chức</h3>
 
           <div className="venues-grid">
-            {/* Tư gia nhà trai */}
-            <div className="venue-card is-groom-house">
-              <div className="venue-badge">
-                <Home size={13} />
-                <span>NHÀ TRAI</span>
-              </div>
-              <h4>{wedding.groomHouse?.title || 'Tư gia nhà trai'}</h4>
-              <p className="venue-host">{wedding.groomHouse?.host || `Nhà Chú Rể ${wedding.groom}`}</p>
-              {wedding.groomHouse?.address && (
-                <p className="venue-address-text"><MapPin size={14} />{wedding.groomHouse.address}</p>
-              )}
-              {wedding.groomHouse?.mapsUrl && (
-                <a
-                  className="btn btn-primary btn-venue-map"
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  href={wedding.groomHouse.mapsUrl}
-                >
-                  <MapPin size={15} /> Chỉ đường Nhà Trai <ExternalLink size={13} />
-                </a>
-              )}
-            </div>
-
-            {/* Tư gia nhà gái */}
-            <div className="venue-card is-bride-house">
-              <div className="venue-badge">
-                <Home size={13} />
-                <span>NHÀ GÁI</span>
-              </div>
-              <h4>{wedding.brideHouse?.title || 'Tư gia nhà gái'}</h4>
-              <p className="venue-host">{wedding.brideHouse?.host || `Nhà Cô Dâu ${wedding.bride}`}</p>
-              {wedding.brideHouse?.address && (
-                <p className="venue-address-text"><MapPin size={14} />{wedding.brideHouse.address}</p>
-              )}
-              {wedding.brideHouse?.mapsUrl && (
-                <a
-                  className="btn btn-primary btn-venue-map"
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  href={wedding.brideHouse.mapsUrl}
-                >
-                  <MapPin size={15} /> Chỉ đường Nhà Gái <ExternalLink size={13} />
-                </a>
-              )}
-            </div>
+            <VenueMap house={wedding.groomHouse} label="Nhà trai" />
+            <VenueMap house={wedding.brideHouse} label="Nhà gái" />
           </div>
 
           <div className="event-actions">
@@ -517,6 +505,21 @@ export default function App() {
         <button className="btn btn-share" type="button" onClick={copyInviteUrl}>
           {copied ? <Check size={17}/> : <Copy size={17}/>} {copied ? 'Đã sao chép link' : 'Sao chép link thiệp'}
         </button>
+      </section>
+
+      <section className="thanks-photo" aria-label="Lời cảm ơn">
+        <img src="/photos/khoanhkhac/anh4.jpg" alt={`Khoảnh khắc của ${wedding.groom} và ${wedding.bride}`} />
+        <div className="thanks-photo-overlay" aria-hidden="true" />
+        <div className="thanks-photo-wave thanks-photo-wave-top" aria-hidden="true" />
+        <div className="thanks-photo-wave thanks-photo-wave-bottom" aria-hidden="true" />
+        <div className="thanks-photo-content">
+          <p>Cảm ơn bạn đã ghé thăm tấm thiệp nhỏ này.</p>
+          <p>Sự hiện diện và lời chúc của bạn<br />là món quà ý nghĩa nhất với chúng mình.</p>
+          <div className="thanks-photo-signature">
+            <span>— With love —</span>
+            <strong>{wedding.groom} &amp; {wedding.bride}</strong>
+          </div>
+        </div>
       </section>
     </main>
     {wedding.musicUrl && <button className="music-button" type="button" aria-label={playing ? 'Tạm dừng nhạc' : 'Phát nhạc nền'} onClick={toggleMusic}>

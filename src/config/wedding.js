@@ -6,10 +6,10 @@ export const wedding = {
   groom: 'Đức Huy',
   bride: 'Bùi Yến',
   // Thời gian chính thức (tiệc mời khách). Giữ định dạng ISO và múi giờ Việt Nam (+07:00).
-  dateISO: '2026-12-27T17:30:00+07:00',
+  dateISO: '2026-12-27T16:30:00+07:00',
   // Ngày mời tiệc cưới:
   partyDateLabel: 'Chủ Nhật · 27 tháng 12, 2026',
-  partyHourLabel: '17:30',
+  partyHourLabel: '16:30',
   // Ngày lễ thành hôn & đón dâu:
   ceremonyDateLabel: 'Thứ Hai · 28 tháng 12, 2026',
   ceremonyHourLabel: 'Lễ thành hôn & đón dâu',
@@ -17,18 +17,22 @@ export const wedding = {
   calendarDateISO: '2026-12-28T00:00:00+07:00',
   // Nhãn hiển thị chung:
   dateLabel: 'Chủ Nhật · 27 tháng 12, 2026',
-  hourLabel: '17:30',
+  hourLabel: '16:30',
   // Địa điểm tổ chức: Tư gia nhà trai & Tư gia nhà gái
   groomHouse: {
     title: 'Tư gia nhà trai',
     host: 'Nhà Chú Rể Đức Huy',
-    address: 'Bấm nút bên dưới để mở vị trí trên Google Maps',
+    address: 'Hạ Chuế, Kim Xá, Vĩnh Tường, Vĩnh Phúc',
+    // Tọa độ lấy trực tiếp từ link Google Maps ở dưới để bản đồ nhúng trùng đúng ghim.
+    mapQuery: '21.312664,105.487414',
     mapsUrl: 'https://maps.app.goo.gl/3EjJ7uw3DarNp7Py8'
   },
   brideHouse: {
     title: 'Tư gia nhà gái',
     host: 'Nhà Cô Dâu Bùi Yến',
-    address: 'Bấm nút bên dưới để mở vị trí trên Google Maps',
+    address: 'Vườn Gấu, Đại Đồng, Vĩnh Tường, Vĩnh Phúc',
+    // Tọa độ lấy trực tiếp từ link Google Maps ở dưới để bản đồ nhúng trùng đúng ghim.
+    mapQuery: '21.271812,105.520389',
     mapsUrl: 'https://maps.app.goo.gl/YsBMfjM8U3YQrUXi7'
   },
   venue: 'Tư gia nhà trai & Tư gia nhà gái',
@@ -44,7 +48,7 @@ export const wedding = {
     },
     bride: {
       title: 'Ông Bà',
-      names: ['Bùi Văn Hải', 'Nguyễn Thị Bích'],
+      names: ['Bùi Văn Hải', 'Ngô Thị Bích'],
       address: 'Vườn Gấu, Đại Đồng, Vĩnh Tường, Vĩnh Phúc',
     },
     groomFullName: 'Nguyễn Đức Huy',
