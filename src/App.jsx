@@ -36,6 +36,13 @@ const snowflakes = [
   ['63%', '-8s', '13s', '6px', '19px'], ['70%', '-4s', '10s', '3px', '-20px'],
   ['76%', '-11s', '15s', '5px', '10px'], ['83%', '-6s', '12s', '3px', '-11px'],
   ['90%', '-9s', '14s', '4px', '16px'], ['96%', '-1s', '11s', '3px', '-15px'],
+  ['7%', '-8s', '17s', '2px', '-8px'], ['15%', '-13s', '12s', '4px', '13px'],
+  ['22%', '-4s', '18s', '3px', '-19px'], ['30%', '-15s', '10s', '5px', '9px'],
+  ['37%', '-9s', '16s', '2px', '16px'], ['44%', '-2s', '13s', '4px', '-15px'],
+  ['51%', '-14s', '18s', '3px', '20px'], ['59%', '-6s', '12s', '5px', '-9px'],
+  ['67%', '-16s', '15s', '2px', '14px'], ['73%', '-3s', '17s', '4px', '-17px'],
+  ['80%', '-12s', '11s', '3px', '8px'], ['87%', '-5s', '16s', '5px', '-14px'],
+  ['93%', '-15s', '13s', '2px', '18px'], ['99%', '-7s', '17s', '4px', '-10px'],
 ];
 
 function CoverSnowfall() {
@@ -409,9 +416,9 @@ export default function App() {
         <span>TOGETHER</span>
       </div>
       <div className="photo-cover-date" aria-label={`Ngày cưới ${coverDate.day} tháng ${coverDate.month} năm ${coverDate.fullYear}`}>
-        <span>{coverDate.day}</span>
-        <span>{coverDate.month}</span>
-        <span>{coverDate.year}</span>
+        <span className="cover-date-day">{coverDate.day}</span>
+        <span className="cover-date-month">{coverDate.month}</span>
+        <span className="cover-date-year">{coverDate.year}</span>
       </div>
       <div className="photo-cover-names">
         <span>{wedding.groom}</span>
