@@ -233,9 +233,39 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = 0.35;
-    }
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.volume = 0.35;
+    const syncPlaying = () => setPlaying(!audio.paused);
+    const interactionEvents = ['pointerdown', 'touchstart', 'keydown'];
+    const removeInteractionListeners = () => {
+      interactionEvents.forEach((eventName) => {
+        document.removeEventListener(eventName, startMusic, true);
+      });
+    };
+    const startMusic = async () => {
+      try {
+        await audio.play();
+        setPlaying(true);
+        removeInteractionListeners();
+      } catch {
+        setPlaying(false);
+      }
+    };
+
+    audio.addEventListener('play', syncPlaying);
+    audio.addEventListener('pause', syncPlaying);
+    interactionEvents.forEach((eventName) => {
+      document.addEventListener(eventName, startMusic, true);
+    });
+    startMusic();
+
+    return () => {
+      removeInteractionListeners();
+      audio.removeEventListener('play', syncPlaying);
+      audio.removeEventListener('pause', syncPlaying);
+    };
   }, []);
 
   async function toggleMusic() {
@@ -272,7 +302,7 @@ export default function App() {
   const coverDate = getCoverDate(wedding.dateISO);
 
   return <>
-    {wedding.musicUrl && <audio ref={audioRef} loop preload="none" src={wedding.musicUrl} />}
+    {wedding.musicUrl && <audio ref={audioRef} autoPlay playsInline loop preload="auto" src={wedding.musicUrl} />}
     <section className="photo-cover" aria-label="Ảnh bìa thiệp cưới">
       <img className="photo-cover-image" src="/photos/anh1.png" alt={`Ảnh ${wedding.groom} và ${wedding.bride}`} />
       <div className="photo-cover-shade" aria-hidden="true" />
