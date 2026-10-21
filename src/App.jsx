@@ -84,38 +84,27 @@ function makeCalendarFile() {
   setTimeout(() => URL.revokeObjectURL(link.href), 1000);
 }
 
-function WeddingCalendar({
-  dateISO = wedding.dateISO,
-  partyDateLabel = wedding.partyDateLabel,
-  partyHourLabel = wedding.partyHourLabel,
-  ceremonyDateLabel = wedding.ceremonyDateLabel,
-  ceremonyHourLabel = wedding.ceremonyHourLabel
-}) {
+function WeddingCalendar({ now }) {
+  const dateISO = wedding.calendarDateISO || wedding.dateISO;
   const dateObj = new Date(dateISO);
   const isValid = !Number.isNaN(dateObj.getTime());
   const year = isValid ? dateObj.getFullYear() : 2026;
   const month = isValid ? dateObj.getMonth() : 11;
-
-  // Party day: 27, Ceremony day: 28
-  const partyDay = 27;
-  const ceremonyDay = 28;
-
-  const monthTitle = `THÁNG ${month + 1} · ${year}`;
+  const weddingDay = isValid ? dateObj.getDate() : 28;
+  const dateLabel = `${year}.${String(month + 1).padStart(2, '0')}.${String(weddingDay).padStart(2, '0')}`;
+  const weekdayLabel = new Intl.DateTimeFormat('vi-VN', { weekday: 'long' }).format(dateObj);
+  const countdown = getCountdown(dateISO, now);
 
   const weekDays = [
-    { key: 't2', label: 'T2' },
-    { key: 't3', label: 'T3' },
-    { key: 't4', label: 'T4' },
-    { key: 't5', label: 'T5' },
-    { key: 't6', label: 'T6' },
-    { key: 't7', label: 'T7' },
     { key: 'cn', label: 'CN', isSunday: true },
+    { key: 't2', label: 'T2' }, { key: 't3', label: 'T3' },
+    { key: 't4', label: 'T4' }, { key: 't5', label: 'T5' },
+    { key: 't6', label: 'T6' }, { key: 't7', label: 'T7' },
   ];
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDay = new Date(year, month, 1).getDay();
-  // Monday is index 0:
-  const leadingBlanks = (firstDay + 6) % 7;
+  const leadingBlanks = firstDay;
 
   const cells = [];
   for (let i = 0; i < leadingBlanks; i++) {
@@ -123,12 +112,11 @@ function WeddingCalendar({
   }
   for (let day = 1; day <= daysInMonth; day++) {
     const dayOfWeek = (leadingBlanks + (day - 1)) % 7;
-    const isSunday = dayOfWeek === 6;
+    const isSunday = dayOfWeek === 0;
     cells.push({
       key: `day-${day}`,
       day,
-      isParty: day === partyDay,
-      isCeremony: day === ceremonyDay,
+      isWedding: day === weddingDay,
       isSunday,
     });
   }
@@ -138,61 +126,30 @@ function WeddingCalendar({
   }
 
   return (
-    <div className="wedding-calendar-card" aria-label={`Lịch ngày cưới: Tháng ${month + 1} năm ${year}`}>
-      <div className="cal-header">
-        <div className="cal-header-leaf">✦</div>
-        <div className="cal-title">{monthTitle}</div>
-        <div className="cal-subtitle">SAVE OUR SPECIAL DAYS</div>
+    <div className="ceremony-calendar-card" aria-label={`Lịch ngày cưới: ${dateLabel}`}>
+      <div className="ceremony-calendar-header">
+        <div>{dateLabel}</div>
+        <p>{weekdayLabel} · Ngày cưới của chúng mình</p>
       </div>
 
-      <div className="cal-grid">
-        <div className="cal-weekdays">
+      <div className="ceremony-calendar-grid">
+        <div className="ceremony-calendar-weekdays">
           {weekDays.map((w) => (
-            <div key={w.key} className={`cal-weekday ${w.isSunday ? 'is-sunday' : ''}`}>
+            <div key={w.key} className={w.isSunday ? 'is-sunday' : ''}>
               {w.label}
             </div>
           ))}
         </div>
 
-        <div className="cal-days">
+        <div className="ceremony-calendar-days">
           {cells.map((cell) => {
             if (cell.isBlank) {
-              return <div key={cell.key} className="cal-day is-blank" aria-hidden="true" />;
-            }
-            if (cell.isParty) {
-              return (
-                <div
-                  key={cell.key}
-                  className="cal-day is-party-day"
-                  title={`Tiệc cưới chung vui: ${partyDateLabel} (${partyHourLabel})`}
-                >
-                  <div className="wedding-heart-badge party-badge">
-                    <Heart className="heart-icon-bg" size={32} fill="#d14d72" color="#d14d72" strokeWidth={0} />
-                    <span className="wedding-day-num">{cell.day}</span>
-                    <span className="heart-pulse-ring" />
-                  </div>
-                </div>
-              );
-            }
-            if (cell.isCeremony) {
-              return (
-                <div
-                  key={cell.key}
-                  className="cal-day is-ceremony-day"
-                  title={`Lễ thành hôn & đón dâu: ${ceremonyDateLabel}`}
-                >
-                  <div className="wedding-heart-badge ceremony-badge">
-                    <Heart className="heart-icon-bg" size={32} fill="#9a4763" color="#9a4763" strokeWidth={0} />
-                    <span className="wedding-day-num">{cell.day}</span>
-                    <span className="ceremony-ring-glow" />
-                  </div>
-                </div>
-              );
+              return <div key={cell.key} aria-hidden="true" />;
             }
             return (
               <div
                 key={cell.key}
-                className={`cal-day ${cell.isSunday ? 'is-sunday' : ''}`}
+                className={`${cell.isSunday ? 'is-sunday' : ''} ${cell.isWedding ? 'is-wedding-day' : ''}`}
               >
                 <span>{cell.day}</span>
               </div>
@@ -201,29 +158,13 @@ function WeddingCalendar({
         </div>
       </div>
 
-      <div className="cal-schedule">
-        <div className="cal-schedule-item is-party">
-          <div className="cal-schedule-badge">
-            <Heart size={12} fill="#d14d72" color="#d14d72" />
-            <span>Tiệc cưới mời khách</span>
-          </div>
-          <div className="cal-schedule-date">
-            <strong>Chủ Nhật · 27.12.2026</strong> · {partyHourLabel}
-          </div>
-        </div>
-
-        <div className="cal-schedule-divider" />
-
-        <div className="cal-schedule-item is-ceremony">
-          <div className="cal-schedule-badge">
-            <Sparkles size={12} color="#9a4763" />
-            <span>Lễ thành hôn & đón dâu</span>
-          </div>
-          <div className="cal-schedule-date">
-            <strong>Thứ Hai · 28.12.2026</strong>
-          </div>
-        </div>
+      <div className="ceremony-calendar-countdown">
+        {countdown.map((item) => <div key={item.label}>
+          <span>{item.label.toLowerCase()}</span>
+          <strong>{String(item.value).padStart(2, '0')}</strong>
+        </div>)}
       </div>
+      <p className="ceremony-calendar-note">Đếm ngược đến ngày cưới của {wedding.groom} và {wedding.bride}.</p>
     </div>
   );
 }
@@ -402,7 +343,7 @@ export default function App() {
   const countdown = getCountdown(wedding.dateISO, now);
   const isWeddingDay = countdown.every((x) => x.value === 0);
   const recipient = guest?.name || 'Quý khách';
-  const coverDate = getCoverDate(wedding.dateISO);
+  const coverDate = getCoverDate(wedding.calendarDateISO || wedding.dateISO);
 
   return <>
     {wedding.musicUrl && <audio ref={audioRef} autoPlay playsInline loop preload="auto" src={wedding.musicUrl} />}
@@ -445,7 +386,7 @@ export default function App() {
             <strong>{recipient}</strong>
             <p>Đến dự ngày vui và chung vui cùng gia đình chúng mình</p>
           </div>
-          <WeddingCalendar />
+          <WeddingCalendar now={now} />
           <a className="down-arrow" href="#wedding-info" aria-label="Xem thông tin lễ cưới"><ChevronDown size={22}/></a>
         </div>
       </section>

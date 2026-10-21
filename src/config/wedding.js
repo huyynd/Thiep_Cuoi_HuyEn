@@ -13,6 +13,8 @@ export const wedding = {
   // Ngày lễ thành hôn & đón dâu:
   ceremonyDateLabel: 'Thứ Hai · 28 tháng 12, 2026',
   ceremonyHourLabel: 'Lễ thành hôn & đón dâu',
+  // Ngày cưới hiển thị trên lịch lớn.
+  calendarDateISO: '2026-12-28T00:00:00+07:00',
   // Nhãn hiển thị chung:
   dateLabel: 'Chủ Nhật · 27 tháng 12, 2026',
   hourLabel: '17:30',
