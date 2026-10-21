@@ -28,6 +28,24 @@ function getCoverDate(dateString) {
   return { day, month, year: year.slice(-2), fullYear: year };
 }
 
+const snowflakes = [
+  ['4%', '2.5s', '10s', '3px', '12px'], ['11%', '-3s', '13s', '5px', '-17px'],
+  ['18%', '-7s', '11s', '3px', '20px'], ['26%', '-1s', '15s', '6px', '-12px'],
+  ['33%', '-10s', '12s', '4px', '17px'], ['40%', '-5s', '14s', '3px', '-18px'],
+  ['47%', '-12s', '11s', '5px', '14px'], ['55%', '-2s', '16s', '3px', '-14px'],
+  ['63%', '-8s', '13s', '6px', '19px'], ['70%', '-4s', '10s', '3px', '-20px'],
+  ['76%', '-11s', '15s', '5px', '10px'], ['83%', '-6s', '12s', '3px', '-11px'],
+  ['90%', '-9s', '14s', '4px', '16px'], ['96%', '-1s', '11s', '3px', '-15px'],
+];
+
+function CoverSnowfall() {
+  return <div className="photo-cover-snow" aria-hidden="true">
+    {snowflakes.map(([left, delay, duration, size, drift], index) => (
+      <span key={index} style={{ '--snow-left': left, '--snow-delay': delay, '--snow-duration': duration, '--snow-size': size, '--snow-drift': drift }} />
+    ))}
+  </div>;
+}
+
 function FlowerOrnament({ className = '' }) {
   return <div className={`flower-ornament ${className}`} aria-hidden="true">
     <span /><span /><span /><span /><span /><i />
@@ -260,6 +278,44 @@ function Gallery() {
   </div>;
 }
 
+function MomentsCarousel() {
+  const photos = wedding.momentPhotos || [];
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    if (photos.length < 2) return;
+    const timer = window.setInterval(() => {
+      setActiveIndex((current) => (current + 1) % photos.length);
+    }, 3000);
+    return () => window.clearInterval(timer);
+  }, [photos.length]);
+
+  if (!photos.length) return null;
+  const showNext = () => setActiveIndex((current) => (current + 1) % photos.length);
+
+  return <section className="moments-carousel section-block" aria-label="Khoảnh khắc của chúng mình">
+    <div className="eyebrow">GALLERY</div>
+    <h2>Khoảnh khắc của chúng mình</h2>
+    <div className="carousel-shell">
+      <button className="carousel-featured" type="button" onClick={showNext} aria-label="Xem ảnh tiếp theo">
+        <img className="carousel-featured-image" src={photos[activeIndex]} alt={`Khoảnh khắc của ${wedding.groom} và ${wedding.bride} ${activeIndex + 1}`} />
+      </button>
+    </div>
+    <div className="carousel-thumbnails" aria-label="Chọn ảnh">
+      {photos.map((photo, index) => <button
+        type="button"
+        key={photo}
+        className={`carousel-thumbnail ${index === activeIndex ? 'is-active' : ''}`}
+        onClick={() => setActiveIndex(index)}
+        aria-label={`Xem ảnh ${index + 1}`}
+        aria-current={index === activeIndex ? 'true' : undefined}
+      >
+        <img src={photo} alt="" />
+      </button>)}
+    </div>
+  </section>;
+}
+
 export default function App() {
   const guest = findGuest();
   const [now, setNow] = useState(Date.now());
@@ -346,6 +402,7 @@ export default function App() {
     <section className="photo-cover" aria-label="Ảnh bìa thiệp cưới">
       <img className="photo-cover-image" src="/photos/anh1.png" alt={`Ảnh ${wedding.groom} và ${wedding.bride}`} />
       <div className="photo-cover-shade" aria-hidden="true" />
+      <CoverSnowfall />
       <div className="photo-cover-frame" aria-hidden="true" />
       <div className="photo-cover-heading" aria-hidden="true">
         <span>TO BE</span>
@@ -395,6 +452,8 @@ export default function App() {
         <p className="intro">{wedding.message}</p>
         <p className="intro-small">Mong được đón tiếp <b>{recipient}</b> trong ngày trọng đại của hai chúng mình.</p>
       </section>
+
+      <MomentsCarousel />
 
       <section className="event-section section-block" id="thong-tin">
         <div className="eyebrow">THE CELEBRATION</div>

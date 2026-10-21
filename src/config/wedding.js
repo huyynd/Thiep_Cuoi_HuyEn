@@ -54,6 +54,18 @@ export const wedding = {
   siteUrl: 'https://thiep-cuoi-huy-en.vercel.app',
   // Đặt ảnh trong public/photos/ và nhập đường dẫn, ví dụ '/photos/anh-1.jpg'.
   photos: [],
+  // Ảnh cho slideshow "Khoảnh khắc của chúng mình".
+  momentPhotos: [
+    '/photos/khoanhkhac/anh1.jpg',
+    '/photos/khoanhkhac/anh2.jpg',
+    '/photos/khoanhkhac/anh3.jpg',
+    '/photos/khoanhkhac/anh4.jpg',
+    '/photos/khoanhkhac/anh5.jpg',
+    '/photos/khoanhkhac/anh6.jpg',
+    '/photos/khoanhkhac/anh7.jpg',
+    '/photos/khoanhkhac/anh8.jpg',
+    '/photos/khoanhkhac/anh9.jpg',
+  ],
   // Nhạc nền được phát khi khách mở thiệp; nút góc phải dưới dùng để tạm dừng/phát lại.
   musicUrl: '/music/ngaydautien.mp3',
   // Ảnh xem trước khi chia sẻ link trên Zalo/Facebook, phải là URL HTTPS đầy đủ.
