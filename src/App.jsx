@@ -203,6 +203,46 @@ function WeddingCalendar({
   );
 }
 
+function WeddingInfo() {
+  const info = wedding.familyInfo;
+  if (!info) return null;
+  const families = [info.groom, info.bride];
+
+  return <section className="wedding-info" id="wedding-info" aria-label="Thông tin lễ cưới">
+    <div className="wedding-info-inner">
+      <div className="wedding-info-kicker">WEDDING INFO</div>
+      <h2>Thông tin lễ cưới</h2>
+
+      <div className="family-info-grid">
+        {families.map((family, index) => <div className="family-info-item" key={index}>
+          <div className="family-info-title">{family.title}</div>
+          <div className="family-info-names">
+            {family.names.map((name) => <strong key={name}>{name}</strong>)}
+          </div>
+          <p>{family.address}</p>
+        </div>)}
+      </div>
+
+      <div className="wedding-announcement">
+        <p>Trân trọng báo tin</p>
+        <p>Lễ thành hôn của con chúng tôi</p>
+      </div>
+
+      <div className="couple-announcement">
+        <div>
+          <strong>{info.groomFullName}</strong>
+          <span>{info.groomRole}</span>
+        </div>
+        <i>&amp;</i>
+        <div>
+          <strong>{info.brideFullName}</strong>
+          <span>{info.brideRole}</span>
+        </div>
+      </div>
+    </div>
+  </section>;
+}
+
 function Gallery() {
   if (!wedding.photos?.length) {
     return <div className="quote-panel">
@@ -342,9 +382,11 @@ export default function App() {
             <p>Đến dự ngày vui và chung vui cùng gia đình chúng mình</p>
           </div>
           <WeddingCalendar />
-          <a className="down-arrow" href="#loi-moi" aria-label="Xem chi tiết thiệp mời"><ChevronDown size={22}/></a>
+          <a className="down-arrow" href="#wedding-info" aria-label="Xem thông tin lễ cưới"><ChevronDown size={22}/></a>
         </div>
       </section>
+
+      <WeddingInfo />
 
       <section className="welcome section-block" id="loi-moi">
         <div className="eyebrow">WITH LOVE & GRATITUDE</div>

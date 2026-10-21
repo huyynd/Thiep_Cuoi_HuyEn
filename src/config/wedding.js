@@ -33,6 +33,23 @@ export const wedding = {
   address: 'Bấm nút chỉ đường của từng nhà để mở Google Maps',
   mapsUrl: 'https://maps.app.goo.gl/3EjJ7uw3DarNp7Py8',
   message: 'Sự hiện diện của bạn là niềm hạnh phúc và vinh dự lớn đối với gia đình chúng mình.',
+  // Thông tin hai gia đình hiển thị dưới lịch. Có thể thay đổi trực tiếp tại đây.
+  familyInfo: {
+    groom: {
+      title: 'Ông Bà',
+      names: ['Nguyễn Văn Hạnh', 'Nguyễn Thị Hưng'],
+      address: 'Hạ Chuế, Kim Xá, Vĩnh Tường, Vĩnh Phúc',
+    },
+    bride: {
+      title: 'Ông Bà',
+      names: ['Bùi Văn Hải', 'Nguyễn Thị Bích'],
+      address: 'Vườn Gấu, Đại Đồng, Vĩnh Tường, Vĩnh Phúc',
+    },
+    groomFullName: 'Nguyễn Đức Huy',
+    groomRole: 'Đại Hoàng Tử',
+    brideFullName: 'Bùi Thị Yến',
+    brideRole: 'Trưởng Công Chúa',
+  },
   // URL Vercel CHÍNH THỨC sau khi triển khai (không có dấu / cuối).
   siteUrl: 'https://thiep-cuoi-huy-en.vercel.app',
   // Đặt ảnh trong public/photos/ và nhập đường dẫn, ví dụ '/photos/anh-1.jpg'.
