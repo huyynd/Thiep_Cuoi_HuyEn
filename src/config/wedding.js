@@ -72,6 +72,45 @@ export const wedding = {
     '/photos/khoanhkhac/anh8.jpg',
     '/photos/khoanhkhac/anh9.jpg',
   ],
+  // Hành trình tình yêu hiển thị trước phần lịch cưới.
+  loveStory: [
+    {
+      year: 'Cấp 3',
+      title: 'Những năm tháng thanh xuân',
+      text: 'Gặp nhau dưới mái trường cấp 3, cùng đi qua những năm tháng học trò hồn nhiên và lưu giữ trọn vẹn ký ức thanh xuân rực rỡ.',
+      photo: '/photos/khoanhkhac/anh1.jpg',
+    },
+    {
+      year: 'Đại học',
+      title: 'Từ những cuộc trò chuyện',
+      text: 'Bắt đầu hành trình riêng tại đại học, những cuộc trò chuyện giản dị mỗi ngày đã dần kéo hai trái tim tìm thấy sự đồng điệu.',
+      photo: '/photos/khoanhkhac/anh2.jpg',
+    },
+    {
+      year: '2026',
+      title: 'Lời cầu hôn',
+      text: 'Năm 2026, Huy chính thức cầu hôn Yến. Một lời hứa trao tay, mở ra chương mới đầy hứa hẹn về một mái nhà chung.',
+      photo: '/photos/khoanhkhac/anh3.jpg',
+    },
+    {
+      year: 'Yêu thương',
+      title: 'Từ bạn bè thành người thương',
+      text: 'Tình bạn năm nào hóa tình yêu. Học cách lắng nghe và thấu hiểu, chúng mình thêm trân trọng từng phút giây được đồng hành.',
+      photo: '/photos/khoanhkhac/anh4.jpg',
+    },
+    {
+      year: 'Lời hứa',
+      title: 'Cùng hướng về một mái nhà',
+      text: 'Trưởng thành cùng nhau, chúng mình chọn nắm chặt tay và biến tình yêu thành lời hứa gắn bó suốt chặng đường dài phía trước.',
+      photo: '/photos/khoanhkhac/anh5.jpg',
+    },
+    {
+      year: 'Hôm nay',
+      title: 'Về chung một nhà',
+      text: 'Hôm nay, chương mới chính thức bắt đầu — không chỉ là câu chuyện đôi lứa, mà là hành trình cùng đắp xây một gia đình nhỏ ngập tràn yêu thương.',
+      photo: '/photos/khoanhkhac/anh6.jpg',
+    },
+  ],
   // Nhạc nền được phát khi khách mở thiệp; nút góc phải dưới dùng để tạm dừng/phát lại.
   musicUrl: '/music/ngaydautien.mp3',
   // Ảnh xem trước khi chia sẻ link trên Zalo/Facebook, phải là URL HTTPS đầy đủ.

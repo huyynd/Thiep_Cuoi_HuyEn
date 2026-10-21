@@ -436,6 +436,136 @@ p {
   margin-top: 29px;
 }
 
+.love-story {
+  width: min(100%, 620px);
+  margin: 52px auto 0;
+  padding: clamp(38px, 6vw, 60px) clamp(18px, 4vw, 42px) clamp(34px, 5vw, 54px);
+  color: #684f56;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 8% 4%, rgba(218, 172, 190, .14), transparent 22%),
+    radial-gradient(circle at 92% 97%, rgba(218, 172, 190, .12), transparent 24%),
+    #fffdfc;
+  border: 1px solid rgba(213, 180, 191, .52);
+  box-shadow: 0 12px 34px rgba(108, 72, 86, .09);
+}
+
+.love-story-kicker {
+  color: #a16d7e;
+  font: 500 clamp(31px, 5vw, 46px)/1.05 'Playfair Display', Georgia, serif;
+  text-align: center;
+}
+
+.love-story-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 14px 0 35px;
+  color: #c9859d;
+  font-size: 20px;
+}
+
+.love-story-ornament span {
+  width: 50px;
+  height: 1px;
+  background: #d9afbb;
+}
+
+.love-story-timeline { position: relative; }
+
+.love-story-timeline::before {
+  position: absolute;
+  top: 16px;
+  bottom: 16px;
+  left: 50%;
+  width: 1px;
+  content: '';
+  background: #d8a9b7;
+  transform: translateX(-50%);
+}
+
+.love-story-chapter {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 171px;
+  padding-bottom: 34px;
+}
+
+.love-story-chapter:last-child { padding-bottom: 0; }
+
+.love-story-copy {
+  grid-column: 1;
+  padding: 0 33px 0 0;
+  text-align: right;
+}
+
+.love-story-chapter.is-right .love-story-copy {
+  grid-column: 2;
+  padding: 0 0 0 33px;
+  text-align: left;
+}
+
+.love-story-copy time {
+  display: block;
+  color: #9b6075;
+  font: 500 clamp(26px, 4vw, 34px)/1 'Playfair Display', Georgia, serif;
+}
+
+.love-story-copy h3 {
+  margin: 10px 0 10px;
+  color: #aa7084;
+  font: 400 clamp(23px, 3.8vw, 31px)/1.1 'Great Vibes', cursive;
+}
+
+.love-story-copy p {
+  margin: 0;
+  font-size: clamp(15px, 2.1vw, 18px);
+  font-style: italic;
+  line-height: 1.45;
+}
+
+.love-story-marker {
+  position: absolute;
+  z-index: 1;
+  top: 8px;
+  left: 50%;
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  color: #fff;
+  font-size: 13px;
+  background: #c77492;
+  border: 3px solid #fffdfc;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(151, 78, 105, .2);
+  transform: translateX(-50%);
+}
+
+.love-story-photo {
+  grid-column: 2;
+  justify-self: center;
+  width: min(100%, 155px);
+  height: 142px;
+  margin: 0 0 0 31px;
+  overflow: hidden;
+  border: 5px solid #fff;
+  border-radius: 50% 50% 45% 45%;
+  box-shadow: 0 7px 17px rgba(110, 73, 86, .17);
+  transform: rotate(2.5deg);
+}
+
+.love-story-chapter.is-right .love-story-photo {
+  grid-column: 1;
+  grid-row: 1;
+  margin: 0 31px 0 0;
+  transform: rotate(-2.5deg);
+}
+
+.love-story-photo img { width: 100%; height: 100%; object-fit: cover; }
+
 .ceremony-calendar-card {
   width: 100%;
   max-width: 510px;
@@ -507,6 +637,7 @@ p {
 .ceremony-calendar-days .is-wedding-day {
   color: #fff;
   position: relative;
+  isolation: isolate;
 }
 
 .ceremony-calendar-days .is-wedding-day span {
@@ -520,6 +651,7 @@ p {
 
 .ceremony-calendar-days .is-wedding-day::before {
   position: absolute;
+  z-index: 0;
   top: 50%;
   left: 50%;
   color: #dd6f96;
@@ -530,12 +662,53 @@ p {
   animation: calendarHeartBeat 2.5s ease-in-out infinite;
 }
 
+.ceremony-calendar-days .is-wedding-day::after {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 50%;
+  width: clamp(31px, 4.5vw, 39px);
+  height: clamp(31px, 4.5vw, 39px);
+  border: 1px solid rgba(213, 96, 143, .54);
+  border-radius: 50%;
+  content: '';
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(.78);
+  animation: calendarHeartRipple 2.5s ease-out infinite;
+}
+
+.ceremony-calendar-days .is-wedding-day span::before,
+.ceremony-calendar-days .is-wedding-day span::after {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  width: clamp(31px, 4.5vw, 39px);
+  height: clamp(31px, 4.5vw, 39px);
+  border: 1px solid rgba(213, 96, 143, .48);
+  border-radius: 50%;
+  content: '';
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(.78);
+  animation: calendarHeartRipple 2.5s ease-out infinite;
+}
+
+.ceremony-calendar-days .is-wedding-day span::before { animation-delay: .22s; }
+.ceremony-calendar-days .is-wedding-day span::after { animation-delay: .44s; }
+
 @keyframes calendarHeartBeat {
   0%, 100% { transform: translate(-50%, -50%) scale(1); }
   14% { transform: translate(-50%, -50%) scale(1.08, 1.04); }
   27% { transform: translate(-50%, -50%) scale(.98); }
   42% { transform: translate(-50%, -50%) scale(1.05, 1.02); }
   60% { transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes calendarHeartRipple {
+  0%, 14% { opacity: 0; transform: translate(-50%, -50%) scale(.78); }
+  22% { opacity: .62; }
+  63% { opacity: 0; transform: translate(-50%, -50%) scale(1.85); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.85); }
 }
 
 .ceremony-calendar-countdown {

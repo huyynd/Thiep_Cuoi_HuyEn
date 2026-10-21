@@ -169,6 +169,29 @@ function WeddingCalendar({ now }) {
   );
 }
 
+function LoveStory() {
+  const chapters = wedding.loveStory || [];
+  if (!chapters.length) return null;
+
+  return <section className="love-story" aria-label="Hành trình tình yêu của chúng mình">
+    <div className="love-story-kicker">OUR LOVE STORY</div>
+    <div className="love-story-ornament" aria-hidden="true"><span />♥<span /></div>
+    <div className="love-story-timeline">
+      {chapters.map((chapter, index) => <article className={`love-story-chapter ${index % 2 ? 'is-right' : 'is-left'}`} key={chapter.year}>
+        <div className="love-story-copy">
+          <time>{chapter.year}</time>
+          <h3>{chapter.title}</h3>
+          <p>{chapter.text}</p>
+        </div>
+        <div className="love-story-marker" aria-hidden="true">♥</div>
+        <div className="love-story-photo">
+          <img src={chapter.photo} alt={`${chapter.title} của ${wedding.groom} và ${wedding.bride}`} loading="lazy" />
+        </div>
+      </article>)}
+    </div>
+  </section>;
+}
+
 function WeddingInfo() {
   const info = wedding.familyInfo;
   if (!info) return null;
@@ -426,6 +449,7 @@ export default function App() {
             <strong>{recipient}</strong>
             <p>Đến dự ngày vui và chung vui cùng gia đình chúng mình</p>
           </div>
+          <LoveStory />
           <WeddingCalendar now={now} />
           <a className="down-arrow" href="#wedding-info" aria-label="Xem thông tin lễ cưới"><ChevronDown size={22}/></a>
         </div>
