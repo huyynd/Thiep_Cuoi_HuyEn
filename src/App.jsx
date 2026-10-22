@@ -4,14 +4,13 @@ import {
   ExternalLink, Heart, MapPin, Music2, Pause, PenLine, Send, X
 } from 'lucide-react';
 import { wedding } from './config/wedding.js';
-import guests from './data/guests.generated.json';
 import { createGuestbookEntry, getGuestbookEntries, isGuestbookConfigured } from './lib/guestbook.js';
+import { getInvitationBySlug } from './lib/invitations.js';
 
-function findGuest() {
+function getInvitationSlug() {
   const match = window.location.pathname.match(/^\/moi\/([^/]+)\/?$/);
   if (!match) return window.location.pathname === '/' ? null : false;
-  const slug = decodeURIComponent(match[1]);
-  return guests.find((guest) => guest.slug === slug) || false;
+  return decodeURIComponent(match[1]);
 }
 
 function getCountdown(dateString, now) {
@@ -395,19 +394,23 @@ function WeddingEvents() {
         />
       </div>
 
-      <div className="event-divider" />
-      <div className="event-label">LOCATION</div>
-      <h3 className="venues-title">Địa điểm tổ chức</h3>
-
-      <div className="venues-grid">
-        <VenueMap house={wedding.groomHouse} label="Nhà trai" />
-        <VenueMap house={wedding.brideHouse} label="Nhà gái" />
-      </div>
-
       <div className="event-actions">
         <button className="btn btn-outline" type="button" onClick={makeCalendarFile}>
           <CalendarDays size={16} /> Lưu lịch tiệc vào điện thoại
         </button>
+      </div>
+    </div>
+  </section>;
+}
+
+function WeddingVenues() {
+  return <section className="event-section section-block wedding-venues" id="dia-diem">
+    <div className="event-card event-card-venues">
+      <div className="event-label">LOCATION</div>
+      <h3 className="venues-title">Địa điểm tổ chức</h3>
+      <div className="venues-grid">
+        <VenueMap house={wedding.groomHouse} label="Nhà trai" />
+        <VenueMap house={wedding.brideHouse} label="Nhà gái" />
       </div>
     </div>
   </section>;
@@ -473,6 +476,7 @@ function Guestbook({ guest }) {
       const entry = await createGuestbookEntry({
         name: trimmedName,
         message: trimmedMessage,
+        invitationId: guest?.id,
         invitationSlug: guest?.slug,
         invitationRecipient: guest?.name,
         invitationPath: `${window.location.pathname}${window.location.search}`,
@@ -568,11 +572,28 @@ function InvitationEvent({ title, dateISO, time, note }) {
 }
 
 export default function App() {
-  const guest = findGuest();
+  const invitationSlug = getInvitationSlug();
+  const [guest, setGuest] = useState(() => invitationSlug ? undefined : null);
   const [now, setNow] = useState(Date.now());
   const [copied, setCopied] = useState(false);
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef(null);
+
+  useEffect(() => {
+    if (!invitationSlug) {
+      setGuest(null);
+      return undefined;
+    }
+    let active = true;
+    setGuest(undefined);
+    getInvitationBySlug(invitationSlug)
+      .then((invitation) => { if (active) setGuest(invitation || false); })
+      .catch((error) => {
+        console.error('Không thể tải thông tin khách mời:', error);
+        if (active) setGuest(false);
+      });
+    return () => { active = false; };
+  }, [invitationSlug]);
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
@@ -632,6 +653,10 @@ export default function App() {
     } catch {
       window.prompt('Sao chép đường link này:', window.location.href);
     }
+  }
+
+  if (invitationSlug && guest === undefined) {
+    return <main className="notfound"><Heart size={34} color="#b87389" /><h1>Đang mở thiệp mời…</h1><p>Chúng mình đang chuẩn bị lời mời dành riêng cho bạn.</p></main>;
   }
 
   if (guest === false) {
@@ -704,6 +729,8 @@ export default function App() {
       <MomentsCarousel />
 
       <Guestbook guest={guest || null} />
+
+      <WeddingVenues />
 
       <section className="closing section-block">
         <div className="closing-heart"><Heart size={28} strokeWidth={1.2} /></div>

@@ -1,31 +1,6 @@
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+import { getSupabase, isSupabaseConfigured } from './supabase.js';
 
-export const isGuestbookConfigured = Boolean(supabaseUrl && supabasePublishableKey);
-
-function endpoint(path) {
-  return `${supabaseUrl.replace(/\/$/, '')}/rest/v1/${path}`;
-}
-
-async function request(path, options = {}) {
-  if (!isGuestbookConfigured) throw new Error('Supabase chưa được cấu hình.');
-
-  const response = await fetch(endpoint(path), {
-    ...options,
-    headers: {
-      apikey: supabasePublishableKey,
-      Authorization: `Bearer ${supabasePublishableKey}`,
-      ...options.headers,
-    },
-  });
-
-  if (!response.ok) {
-    const details = await response.text();
-    throw new Error(details || 'Không thể kết nối sổ lưu bút.');
-  }
-
-  return response.status === 204 ? null : response.json();
-}
+export const isGuestbookConfigured = isSupabaseConfigured;
 
 function mapEntry(entry) {
   return {
@@ -41,25 +16,28 @@ function mapEntry(entry) {
 }
 
 export async function getGuestbookEntries() {
-  const entries = await request('guestbook_entries?select=id,name,message,created_at,invitation_slug,invitation_recipient,invitation_path,invitation_url&order=created_at.desc');
-  return entries.map(mapEntry);
+  const { data, error } = await getSupabase()
+    .from('guestbook_entries')
+    .select('id,name,message,created_at,invitation_slug,invitation_recipient,invitation_path,invitation_url')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data.map(mapEntry);
 }
 
-export async function createGuestbookEntry({ name, message, invitationSlug, invitationRecipient, invitationPath, invitationUrl }) {
-  const entries = await request('guestbook_entries', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Prefer: 'return=representation',
-    },
-    body: JSON.stringify({
+export async function createGuestbookEntry({ name, message, invitationId, invitationSlug, invitationRecipient, invitationPath, invitationUrl }) {
+  const { data, error } = await getSupabase()
+    .from('guestbook_entries')
+    .insert({
       name,
       message,
+      invitation_id: invitationId || null,
       invitation_slug: invitationSlug || null,
       invitation_recipient: invitationRecipient || null,
       invitation_path: invitationPath || '/',
       invitation_url: invitationUrl || null,
-    }),
-  });
-  return mapEntry(entries[0]);
+    })
+    .select('id,name,message,created_at,invitation_slug,invitation_recipient,invitation_path,invitation_url')
+    .single();
+  if (error) throw error;
+  return mapEntry(data);
 }
