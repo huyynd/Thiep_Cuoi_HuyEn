@@ -90,42 +90,6 @@ a:focus-visible {
   animation: coverSnowfall var(--snow-duration) linear var(--snow-delay) infinite;
 }
 
-/* Hiệu ứng hoa rơi — tạm tắt, có thể bỏ comment để bật lại.
-.petal-fall {
-  position: fixed;
-  z-index: 28;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.petal-fall span {
-  position: absolute;
-  top: -28px;
-  left: var(--petal-left);
-  width: var(--petal-size);
-  height: var(--petal-size);
-  opacity: 0;
-  background:
-    radial-gradient(circle at 50% 50%, #c97596 0 17%, transparent 18%),
-    radial-gradient(circle at 50% 19%, #e5b2c5 0 25%, transparent 26%),
-    radial-gradient(circle at 80% 39%, #e0a6bd 0 25%, transparent 26%),
-    radial-gradient(circle at 69% 77%, #e6b3c7 0 25%, transparent 26%),
-    radial-gradient(circle at 31% 77%, #dca0b8 0 25%, transparent 26%),
-    radial-gradient(circle at 20% 39%, #e8b7c9 0 25%, transparent 26%);
-  filter: drop-shadow(0 2px 3px rgba(164, 65, 108, .26));
-  animation: petalFall var(--petal-duration) linear var(--petal-delay) infinite;
-}
-
-@keyframes petalFall {
-  0% { opacity: 0; transform: translate3d(0, -8vh, 0) rotate(var(--petal-rotate)); }
-  9% { opacity: .82; }
-  48% { transform: translate3d(calc(var(--petal-drift) * -.42), 50vh, 0) rotate(calc(var(--petal-rotate) + 150deg)); }
-  87% { opacity: .62; }
-  100% { opacity: 0; transform: translate3d(var(--petal-drift), 112vh, 0) rotate(calc(var(--petal-rotate) + 340deg)); }
-}
-*/
-
 @keyframes coverSnowfall {
   0% {
     opacity: 0;
@@ -255,20 +219,11 @@ a:focus-visible {
   box-shadow: 0 0 7px rgba(255, 255, 255, .7);
 }
 
-.cover-date-month::before {
-  right: 100%;
-  margin-right: 17px;
-}
-
-.cover-date-month::after {
-  left: 100%;
-  margin-left: 17px;
-}
+.cover-date-month::before { right: 100%; margin-right: 17px; }
+.cover-date-month::after { left: 100%; margin-left: 17px; }
 
 @keyframes dateHaloSpin {
-  to {
-    transform: translateX(-50%) rotate(360deg);
-  }
+  to { transform: translateX(-50%) rotate(360deg); }
 }
 
 .photo-cover-names {
@@ -517,9 +472,7 @@ p {
   background: #d9afbb;
 }
 
-.love-story-timeline {
-  position: relative;
-}
+.love-story-timeline { position: relative; }
 
 .love-story-timeline::before {
   position: absolute;
@@ -540,9 +493,7 @@ p {
   padding-bottom: 34px;
 }
 
-.love-story-chapter:last-child {
-  padding-bottom: 0;
-}
+.love-story-chapter:last-child { padding-bottom: 0; }
 
 .love-story-copy {
   grid-column: 1;
@@ -613,11 +564,7 @@ p {
   transform: rotate(-2.5deg);
 }
 
-.love-story-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+.love-story-photo img { width: 100%; height: 100%; object-fit: cover; }
 
 .today-together {
   width: min(100%, 620px);
@@ -661,44 +608,21 @@ p {
   box-shadow: 0 8px 22px rgba(105, 72, 82, .14);
 }
 
-.today-together-photo img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+.today-together-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.today-together-photo.bride-photo { grid-column: 1; grid-row: 1; }
+.today-together-photo.groom-photo { grid-column: 2; grid-row: 2; }
 
-.today-together-photo.bride-photo {
-  grid-column: 1;
-  grid-row: 1;
-}
+.today-together-person { text-align: center; }
+.today-together-person.bride-person { grid-column: 2; grid-row: 1; }
+.today-together-person.groom-person { grid-column: 1; grid-row: 2; }
 
-.today-together-photo.groom-photo {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-.today-together-person {
-  text-align: center;
-}
-
-.today-together-person.bride-person {
-  grid-column: 2;
-  grid-row: 1;
-}
-
-.today-together-person.groom-person {
-  grid-column: 1;
-  grid-row: 2;
-}
-
-.today-together-person>span {
+.today-together-person > span {
   display: block;
   color: #715d62;
   font: 400 clamp(20px, 3vw, 27px)/1.2 'Playfair Display', Georgia, serif;
 }
 
-.today-together-person>strong {
+.today-together-person > strong {
   display: block;
   margin-top: 9px;
   color: #8f5970;
@@ -734,7 +658,6 @@ p {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-
   .love-story-chapter .love-story-copy,
   .love-story-chapter .love-story-photo,
   .love-story-chapter .love-story-marker {
@@ -746,9 +669,7 @@ p {
     transform: translateX(-46px);
   }
 
-  .love-story-chapter.is-right:not(.is-revealed) .love-story-copy {
-    transform: translateX(46px);
-  }
+  .love-story-chapter.is-right:not(.is-revealed) .love-story-copy { transform: translateX(46px); }
 
   .love-story-chapter:not(.is-revealed) .love-story-photo {
     opacity: 0;
@@ -759,13 +680,8 @@ p {
     transform: rotate(-2.5deg) translateX(-46px);
   }
 
-  .love-story-chapter.is-revealed .love-story-photo {
-    transform: rotate(2.5deg) translateX(0);
-  }
-
-  .love-story-chapter.is-right.is-revealed .love-story-photo {
-    transform: rotate(-2.5deg) translateX(0);
-  }
+  .love-story-chapter.is-revealed .love-story-photo { transform: rotate(2.5deg) translateX(0); }
+  .love-story-chapter.is-right.is-revealed .love-story-photo { transform: rotate(-2.5deg) translateX(0); }
 
   .love-story-chapter:not(.is-revealed) .love-story-marker {
     opacity: 0;
@@ -900,59 +816,22 @@ p {
   animation: calendarHeartRipple 2.5s ease-out infinite;
 }
 
-.ceremony-calendar-days .is-wedding-day span::before {
-  animation-delay: .22s;
-}
-
-.ceremony-calendar-days .is-wedding-day span::after {
-  animation-delay: .44s;
-}
+.ceremony-calendar-days .is-wedding-day span::before { animation-delay: .22s; }
+.ceremony-calendar-days .is-wedding-day span::after { animation-delay: .44s; }
 
 @keyframes calendarHeartBeat {
-
-  0%,
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-  }
-
-  14% {
-    transform: translate(-50%, -50%) scale(1.08, 1.04);
-  }
-
-  27% {
-    transform: translate(-50%, -50%) scale(.98);
-  }
-
-  42% {
-    transform: translate(-50%, -50%) scale(1.05, 1.02);
-  }
-
-  60% {
-    transform: translate(-50%, -50%) scale(1);
-  }
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  14% { transform: translate(-50%, -50%) scale(1.08, 1.04); }
+  27% { transform: translate(-50%, -50%) scale(.98); }
+  42% { transform: translate(-50%, -50%) scale(1.05, 1.02); }
+  60% { transform: translate(-50%, -50%) scale(1); }
 }
 
 @keyframes calendarHeartRipple {
-
-  0%,
-  14% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(.78);
-  }
-
-  22% {
-    opacity: .62;
-  }
-
-  63% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1.85);
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1.85);
-  }
+  0%, 14% { opacity: 0; transform: translate(-50%, -50%) scale(.78); }
+  22% { opacity: .62; }
+  63% { opacity: 0; transform: translate(-50%, -50%) scale(1.85); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.85); }
 }
 
 .ceremony-calendar-countdown {
@@ -1618,15 +1497,8 @@ h2 {
   white-space: nowrap;
 }
 
-.invitation-event-date span:first-child {
-  text-align: right;
-  padding-right: 25px;
-}
-
-.invitation-event-date span:last-child {
-  text-align: left;
-  padding-left: 25px;
-}
+.invitation-event-date span:first-child { text-align: right; padding-right: 25px; }
+.invitation-event-date span:last-child { text-align: left; padding-left: 25px; }
 
 .invitation-event-date .invitation-month-number {
   display: inline-block;
@@ -1786,7 +1658,7 @@ h2 {
   gap: 19px;
 }
 
-.venue-map-heading>span {
+.venue-map-heading > span {
   display: block;
   color: #bd8497;
   font: 400 clamp(13px, 2vw, 16px)/1.2 'DM Sans', Arial, sans-serif;
@@ -1817,10 +1689,7 @@ h2 {
   font: 400 clamp(16px, 2.2vw, 19px)/1.45 'Playfair Display', Georgia, serif;
 }
 
-.venue-map-address svg {
-  flex: 0 0 auto;
-  color: #ad647d;
-}
+.venue-map-address svg { flex: 0 0 auto; color: #ad647d; }
 
 .venue-map-frame {
   width: min(100%, 680px);
@@ -2108,9 +1977,7 @@ h2 {
   border-color: #8c272d;
 }
 
-.carousel-thumbnail:hover {
-  transform: translateY(-2px);
-}
+.carousel-thumbnail:hover { transform: translateY(-2px); }
 
 .carousel-thumbnail img {
   width: 100%;
@@ -2251,9 +2118,7 @@ h2 {
   pointer-events: none;
 }
 
-.thanks-photo-wave {
-  display: none;
-}
+.thanks-photo-wave { display: none; }
 
 .thanks-photo-content {
   width: min(620px, calc(100% - 48px));
@@ -2276,9 +2141,7 @@ h2 {
   line-height: 1.48;
 }
 
-.thanks-photo-content>p+p {
-  margin-top: 32px;
-}
+.thanks-photo-content>p+p { margin-top: 32px; }
 
 .thanks-photo-signature {
   display: grid;

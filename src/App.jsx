@@ -45,16 +45,6 @@ const snowflakes = [
   ['93%', '-15s', '13s', '2px', '18px'], ['99%', '-7s', '17s', '4px', '-10px'],
 ];
 
-/* Hiệu ứng hoa rơi — tạm tắt, có thể bỏ comment để bật lại.
-const fallingPetals = [
-  ['3%', '-2s', '13s', '14px', '40px', '12deg'], ['12%', '-8s', '17s', '20px', '-48px', '-28deg'],
-  ['21%', '-4s', '15s', '12px', '32px', '22deg'], ['31%', '-11s', '18s', '18px', '-39px', '-18deg'],
-  ['42%', '-6s', '14s', '15px', '44px', '35deg'], ['51%', '-13s', '19s', '22px', '-31px', '-36deg'],
-  ['61%', '-3s', '16s', '13px', '37px', '18deg'], ['70%', '-9s', '15s', '19px', '-45px', '-22deg'],
-  ['79%', '-5s', '18s', '15px', '28px', '31deg'], ['88%', '-12s', '14s', '21px', '-33px', '-16deg'],
-  ['96%', '-7s', '17s', '12px', '43px', '26deg'], ['7%', '-14s', '20s', '17px', '-25px', '-32deg'],
-];
-
 function CoverSnowfall() {
   return <div className="photo-cover-snow" aria-hidden="true">
     {snowflakes.map(([left, delay, duration, size, drift], index) => (
@@ -62,15 +52,6 @@ function CoverSnowfall() {
     ))}
   </div>;
 }
-
-function PetalFall() {
-  return <div className="petal-fall" aria-hidden="true">
-    {fallingPetals.map(([left, delay, duration, size, drift, rotate], index) => (
-      <span key={index} style={{ '--petal-left': left, '--petal-delay': delay, '--petal-duration': duration, '--petal-size': size, '--petal-drift': drift, '--petal-rotate': rotate }} />
-    ))}
-  </div>;
-}
-*/
 
 function FlowerOrnament({ className = '' }) {
   return <div className={`flower-ornament ${className}`} aria-hidden="true">
@@ -488,7 +469,6 @@ export default function App() {
 
   return <>
     {wedding.musicUrl && <audio ref={audioRef} autoPlay playsInline loop preload="auto" src={wedding.musicUrl} />}
-    {/* <PetalFall /> */}
     <section className="photo-cover" aria-label="Ảnh bìa thiệp cưới">
       <img className="photo-cover-image" src="/photos/anh1.png" alt={`Ảnh ${wedding.groom} và ${wedding.bride}`} />
       <div className="photo-cover-shade" aria-hidden="true" />

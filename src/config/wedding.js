@@ -57,7 +57,7 @@ export const wedding = {
     brideRole: 'Trưởng Công Chúa',
   },
   // URL Vercel CHÍNH THỨC sau khi triển khai (không có dấu / cuối).
-  siteUrl: 'https://thiepcuoihuyen.vercel.app',
+  siteUrl: 'https://thiep-cuoi-huy-en.vercel.app',
   // Đặt ảnh trong public/photos/ và nhập đường dẫn, ví dụ '/photos/anh-1.jpg'.
   photos: [],
   // Ảnh cho slideshow "Khoảnh khắc của chúng mình".
@@ -121,5 +121,5 @@ export const wedding = {
   musicUrl: '/music/ngaydautien.mp3',
   // Ảnh xem trước khi chia sẻ link trên Zalo/Facebook, phải là URL HTTPS đầy đủ.
   // Ví dụ: 'https://ten-mien-cua-ban.vercel.app/photos/anh-bia.jpg'
-  shareImageUrl: 'https://thiepcuoihuyen.vercel.app/photos/anh1.png'
+  shareImageUrl: ''
 };
