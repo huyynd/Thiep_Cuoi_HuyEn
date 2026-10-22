@@ -372,6 +372,46 @@ function MomentsCarousel() {
   </section>;
 }
 
+function WeddingEvents() {
+  return <section className="event-section section-block" id="thong-tin">
+    <div className="eyebrow">WEDDING INVITATION</div>
+    <h2>Trân trọng kính mời</h2>
+    <div className="event-card event-card-invitation">
+      <div className="corner-motif">✿</div>
+      <div className="wedding-invitation-events">
+        <InvitationEvent
+          title="TIỆC CƯỚI (MỜI TIỆC)"
+          dateISO={wedding.dateISO}
+          time={wedding.partyHourLabel}
+          note="Trân trọng kính mời quý khách đến nâng ly chung vui"
+        />
+        <div className="invitation-event-divider" aria-hidden="true" />
+        <InvitationEvent
+          title="LỄ THÀNH HÔN & ĐÓN DÂU"
+          dateISO={wedding.calendarDateISO || wedding.dateISO}
+          time={wedding.ceremonyHourLabel}
+          note="Lễ rước dâu và thành hôn của hai chúng mình"
+        />
+      </div>
+
+      <div className="event-divider" />
+      <div className="event-label">LOCATION</div>
+      <h3 className="venues-title">Địa điểm tổ chức</h3>
+
+      <div className="venues-grid">
+        <VenueMap house={wedding.groomHouse} label="Nhà trai" />
+        <VenueMap house={wedding.brideHouse} label="Nhà gái" />
+      </div>
+
+      <div className="event-actions">
+        <button className="btn btn-outline" type="button" onClick={makeCalendarFile}>
+          <CalendarDays size={16}/> Lưu lịch tiệc vào điện thoại
+        </button>
+      </div>
+    </div>
+  </section>;
+}
+
 function InvitationEvent({ title, dateISO, time, note }) {
   const [year = '2026', month = '12', day = '28'] = dateISO.slice(0, 10).split('-');
   const weekDays = ['CHỦ NHẬT', 'THỨ HAI', 'THỨ BA', 'THỨ TƯ', 'THỨ NĂM', 'THỨ SÁU', 'THỨ BẢY'];
@@ -511,54 +551,20 @@ export default function App() {
             <strong>{recipient}</strong>
             <p>Đến dự ngày vui và chung vui cùng gia đình chúng mình</p>
           </div>
-          <LoveStory />
-          <TodayTogether />
           <WeddingCalendar now={now} />
-          <a className="down-arrow" href="#wedding-info" aria-label="Xem thông tin lễ cưới"><ChevronDown size={22}/></a>
+          <a className="down-arrow" href="#thong-tin" aria-label="Xem lịch tiệc và địa điểm"><ChevronDown size={22}/></a>
         </div>
       </section>
+
+      <WeddingEvents />
 
       <WeddingInfo />
 
+      <LoveStory />
+
+      <TodayTogether />
+
       <MomentsCarousel />
-
-      <section className="event-section section-block" id="thong-tin">
-        <div className="eyebrow">WEDDING INVITATION</div>
-        <h2>Trân trọng kính mời</h2>
-        <div className="event-card event-card-invitation">
-          <div className="corner-motif">✿</div>
-          <div className="wedding-invitation-events">
-            <InvitationEvent
-              title="TIỆC CƯỚI (MỜI TIỆC)"
-              dateISO={wedding.dateISO}
-              time={wedding.partyHourLabel}
-              note="Trân trọng kính mời quý khách đến nâng ly chung vui"
-            />
-            <div className="invitation-event-divider" aria-hidden="true" />
-            <InvitationEvent
-              title="LỄ THÀNH HÔN & ĐÓN DÂU"
-              dateISO={wedding.calendarDateISO || wedding.dateISO}
-              time={wedding.ceremonyHourLabel}
-              note="Lễ rước dâu và thành hôn của hai chúng mình"
-            />
-          </div>
-
-          <div className="event-divider" />
-          <div className="event-label">LOCATION</div>
-          <h3 className="venues-title">Địa điểm tổ chức</h3>
-
-          <div className="venues-grid">
-            <VenueMap house={wedding.groomHouse} label="Nhà trai" />
-            <VenueMap house={wedding.brideHouse} label="Nhà gái" />
-          </div>
-
-          <div className="event-actions">
-            <button className="btn btn-outline" type="button" onClick={makeCalendarFile}>
-              <CalendarDays size={16}/> Lưu lịch tiệc vào điện thoại
-            </button>
-          </div>
-        </div>
-      </section>
 
       <section className="closing section-block">
         <div className="closing-heart"><Heart size={28} strokeWidth={1.2}/></div>
