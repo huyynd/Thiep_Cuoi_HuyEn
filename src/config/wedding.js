@@ -114,8 +114,8 @@ export const wedding = {
   todayTogether: {
     bridePhoto: '/photos/khoanhkhac/anh7.jpg',
     groomPhoto: '/photos/khoanhkhac/anh8.jpg',
-    brideSignature: '',
-    groomSignature: '',
+    brideSignature: '/photos/chuki/chukyyen.png',
+    groomSignature: '/photos/chuki/chukyhuy-transparent.png',
   },
   // Nhạc nền được phát khi khách mở thiệp; nút góc phải dưới dùng để tạm dừng/phát lại.
   musicUrl: '/music/ngaydautien.mp3',

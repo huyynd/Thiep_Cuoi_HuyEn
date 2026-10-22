@@ -172,8 +172,6 @@ function WeddingCalendar({ now }) {
 function LoveStory() {
   const chapters = wedding.loveStory || [];
   const storyRef = useRef(null);
-  const storyScrollYRef = useRef(window.scrollY);
-  const storyScrollDirectionRef = useRef(1);
   const [revealedChapters, setRevealedChapters] = useState(() => new Set());
 
   useEffect(() => {
@@ -183,32 +181,22 @@ function LoveStory() {
       return undefined;
     }
 
-    const updateDirection = () => {
-      const currentY = window.scrollY;
-      if (currentY !== storyScrollYRef.current) {
-        storyScrollDirectionRef.current = currentY > storyScrollYRef.current ? 1 : -1;
-        storyScrollYRef.current = currentY;
-      }
-    };
-
     const observer = new IntersectionObserver((entries) => {
       setRevealedChapters((current) => {
         const next = new Set(current);
         entries.forEach((entry) => {
           const index = Number(entry.target.dataset.storyIndex);
-          if (entry.isIntersecting && storyScrollDirectionRef.current > 0) next.add(index);
+          if (entry.isIntersecting) next.add(index);
           else next.delete(index);
         });
         return next;
       });
-    }, { threshold: .22, rootMargin: '0px 0px -8% 0px' });
+    }, { threshold: 0, rootMargin: '0px' });
 
     const items = root.querySelectorAll('[data-story-index]');
     items.forEach((item) => observer.observe(item));
-    window.addEventListener('scroll', updateDirection, { passive: true });
     return () => {
       observer.disconnect();
-      window.removeEventListener('scroll', updateDirection);
     };
   }, [chapters.length]);
 
@@ -245,12 +233,16 @@ function TodayTogether() {
       <div className="today-together-person bride-person">
         <span>Cô dâu</span>
         <strong>{wedding.bride}</strong>
-        <div className="today-together-signature">{details.brideSignature}</div>
+        <div className="today-together-signature">
+          {details.brideSignature && <img src={details.brideSignature} alt={`Chữ ký ${wedding.bride}`} />}
+        </div>
       </div>
       <div className="today-together-person groom-person">
         <span>Chú rể</span>
         <strong>{wedding.groom}</strong>
-        <div className="today-together-signature">{details.groomSignature}</div>
+        <div className="today-together-signature">
+          {details.groomSignature && <img src={details.groomSignature} alt={`Chữ ký ${wedding.groom}`} />}
+        </div>
       </div>
       <div className="today-together-photo groom-photo">
         <img src={details.groomPhoto || '/photos/khoanhkhac/anh8.jpg'} alt={`Chú rể ${wedding.groom}`} loading="lazy" />

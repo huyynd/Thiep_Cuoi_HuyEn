@@ -631,10 +631,30 @@ p {
 }
 
 .today-together-signature {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-height: clamp(49px, 7vw, 68px);
   margin-top: 16px;
-  color: #564247;
-  font: 400 clamp(30px, 5vw, 46px)/1 'Great Vibes', cursive;
+}
+
+.today-together-signature img {
+  display: block;
+  width: clamp(142px, 20vw, 164px);
+  max-width: 100%;
+  max-height: clamp(48px, 7vw, 68px);
+  object-fit: contain;
+}
+
+.groom-person .today-together-signature {
+  min-height: clamp(116px, 17vw, 142px);
+  margin-top: 5px;
+}
+
+.groom-person .today-together-signature img {
+  width: clamp(108px, 16vw, 128px);
+  max-height: none;
+  transform: rotate(45deg);
 }
 
 @media (prefers-reduced-motion: no-preference) {
