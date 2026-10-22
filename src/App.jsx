@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   ArrowRight, CalendarDays, Check, ChevronDown, Copy,
-  ExternalLink, Heart, MapPin, Music2, Pause
+  ExternalLink, Heart, MapPin, Music2, Pause, PenLine, Send, X
 } from 'lucide-react';
 import { wedding } from './config/wedding.js';
 import guests from './data/guests.generated.json';
@@ -20,7 +20,7 @@ function getCountdown(dateString, now) {
   const m = Math.floor((remaining / 60_000) % 60);
   const s = Math.floor((remaining / 1_000) % 60);
   return [{ label: 'Ngày', value: d }, { label: 'Giờ', value: h },
-    { label: 'Phút', value: m }, { label: 'Giây', value: s }];
+  { label: 'Phút', value: m }, { label: 'Giây', value: s }];
 }
 
 function getCoverDate(dateString) {
@@ -405,10 +405,122 @@ function WeddingEvents() {
 
       <div className="event-actions">
         <button className="btn btn-outline" type="button" onClick={makeCalendarFile}>
-          <CalendarDays size={16}/> Lưu lịch tiệc vào điện thoại
+          <CalendarDays size={16} /> Lưu lịch tiệc vào điện thoại
         </button>
       </div>
     </div>
+  </section>;
+}
+
+function getGuestbookPreview(message) {
+  return message.length > 80 ? `${message.slice(0, 80).trimEnd()}…` : message;
+}
+
+function Guestbook() {
+  const [entries, setEntries] = useState(() => {
+    try {
+      const saved = JSON.parse(window.localStorage.getItem('huy-yen-guestbook') || '[]');
+      return Array.isArray(saved) ? saved : [];
+    } catch {
+      return [];
+    }
+  });
+  const [dialog, setDialog] = useState(null);
+  const [name, setName] = useState('');
+  const [message, setMessage] = useState('');
+  const [latestEntryId, setLatestEntryId] = useState(null);
+  const [selectedEntry, setSelectedEntry] = useState(null);
+  const guestbookRailRef = useRef(null);
+
+  useEffect(() => {
+    window.localStorage.setItem('huy-yen-guestbook', JSON.stringify(entries));
+  }, [entries]);
+
+  useEffect(() => {
+    if (latestEntryId && guestbookRailRef.current) {
+      guestbookRailRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+    }
+  }, [entries, latestEntryId]);
+
+  function openWriter() {
+    setName('');
+    setMessage('');
+    setDialog('write');
+  }
+
+  function submitEntry(event) {
+    event.preventDefault();
+    const trimmedName = name.trim();
+    const trimmedMessage = message.trim();
+    if (!trimmedName || !trimmedMessage) return;
+
+    const entry = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      name: trimmedName,
+      message: trimmedMessage,
+      createdAt: new Date().toISOString(),
+    };
+    setEntries((current) => [entry, ...current]);
+    setLatestEntryId(entry.id);
+    setDialog(null);
+  }
+
+  function openEntry(entry) {
+    setSelectedEntry(entry);
+    setDialog('detail');
+  }
+
+  return <section className="guestbook section-block" aria-label="Sổ lưu bút">
+    <div className="eyebrow">GUESTBOOK</div>
+    <h2>Sổ lưu bút</h2>
+    <div className="guestbook-card">
+      <div className="guestbook-rail" ref={guestbookRailRef} aria-label="Các lời chúc">
+        {entries.map((entry) => <button type="button" key={entry.id} onClick={() => openEntry(entry)} className={`guestbook-note-card ${latestEntryId === entry.id ? 'is-new' : ''}`} aria-label={`Xem lời chúc của ${entry.name}`}>
+          <Heart size={22} fill="currentColor" strokeWidth={1.2} aria-hidden="true" />
+          <p>{getGuestbookPreview(entry.message)}</p>
+          <div className="guestbook-note-meta"><span className="guestbook-author" title={entry.name}><strong>{entry.name}</strong></span><time>{new Date(entry.createdAt).toLocaleDateString('vi-VN')}</time></div>
+        </button>)}
+        <button className="guestbook-write-tile" type="button" onClick={openWriter}>
+          <PenLine size={31} strokeWidth={1.45} />
+          <span>Viết lưu bút</span>
+        </button>
+      </div>
+      {entries.length > 1 && <div className="guestbook-hint">Vuốt ngang để xem thêm lời chúc</div>}
+      <div className="guestbook-links">
+        <button type="button" onClick={openWriter}>Viết</button>
+        <button type="button" onClick={() => setDialog('all')}>Xem tất cả{entries.length ? ` (${entries.length})` : ''}</button>
+      </div>
+    </div>
+
+    {dialog && <div className="guestbook-dialog" role="presentation">
+      <button className="guestbook-backdrop" type="button" aria-label="Đóng sổ lưu bút" onClick={() => setDialog(null)} />
+      <div className="guestbook-dialog-panel" role="dialog" aria-modal="true" aria-labelledby="guestbook-dialog-title">
+        <div className="guestbook-dialog-head">
+          <div className="guestbook-dialog-icon"><PenLine size={25} /></div>
+          <h3 id="guestbook-dialog-title">{dialog === 'write' ? 'Viết lưu bút' : dialog === 'detail' ? 'Lời chúc gửi đến chúng mình' : 'Xem tất cả lời chúc'}</h3>
+          <button className="guestbook-close" type="button" aria-label="Đóng" onClick={() => setDialog(null)}><X size={28} /></button>
+        </div>
+
+        {dialog === 'write' ? <form className="guestbook-form" onSubmit={submitEntry}>
+          <label>Họ tên
+            <input value={name} onChange={(event) => setName(event.target.value)} placeholder="Nhập họ tên" maxLength={80} autoFocus required />
+          </label>
+          <label>Nội dung
+            <textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Gửi lời chúc đến Đức Huy & Bùi Yến" maxLength={500} required />
+          </label>
+          <div className="guestbook-form-footer"><span>{message.length}/500</span><button className="btn btn-primary" type="submit"><Send size={16} /> Hoàn tất</button></div>
+        </form> : dialog === 'detail' && selectedEntry ? <article className="guestbook-detail">
+          <Heart size={25} fill="currentColor" strokeWidth={1.2} aria-hidden="true" />
+          <p>{selectedEntry.message}</p>
+          <div><strong>— {selectedEntry.name} —</strong><time>{new Date(selectedEntry.createdAt).toLocaleDateString('vi-VN')}</time></div>
+        </article> : <div className="guestbook-entries">
+          {entries.length ? entries.map((entry) => <article key={entry.id} className="guestbook-entry">
+            <div><strong>{entry.name}</strong><time>{new Date(entry.createdAt).toLocaleDateString('vi-VN')}</time></div>
+            <p>{entry.message}</p>
+          </article>) : <div className="guestbook-empty"><p>Chưa có lời chúc nào.</p><button className="btn btn-outline" type="button" onClick={openWriter}>Viết lưu bút</button></div>}
+        </div>}
+      </div>
+    </div>}
   </section>;
 }
 
@@ -552,7 +664,7 @@ export default function App() {
             <p>Đến dự ngày vui và chung vui cùng gia đình chúng mình</p>
           </div>
           <WeddingCalendar now={now} />
-          <a className="down-arrow" href="#thong-tin" aria-label="Xem lịch tiệc và địa điểm"><ChevronDown size={22}/></a>
+          <a className="down-arrow" href="#thong-tin" aria-label="Xem lịch tiệc và địa điểm"><ChevronDown size={22} /></a>
         </div>
       </section>
 
@@ -566,13 +678,15 @@ export default function App() {
 
       <MomentsCarousel />
 
+      <Guestbook />
+
       <section className="closing section-block">
-        <div className="closing-heart"><Heart size={28} strokeWidth={1.2}/></div>
+        <div className="closing-heart"><Heart size={28} strokeWidth={1.2} /></div>
         <p>Thanh xuân sẽ đẹp hơn khi có bạn cùng chứng kiến khoảnh khắc đặc biệt này.</p>
         <h2>Hẹn gặp bạn nhé!</h2>
         <div className="signature">{wedding.groom} <span>&</span> {wedding.bride}</div>
         <button className="btn btn-share" type="button" onClick={copyInviteUrl}>
-          {copied ? <Check size={17}/> : <Copy size={17}/>} {copied ? 'Đã sao chép link' : 'Sao chép link thiệp'}
+          {copied ? <Check size={17} /> : <Copy size={17} />} {copied ? 'Đã sao chép link' : 'Sao chép link thiệp'}
         </button>
       </section>
 
@@ -592,8 +706,8 @@ export default function App() {
       </section>
     </main>
     {wedding.musicUrl && <button className="music-button" type="button" aria-label={playing ? 'Tạm dừng nhạc' : 'Phát nhạc nền'} onClick={toggleMusic}>
-      {playing ? <Pause size={20} fill="currentColor"/> : <Music2 size={20}/>} 
+      {playing ? <Pause size={20} fill="currentColor" /> : <Music2 size={20} />}
     </button>}
-    <footer>Made with <Heart size={12} fill="currentColor"/> · {wedding.groom} & {wedding.bride}</footer>
+    <footer>Made with <Heart size={12} fill="currentColor" /> · {wedding.groom} & {wedding.bride}</footer>
   </>;
 }
