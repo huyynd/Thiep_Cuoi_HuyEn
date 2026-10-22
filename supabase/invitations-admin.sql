@@ -158,12 +158,47 @@ begin
 end;
 $$;
 
+create or replace function public.create_invitations(p_names text[], p_slug_bases text[])
+returns table (
+  id uuid,
+  name text,
+  slug text,
+  guest_code text,
+  copy_count integer,
+  copied_at timestamptz,
+  sent_at timestamptz,
+  created_at timestamptz
+)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  item_index integer;
+begin
+  if not public.is_wedding_admin() then
+    raise exception 'Bạn không có quyền quản trị.' using errcode = '42501';
+  end if;
+  if coalesce(array_length(p_names, 1), 0) = 0
+    or array_length(p_names, 1) <> array_length(p_slug_bases, 1)
+    or array_length(p_names, 1) > 300 then
+    raise exception 'Danh sách import không hợp lệ.' using errcode = '22023';
+  end if;
+
+  for item_index in array_lower(p_names, 1)..array_upper(p_names, 1) loop
+    return query select * from public.create_invitation(p_names[item_index], p_slug_bases[item_index]);
+  end loop;
+end;
+$$;
+
 revoke all on function public.get_invitation_by_slug(text) from public;
 grant execute on function public.get_invitation_by_slug(text) to anon, authenticated;
 revoke all on function public.create_invitation(text, text) from public;
 grant execute on function public.create_invitation(text, text) to authenticated;
 revoke all on function public.record_invitation_copy(uuid) from public;
 grant execute on function public.record_invitation_copy(uuid) to authenticated;
+revoke all on function public.create_invitations(text[], text[]) from public;
+grant execute on function public.create_invitations(text[], text[]) to authenticated;
 
 -- Cập nhật policy của lưu bút để nhận invitation_id cho mỗi lời chúc mới.
 drop policy if exists "Anyone can add a wedding guestbook entry" on public.guestbook_entries;

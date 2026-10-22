@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Check, Copy, Link2, LoaderCircle, LogIn, LogOut, Plus, RefreshCw, Send, Users } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Check, Copy, FileUp, Link2, LoaderCircle, LogIn, LogOut, Plus, RefreshCw, Search, Send, Users } from 'lucide-react';
 import { wedding } from './config/wedding.js';
-import { createInvitation, listInvitations, markInvitationSent, recordInvitationCopy } from './lib/invitations.js';
+import { createInvitation, createInvitations, listInvitations, markInvitationSent, recordInvitationCopy } from './lib/invitations.js';
 import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
 
 function invitationUrl(invitation) {
@@ -10,6 +10,21 @@ function invitationUrl(invitation) {
 
 function readableDate(value) {
   return value ? new Intl.DateTimeFormat('vi-VN', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(value)) : 'Chưa gửi';
+}
+
+function normalizeHeader(value) {
+  return String(value || '').toLocaleLowerCase('vi-VN').replace(/đ/g, 'd').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function getNamesFromWorkbook(XLSX, workbook) {
+  const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+  const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: '' });
+  if (!rows.length) return [];
+  const supportedHeaders = new Set(['ten hien thi', 'ten khach moi', 'ho va ten', 'ten', 'name', 'guest']);
+  const headerIndex = rows[0].findIndex((cell) => supportedHeaders.has(normalizeHeader(cell)));
+  const column = headerIndex >= 0 ? headerIndex : 0;
+  const firstRow = headerIndex >= 0 ? 1 : 0;
+  return rows.slice(firstRow).map((row) => String(row[column] || '').trim()).filter(Boolean);
 }
 
 export default function Admin() {
@@ -23,12 +38,22 @@ export default function Admin() {
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [copiedId, setCopiedId] = useState(null);
+  const [importing, setImporting] = useState(false);
+  const [search, setSearch] = useState('');
+  const fileInputRef = useRef(null);
 
   const stats = useMemo(() => ({
     total: invitations.length,
     sent: invitations.filter((item) => item.sentAt).length,
     copies: invitations.reduce((total, item) => total + (item.copyCount || 0), 0),
   }), [invitations]);
+
+  const filteredInvitations = useMemo(() => {
+    const keyword = search.trim().toLocaleLowerCase('vi-VN');
+    if (!keyword) return invitations;
+    return invitations.filter((invitation) => [invitation.name, invitation.guestCode, invitation.slug]
+      .some((value) => value.toLocaleLowerCase('vi-VN').includes(keyword)));
+  }, [invitations, search]);
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -94,6 +119,30 @@ export default function Admin() {
     }
   }
 
+  async function importExcel(event) {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    setImporting(true);
+    setError('');
+    setNotice('');
+    try {
+      const XLSX = await import('xlsx');
+      const workbook = XLSX.read(await file.arrayBuffer(), { type: 'array' });
+      const names = getNamesFromWorkbook(XLSX, workbook);
+      if (!names.length) throw new Error('Không tìm thấy tên khách mời trong file.');
+      if (names.length > 300) throw new Error('Mỗi lần chỉ import tối đa 300 khách mời.');
+      const created = await createInvitations(names);
+      setInvitations((current) => [...created.reverse(), ...current]);
+      setNotice(`Đã tạo ${created.length} link khách mời từ file ${file.name}.`);
+    } catch (importError) {
+      setError(importError.message || 'Không thể import file này.');
+      console.error(importError);
+    } finally {
+      setImporting(false);
+    }
+  }
+
   async function copyLink(invitation) {
     setError('');
     try {
@@ -149,20 +198,26 @@ export default function Admin() {
 
       <form className="admin-create" onSubmit={addInvitation}>
         <label htmlFor="guest-name">Tên khách mời</label>
-        <div><input id="guest-name" value={guestName} onChange={(event) => setGuestName(event.target.value)} placeholder="Ví dụ: Anh Nguyễn Văn Nam" maxLength={120} required /><button className="admin-primary" type="submit" disabled={submitting}>{submitting ? <LoaderCircle className="spin" size={18} /> : <Plus size={18} />} Tạo link</button></div>
-        <p>Mã khách sẽ tự tăng; link vừa tạo dùng được ngay sau khi lưu.</p>
+        <div><input id="guest-name" value={guestName} onChange={(event) => setGuestName(event.target.value)} placeholder="Ví dụ: Anh Nguyễn Văn Nam" maxLength={120} required /><div className="admin-create-actions"><button className="admin-primary" type="submit" disabled={submitting || importing}>{submitting ? <LoaderCircle className="spin" size={18} /> : <Plus size={18} />} Tạo link</button><button className="admin-secondary" type="button" disabled={importing || submitting} onClick={() => fileInputRef.current?.click()}>{importing ? <LoaderCircle className="spin" size={18} /> : <FileUp size={18} />} {importing ? 'Đang import...' : 'Import Excel'}</button></div></div>
+        <input ref={fileInputRef} className="admin-file-input" type="file" accept=".xlsx,.xls,.csv" onChange={importExcel} />
+        <p>Mã khách sẽ tự tăng. File Excel dùng cột <b>ten_hien_thi</b>, <b>Tên khách mời</b>, <b>Họ và tên</b>, hoặc cột đầu tiên chứa tên.</p>
       </form>
 
-      <div className="admin-list-head"><h2>Danh sách link</h2><button className="admin-icon-button" type="button" onClick={loadInvitations} aria-label="Tải lại danh sách"><RefreshCw size={18} /></button></div>
+      <div className="admin-list-head"><h2>Danh sách link</h2><div className="admin-table-tools"><label className="admin-search"><Search size={17} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Tìm tên khách..." aria-label="Tìm khách mời" /></label><button className="admin-icon-button" type="button" onClick={loadInvitations} aria-label="Tải lại danh sách"><RefreshCw size={18} /></button></div></div>
       {notice && <p className="admin-notice" role="status">{notice}</p>}
       {error && <p className="admin-error" role="alert">{error}</p>}
-      {loading ? <div className="admin-loading"><LoaderCircle className="spin" size={25} /> Đang tải...</div> : <div className="admin-invitations">
-        {invitations.map((invitation) => <article className="admin-invitation" key={invitation.id}>
-          <div className="admin-invitation-main"><span className="admin-code">{invitation.guestCode}</span><h3>{invitation.name}</h3><a href={invitationUrl(invitation)} target="_blank" rel="noreferrer"><Link2 size={15} /> /moi/{invitation.slug}</a></div>
-          <div className="admin-invitation-meta"><span>{invitation.copyCount} lần copy</span><span>{invitation.sentAt ? `Đã gửi · ${readableDate(invitation.sentAt)}` : 'Chưa gửi'}</span></div>
-          <div className="admin-invitation-actions"><button type="button" className="admin-copy" onClick={() => copyLink(invitation)}>{copiedId === invitation.id ? <Check size={17} /> : <Copy size={17} />}{copiedId === invitation.id ? 'Đã copy' : 'Copy link'}</button><label className="admin-sent"><input type="checkbox" checked={Boolean(invitation.sentAt)} onChange={() => toggleSent(invitation)} /><span>Đã gửi</span></label></div>
-        </article>)}
-        {!invitations.length && <p className="admin-empty">Chưa có khách mời nào. Hãy tạo link đầu tiên ở trên.</p>}
+      {loading ? <div className="admin-loading"><LoaderCircle className="spin" size={25} /> Đang tải...</div> : <div className="admin-table-wrap">
+        {filteredInvitations.length ? <table className="admin-table">
+          <thead><tr><th>Mã</th><th>Khách mời</th><th>Đường link</th><th>Copy</th><th>Trạng thái</th><th aria-label="Thao tác" /></tr></thead>
+          <tbody>{filteredInvitations.map((invitation) => <tr key={invitation.id}>
+            <td><span className="admin-code">{invitation.guestCode}</span></td>
+            <td className="admin-guest-name">{invitation.name}</td>
+            <td><a className="admin-table-link" href={invitationUrl(invitation)} target="_blank" rel="noreferrer"><Link2 size={15} /><span>/moi/{invitation.slug}</span></a></td>
+            <td><strong className="admin-copy-count">{invitation.copyCount}</strong><span className="admin-copy-label">lần</span></td>
+            <td><label className="admin-sent"><input type="checkbox" checked={Boolean(invitation.sentAt)} onChange={() => toggleSent(invitation)} /><span>{invitation.sentAt ? 'Đã gửi' : 'Chưa gửi'}</span></label>{invitation.sentAt && <small>{readableDate(invitation.sentAt)}</small>}</td>
+            <td><button type="button" className="admin-copy" onClick={() => copyLink(invitation)}>{copiedId === invitation.id ? <Check size={17} /> : <Copy size={17} />}{copiedId === invitation.id ? 'Đã copy' : 'Copy'}</button></td>
+          </tr>)}</tbody>
+        </table> : <p className="admin-empty">{invitations.length ? 'Không tìm thấy khách mời phù hợp.' : 'Chưa có khách mời nào. Hãy tạo link đầu tiên ở trên.'}</p>}
       </div>}
     </section>
   </main>;

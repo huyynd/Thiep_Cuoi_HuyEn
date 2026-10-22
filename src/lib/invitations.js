@@ -47,6 +47,18 @@ export async function createInvitation(name) {
   return mapInvitation(data?.[0]);
 }
 
+export async function createInvitations(names) {
+  const cleanNames = names.map((name) => name.trim()).filter(Boolean);
+  const slugBases = cleanNames.map(slugify);
+  if (slugBases.some((slug) => !slug)) throw new Error('Có tên không tạo được đường link hợp lệ.');
+  const { data, error } = await getSupabase().rpc('create_invitations', {
+    p_names: cleanNames,
+    p_slug_bases: slugBases,
+  });
+  if (error) throw error;
+  return data.map(mapInvitation);
+}
+
 export async function markInvitationSent(id, sent) {
   const { data, error } = await getSupabase()
     .from('invitations')
