@@ -90,6 +90,42 @@ a:focus-visible {
   animation: coverSnowfall var(--snow-duration) linear var(--snow-delay) infinite;
 }
 
+/* Hiệu ứng hoa rơi — tạm tắt, có thể bỏ comment để bật lại.
+.petal-fall {
+  position: fixed;
+  z-index: 28;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.petal-fall span {
+  position: absolute;
+  top: -28px;
+  left: var(--petal-left);
+  width: var(--petal-size);
+  height: var(--petal-size);
+  opacity: 0;
+  background:
+    radial-gradient(circle at 50% 50%, #c97596 0 17%, transparent 18%),
+    radial-gradient(circle at 50% 19%, #e5b2c5 0 25%, transparent 26%),
+    radial-gradient(circle at 80% 39%, #e0a6bd 0 25%, transparent 26%),
+    radial-gradient(circle at 69% 77%, #e6b3c7 0 25%, transparent 26%),
+    radial-gradient(circle at 31% 77%, #dca0b8 0 25%, transparent 26%),
+    radial-gradient(circle at 20% 39%, #e8b7c9 0 25%, transparent 26%);
+  filter: drop-shadow(0 2px 3px rgba(164, 65, 108, .26));
+  animation: petalFall var(--petal-duration) linear var(--petal-delay) infinite;
+}
+
+@keyframes petalFall {
+  0% { opacity: 0; transform: translate3d(0, -8vh, 0) rotate(var(--petal-rotate)); }
+  9% { opacity: .82; }
+  48% { transform: translate3d(calc(var(--petal-drift) * -.42), 50vh, 0) rotate(calc(var(--petal-rotate) + 150deg)); }
+  87% { opacity: .62; }
+  100% { opacity: 0; transform: translate3d(var(--petal-drift), 112vh, 0) rotate(calc(var(--petal-rotate) + 340deg)); }
+}
+*/
+
 @keyframes coverSnowfall {
   0% {
     opacity: 0;
