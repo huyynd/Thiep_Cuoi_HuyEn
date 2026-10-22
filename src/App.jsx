@@ -148,6 +148,7 @@ function WeddingCalendar({ now }) {
 
   return (
     <div className="ceremony-calendar-card" aria-label={`Lịch ngày cưới: ${dateLabel}`}>
+      <img className="calendar-floral" src="/photos/floral-lily-sprig.png" alt="" aria-hidden="true" />
       <div className="ceremony-calendar-header">
         <div>{dateLabel}</div>
         <p>{weekdayLabel} · Ngày cưới của chúng mình</p>
@@ -224,6 +225,7 @@ function LoveStory() {
   if (!chapters.length) return null;
 
   return <section className="love-story" ref={storyRef} aria-label="Hành trình tình yêu của chúng mình">
+    <img className="love-story-floral" src="/photos/floral-lily-sprig.png" alt="" aria-hidden="true" />
     <div className="love-story-kicker">OUR LOVE STORY</div>
     <div className="love-story-ornament" aria-hidden="true"><span />♥<span /></div>
     <div className="love-story-timeline">
@@ -245,6 +247,7 @@ function LoveStory() {
 function TodayTogether() {
   const details = wedding.todayTogether || {};
   return <section className="today-together" aria-label="Cô dâu và chú rể">
+    <img className="today-together-floral" src="/photos/floral-lily-sprig.png" alt="" aria-hidden="true" />
     <p className="today-together-kicker">Và hôm nay</p>
     <h2>Chúng mình chính thức về chung một nhà</h2>
     <div className="today-together-grid">
@@ -278,6 +281,7 @@ function WeddingInfo() {
   const families = [info.groom, info.bride];
 
   return <section className="wedding-info" id="wedding-info" aria-label="Thông tin lễ cưới">
+    <img className="wedding-info-floral" src="/photos/floral-lily-sprig.png" alt="" aria-hidden="true" />
     <div className="wedding-info-inner">
       <div className="wedding-info-kicker">WEDDING INFO</div>
       <h2>Thông tin lễ cưới</h2>
@@ -350,6 +354,7 @@ function MomentsCarousel() {
   const showNext = () => setActiveIndex((current) => (current + 1) % photos.length);
 
   return <section className="moments-carousel section-block" aria-label="Khoảnh khắc của chúng mình">
+    <img className="moments-floral" src="/photos/floral-lily-sprig.png" alt="" aria-hidden="true" />
     <div className="eyebrow">GALLERY</div>
     <h2>Khoảnh khắc của chúng mình</h2>
     <div className="carousel-shell">
@@ -374,6 +379,7 @@ function MomentsCarousel() {
 
 function WeddingEvents() {
   return <section className="event-section section-block" id="thong-tin">
+    <img className="event-section-floral" src="/photos/floral-lily-sprig.png" alt="" aria-hidden="true" />
     <div className="eyebrow">WEDDING INVITATION</div>
     <h2>Trân trọng kính mời</h2>
     <div className="event-card event-card-invitation">
@@ -405,6 +411,7 @@ function WeddingEvents() {
 
 function WeddingVenues() {
   return <section className="event-section section-block wedding-venues" id="dia-diem">
+    <img className="venues-floral" src="/photos/floral-tulip-lily-corner.png" alt="" aria-hidden="true" />
     <div className="event-card event-card-venues">
       <div className="event-label">LOCATION</div>
       <h3 className="venues-title">Địa điểm tổ chức</h3>
@@ -499,6 +506,7 @@ function Guestbook({ guest }) {
   }
 
   return <section className="guestbook section-block" aria-label="Sổ lưu bút">
+    <img className="guestbook-floral" src="/photos/floral-lily-sprig.png" alt="" aria-hidden="true" />
     <div className="eyebrow">GUESTBOOK</div>
     <h2>Sổ lưu bút</h2>
     <div className="guestbook-card">
@@ -700,8 +708,8 @@ export default function App() {
     <main>
       <section className="hero" id="thiep-moi" aria-label="Thiệp mời đám cưới">
         <div className="hero-fade" aria-hidden="true" />
-        <FlowerOrnament className="flower-left" />
-        <FlowerOrnament className="flower-right" />
+        <img className="hero-floral hero-floral-top" src="/photos/floral-tulip-lily-corner.png" alt="" aria-hidden="true" />
+        <img className="hero-floral hero-floral-bottom" src="/photos/floral-tulip-lily-corner.png" alt="" aria-hidden="true" />
         <div className="hero-content">
           <div className="hero-kicker"><span /> SAVE THE DATE <span /></div>
           <div className="hero-rule"><Heart size={21} fill="#b57487" strokeWidth={1.4} /></div>
@@ -733,6 +741,7 @@ export default function App() {
       <WeddingVenues />
 
       <section className="closing section-block">
+        <img className="closing-floral" src="/photos/floral-tulip-lily-corner.png" alt="" aria-hidden="true" />
         <div className="closing-heart"><Heart size={28} strokeWidth={1.2} /></div>
         <p>Thanh xuân sẽ đẹp hơn khi có bạn cùng chứng kiến khoảnh khắc đặc biệt này.</p>
         <h2>Hẹn gặp bạn nhé!</h2>
@@ -747,6 +756,7 @@ export default function App() {
         <div className="thanks-photo-overlay" aria-hidden="true" />
         <div className="thanks-photo-wave thanks-photo-wave-top" aria-hidden="true" />
         <div className="thanks-photo-wave thanks-photo-wave-bottom" aria-hidden="true" />
+        <img className="thanks-photo-floral" src="/photos/floral-tulip-lily-corner.png" alt="" aria-hidden="true" />
         <div className="thanks-photo-content">
           <p>Cảm ơn bạn đã ghé thăm tấm thiệp nhỏ này.</p>
           <p>Sự hiện diện và lời chúc của bạn<br />là món quà ý nghĩa nhất với chúng mình.</p>

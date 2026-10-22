@@ -48,7 +48,7 @@ a:focus-visible {
   display: flex;
   justify-content: center;
   color: #fff;
-  background: #756565;
+  background: #756565 url('/photos/anh1.png') center / cover no-repeat;
 }
 
 .photo-cover-image,
@@ -59,6 +59,7 @@ a:focus-visible {
 }
 
 .photo-cover-image {
+  z-index: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -726,6 +727,9 @@ p {
 }
 
 .ceremony-calendar-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   width: 100%;
   max-width: 510px;
   margin: 26px auto 0;
@@ -734,6 +738,23 @@ p {
   background: rgba(239, 233, 233, .95);
   border: 1px solid rgba(255, 255, 255, .75);
   box-shadow: 0 15px 42px rgba(86, 58, 66, .16);
+}
+
+.calendar-tulip-bouquet {
+  position: absolute;
+  z-index: 0;
+  right: -75px;
+  bottom: -104px;
+  width: clamp(170px, 28vw, 225px);
+  max-width: 53%;
+  opacity: .78;
+  pointer-events: none;
+  filter: drop-shadow(-6px 8px 9px rgba(100, 73, 68, .14));
+}
+
+.ceremony-calendar-card > :not(.calendar-tulip-bouquet) {
+  position: relative;
+  z-index: 1;
 }
 
 .ceremony-calendar-header {
@@ -1274,6 +1295,8 @@ p {
 }
 
 .wedding-info {
+  position: relative;
+  overflow: hidden;
   padding: clamp(76px, 10vw, 124px) 22px;
   text-align: center;
   background: #ede7e7;
@@ -2124,7 +2147,7 @@ h2 {
   background: #563d47;
 }
 
-.thanks-photo>img,
+.thanks-photo>img:not(.thanks-photo-floral),
 .thanks-photo-overlay {
   position: absolute;
   inset: 0;
@@ -2405,6 +2428,14 @@ h2,
 
   .wedding-info {
     padding: 70px 19px;
+  }
+
+  .calendar-tulip-bouquet {
+    right: -61px;
+    bottom: -91px;
+    width: 186px;
+    max-width: none;
+    opacity: .68;
   }
 
   .family-info-grid {
@@ -3241,4 +3272,327 @@ h2,
   .admin-table { min-width: 730px; }
   .admin-table th,
   .admin-table td { padding: 12px 11px; }
+}
+
+/* Hoa trang trí: tulip hồng phấn + linh lan, giữ nhẹ nhàng như giấy thiệp. */
+:root {
+  color: #76565f;
+  background: #fff9f8;
+}
+
+.hero {
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 13% 10%, rgba(243, 203, 214, .52), transparent 37%),
+    radial-gradient(ellipse at 91% 80%, rgba(251, 233, 237, .86), transparent 42%),
+    linear-gradient(115deg, #fbe9ed, #fff9f8 45%, #fbe9ed);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-floral,
+.today-together-floral,
+.wedding-info-floral,
+.event-section-floral,
+.thanks-photo-floral,
+.calendar-floral,
+.love-story-floral,
+.moments-floral,
+.venues-floral,
+.guestbook-floral,
+.closing-floral {
+  position: absolute;
+  z-index: 0;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  animation: floralSoftReveal 1.05s ease-out both;
+}
+
+.hero-floral {
+  width: clamp(125px, 18vw, 210px);
+  --floral-opacity: .72;
+}
+
+.hero-floral-top {
+  top: -35px;
+  right: -31px;
+  width: clamp(148px, 21vw, 248px);
+}
+
+.hero-floral-bottom {
+  bottom: -78px;
+  left: -51px;
+  width: clamp(98px, 14vw, 165px);
+  --floral-opacity: .43;
+  transform: scaleX(-1) rotate(-8deg);
+}
+
+.today-together {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 4% 9%, rgba(251, 233, 237, .82), transparent 24%),
+    radial-gradient(circle at 96% 93%, rgba(243, 203, 214, .2), transparent 26%),
+    #fff9f8;
+}
+
+.today-together > :not(.today-together-floral),
+.wedding-info-inner,
+.event-section > :not(.event-section-floral),
+.thanks-photo-content {
+  position: relative;
+  z-index: 1;
+}
+
+.today-together-floral {
+  right: -44px;
+  bottom: -85px;
+  width: clamp(175px, 27vw, 250px);
+  --floral-opacity: .24;
+  transform: rotate(-7deg);
+}
+
+.wedding-info {
+  background:
+    radial-gradient(circle at 4% 10%, rgba(251, 233, 237, .62), transparent 28%),
+    linear-gradient(145deg, #fff9f8, #fbe9ed 50%, #fff9f8);
+  color: #76565f;
+}
+
+.wedding-info-floral {
+  top: 30px;
+  right: -66px;
+  width: clamp(178px, 27vw, 270px);
+  --floral-opacity: .25;
+  transform: rotate(12deg);
+}
+
+.wedding-info-inner { position: relative; z-index: 1; }
+.wedding-info h2 { color: #76565f; }
+.family-info-names strong { color: #76565f; }
+.couple-announcement strong { color: #b56f89; }
+
+.event-section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: #fbe9ed;
+}
+
+.event-section-floral {
+  top: 94px;
+  left: -54px;
+  width: clamp(168px, 25vw, 245px);
+  --floral-opacity: .27;
+  transform: rotate(-10deg) scaleX(-1);
+}
+
+.event-card {
+  background: rgba(255, 249, 248, .94);
+  border-color: rgba(221, 166, 181, .36);
+  box-shadow: 0 16px 48px rgba(118, 86, 95, .1);
+}
+
+.invitation-event-date strong {
+  border-color: rgba(217, 210, 201, .9);
+}
+
+.invitation-event-divider { background: rgba(217, 210, 201, .95); }
+
+.thanks-photo-floral {
+  right: -35px;
+  bottom: -58px;
+  width: clamp(180px, 28vw, 290px);
+  --floral-opacity: .68;
+  z-index: -1;
+  transform: rotate(4deg);
+  filter: drop-shadow(0 6px 9px rgba(55, 31, 38, .2));
+}
+
+@keyframes floralSoftReveal {
+  from { opacity: 0; filter: blur(2px); }
+  to { opacity: var(--floral-opacity, .7); filter: blur(0); }
+}
+
+.ceremony-calendar-card > .calendar-floral {
+  position: absolute;
+  right: -42px;
+  bottom: -65px;
+  z-index: 0;
+  width: clamp(142px, 22vw, 212px);
+  --floral-opacity: .17;
+  transform: rotate(-4deg);
+}
+
+.love-story,
+.moments-carousel,
+.guestbook,
+.closing {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.love-story > :not(.love-story-floral),
+.moments-carousel > :not(.moments-floral),
+.guestbook > :not(.guestbook-floral),
+.closing > :not(.closing-floral) {
+  position: relative;
+  z-index: 1;
+}
+
+.love-story-floral {
+  bottom: -82px;
+  left: -45px;
+  width: clamp(165px, 25vw, 235px);
+  --floral-opacity: .18;
+  transform: rotate(-13deg) scaleX(-1);
+}
+
+.moments-carousel {
+  background: #fff9f8;
+}
+
+.moments-floral {
+  right: -44px;
+  bottom: -80px;
+  width: clamp(145px, 22vw, 210px);
+  --floral-opacity: .14;
+  transform: rotate(7deg);
+}
+
+.wedding-venues > .venues-floral {
+  position: absolute;
+  top: auto;
+  right: -54px;
+  bottom: -43px;
+  left: auto;
+  z-index: 0;
+  width: clamp(170px, 25vw, 250px);
+  --floral-opacity: .48;
+  transform: rotate(4deg);
+}
+
+.guestbook {
+  background: #fbe9ed;
+}
+
+.guestbook-floral {
+  top: 38px;
+  left: -48px;
+  width: clamp(150px, 23vw, 220px);
+  --floral-opacity: .18;
+  transform: rotate(-12deg) scaleX(-1);
+}
+
+.closing {
+  background: #fff9f8;
+}
+
+.closing-floral {
+  right: -56px;
+  bottom: -90px;
+  width: clamp(180px, 28vw, 285px);
+  --floral-opacity: .5;
+  transform: rotate(5deg);
+}
+
+@media (max-width: 480px) {
+  .hero-floral-top {
+    top: -20px;
+    right: -28px;
+    width: 132px;
+    --floral-opacity: .66;
+  }
+
+  .hero-floral-bottom {
+    bottom: -56px;
+    left: -43px;
+    width: 98px;
+    --floral-opacity: .38;
+  }
+
+  .today-together-floral {
+    right: -50px;
+    bottom: -71px;
+    width: 136px;
+  }
+
+  .wedding-info-floral {
+    top: 28px;
+    right: -55px;
+    width: 138px;
+  }
+
+  .event-section-floral {
+    top: 72px;
+    left: -46px;
+    width: 132px;
+  }
+
+  .thanks-photo-floral {
+    right: -40px;
+    bottom: -44px;
+    width: 142px;
+    --floral-opacity: .58;
+  }
+
+  .ceremony-calendar-card > .calendar-floral {
+    right: -35px;
+    bottom: -51px;
+    width: 125px;
+  }
+
+  .love-story-floral {
+    bottom: -63px;
+    left: -38px;
+    width: 126px;
+  }
+
+  .moments-floral {
+    right: -35px;
+    bottom: -58px;
+    width: 113px;
+  }
+
+  .wedding-venues > .venues-floral {
+    right: -43px;
+    bottom: -30px;
+    width: 142px;
+  }
+
+  .guestbook-floral {
+    top: 31px;
+    left: -36px;
+    width: 120px;
+  }
+
+  .closing-floral {
+    right: -43px;
+    bottom: -63px;
+    width: 142px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-floral,
+  .today-together-floral,
+  .wedding-info-floral,
+  .event-section-floral,
+  .thanks-photo-floral,
+  .calendar-floral,
+  .love-story-floral,
+  .moments-floral,
+  .venues-floral,
+  .guestbook-floral,
+  .closing-floral {
+    animation: none;
+    opacity: var(--floral-opacity, .7);
+  }
 }
