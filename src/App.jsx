@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   ArrowRight, CalendarDays, Check, ChevronDown, Copy,
-  ExternalLink, Heart, MapPin, Music2, Pause, Sparkles
+  ExternalLink, Heart, MapPin, Music2, Pause
 } from 'lucide-react';
 import { wedding } from './config/wedding.js';
 import guests from './data/guests.generated.json';
@@ -334,23 +334,6 @@ function VenueMap({ house, label }) {
   </article>;
 }
 
-function Gallery() {
-  if (!wedding.photos?.length) {
-    return <div className="quote-panel">
-      <div className="quote-spark"><Sparkles size={26} strokeWidth={1.2} /></div>
-      <p>“Trong muôn vàn khoảnh khắc, điều đẹp nhất là có những người thân yêu cùng chia sẻ niềm vui.”</p>
-      <span>— {wedding.groom} & {wedding.bride} —</span>
-    </div>;
-  }
-  return <div className="gallery-grid">
-    {wedding.photos.map((url, i) => (
-      <div className="gallery-photo" key={url}>
-        <img src={url} loading="lazy" alt={`Khoảnh khắc của cô dâu chú rể ${i + 1}`} />
-      </div>
-    ))}
-  </div>;
-}
-
 function MomentsCarousel() {
   const photos = wedding.momentPhotos || [];
   const [activeIndex, setActiveIndex] = useState(0);
@@ -483,8 +466,6 @@ export default function App() {
     </main>;
   }
 
-  const countdown = getCountdown(wedding.dateISO, now);
-  const isWeddingDay = countdown.every((x) => x.value === 0);
   const recipient = guest?.name || 'Quý khách';
   const coverDate = getCoverDate(wedding.calendarDateISO || wedding.dateISO);
 
@@ -539,14 +520,6 @@ export default function App() {
 
       <WeddingInfo />
 
-      <section className="welcome section-block" id="loi-moi">
-        <div className="eyebrow">WITH LOVE & GRATITUDE</div>
-        <h2>Một lời mời từ trái tim</h2>
-        <div className="small-rose">✿</div>
-        <p className="intro">{wedding.message}</p>
-        <p className="intro-small">Mong được đón tiếp <b>{recipient}</b> trong ngày trọng đại của hai chúng mình.</p>
-      </section>
-
       <MomentsCarousel />
 
       <section className="event-section section-block" id="thong-tin">
@@ -585,22 +558,6 @@ export default function App() {
             </button>
           </div>
         </div>
-      </section>
-
-      <section className="countdown-section section-block">
-        <div className="eyebrow">COUNTING EVERY MOMENT</div>
-        <h2>{isWeddingDay ? 'Ngày hạnh phúc đã đến!' : 'Đếm ngược đến ngày vui'}</h2>
-        <div className="counter-grid">
-          {countdown.map((item) => <div className="counter-item" key={item.label}>
-            <strong>{String(item.value).padStart(2, '0')}</strong><span>{item.label}</span>
-          </div>)}
-        </div>
-      </section>
-
-      <section className="memories section-block">
-        <div className="eyebrow">OUR LOVE STORY</div>
-        <h2>Những khoảnh khắc yêu thương</h2>
-        <Gallery />
       </section>
 
       <section className="closing section-block">
