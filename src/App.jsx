@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { wedding } from './config/wedding.js';
 import guests from './data/guests.generated.json';
+import { createGuestbookEntry, getGuestbookEntries, isGuestbookConfigured } from './lib/guestbook.js';
 
 function findGuest() {
   const match = window.location.pathname.match(/^\/moi\/([^/]+)\/?$/);
@@ -416,25 +417,36 @@ function getGuestbookPreview(message) {
   return message.length > 80 ? `${message.slice(0, 80).trimEnd()}…` : message;
 }
 
-function Guestbook() {
-  const [entries, setEntries] = useState(() => {
-    try {
-      const saved = JSON.parse(window.localStorage.getItem('huy-yen-guestbook') || '[]');
-      return Array.isArray(saved) ? saved : [];
-    } catch {
-      return [];
-    }
-  });
+function Guestbook({ guest }) {
+  const [entries, setEntries] = useState([]);
   const [dialog, setDialog] = useState(null);
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
   const [latestEntryId, setLatestEntryId] = useState(null);
   const [selectedEntry, setSelectedEntry] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [guestbookError, setGuestbookError] = useState('');
   const guestbookRailRef = useRef(null);
 
   useEffect(() => {
-    window.localStorage.setItem('huy-yen-guestbook', JSON.stringify(entries));
-  }, [entries]);
+    if (!isGuestbookConfigured) return undefined;
+    let active = true;
+    const loadEntries = async () => {
+      try {
+        const loadedEntries = await getGuestbookEntries();
+        if (active) setEntries(loadedEntries);
+      } catch (error) {
+        console.error('Không thể tải sổ lưu bút:', error);
+      }
+    };
+
+    loadEntries();
+    const pollId = window.setInterval(loadEntries, 15000);
+    return () => {
+      active = false;
+      window.clearInterval(pollId);
+    };
+  }, []);
 
   useEffect(() => {
     if (latestEntryId && guestbookRailRef.current) {
@@ -445,24 +457,36 @@ function Guestbook() {
   function openWriter() {
     setName('');
     setMessage('');
+    setGuestbookError('');
     setDialog('write');
   }
 
-  function submitEntry(event) {
+  async function submitEntry(event) {
     event.preventDefault();
     const trimmedName = name.trim();
     const trimmedMessage = message.trim();
     if (!trimmedName || !trimmedMessage) return;
 
-    const entry = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-      name: trimmedName,
-      message: trimmedMessage,
-      createdAt: new Date().toISOString(),
-    };
-    setEntries((current) => [entry, ...current]);
-    setLatestEntryId(entry.id);
-    setDialog(null);
+    setSaving(true);
+    setGuestbookError('');
+    try {
+      const entry = await createGuestbookEntry({
+        name: trimmedName,
+        message: trimmedMessage,
+        invitationSlug: guest?.slug,
+        invitationRecipient: guest?.name,
+        invitationPath: `${window.location.pathname}${window.location.search}`,
+        invitationUrl: window.location.href,
+      });
+      setEntries((current) => [entry, ...current.filter((currentEntry) => currentEntry.id !== entry.id)]);
+      setLatestEntryId(entry.id);
+      setDialog(null);
+    } catch (error) {
+      console.error('Không thể gửi lời chúc:', error);
+      setGuestbookError('Chưa thể gửi lời chúc. Vui lòng thử lại sau ít phút.');
+    } finally {
+      setSaving(false);
+    }
   }
 
   function openEntry(entry) {
@@ -508,7 +532,8 @@ function Guestbook() {
           <label>Nội dung
             <textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Gửi lời chúc đến Đức Huy & Bùi Yến" maxLength={500} required />
           </label>
-          <div className="guestbook-form-footer"><span>{message.length}/500</span><button className="btn btn-primary" type="submit"><Send size={16} /> Hoàn tất</button></div>
+          {guestbookError && <p className="guestbook-form-error" role="alert">{guestbookError}</p>}
+          <div className="guestbook-form-footer"><span>{message.length}/500</span><button className="btn btn-primary" type="submit" disabled={saving}><Send size={16} /> {saving ? 'Đang gửi...' : 'Hoàn tất'}</button></div>
         </form> : dialog === 'detail' && selectedEntry ? <article className="guestbook-detail">
           <Heart size={25} fill="currentColor" strokeWidth={1.2} aria-hidden="true" />
           <p>{selectedEntry.message}</p>
@@ -678,7 +703,7 @@ export default function App() {
 
       <MomentsCarousel />
 
-      <Guestbook />
+      <Guestbook guest={guest || null} />
 
       <section className="closing section-block">
         <div className="closing-heart"><Heart size={28} strokeWidth={1.2} /></div>

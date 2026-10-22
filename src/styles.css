@@ -2974,12 +2974,25 @@ h2,
 .guestbook-form input:focus,
 .guestbook-form textarea:focus { border-color: #ab647d; }
 
+.guestbook-form-error {
+  margin: -8px 0 0;
+  color: #b64d6f;
+  font-size: 15px;
+  text-align: left;
+}
+
 .guestbook-form-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   color: #9d7d88;
+}
+
+.guestbook-form .btn:disabled {
+  cursor: wait;
+  opacity: .62;
+  transform: none;
 }
 
 .guestbook-entries { padding: 25px 30px 32px; }
