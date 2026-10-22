@@ -566,6 +566,109 @@ p {
 
 .love-story-photo img { width: 100%; height: 100%; object-fit: cover; }
 
+.today-together {
+  width: min(100%, 620px);
+  margin: 52px auto 0;
+  padding: clamp(41px, 6vw, 65px) clamp(22px, 5vw, 47px) clamp(45px, 6vw, 68px);
+  color: #4e3f43;
+  background:
+    radial-gradient(circle at 3% 12%, rgba(224, 185, 199, .18), transparent 25%),
+    radial-gradient(circle at 97% 88%, rgba(224, 185, 199, .15), transparent 26%),
+    #fffdfc;
+  border: 1px solid rgba(213, 180, 191, .52);
+  box-shadow: 0 12px 34px rgba(108, 72, 86, .09);
+}
+
+.today-together-kicker {
+  margin: 0;
+  color: #aa7084;
+  font: 400 clamp(39px, 6.3vw, 61px)/1 'Great Vibes', cursive;
+  text-align: center;
+}
+
+.today-together h2 {
+  margin: 18px 0 clamp(39px, 6vw, 58px);
+  color: #75495b;
+  font: 400 clamp(23px, 3.8vw, 32px)/1.35 'Playfair Display', Georgia, serif;
+  text-align: center;
+}
+
+.today-together-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: clamp(28px, 5vw, 51px) clamp(23px, 5vw, 49px);
+}
+
+.today-together-photo {
+  width: 100%;
+  aspect-ratio: .87;
+  overflow: hidden;
+  background: #e7dcdf;
+  box-shadow: 0 8px 22px rgba(105, 72, 82, .14);
+}
+
+.today-together-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.today-together-photo.bride-photo { grid-column: 1; grid-row: 1; }
+.today-together-photo.groom-photo { grid-column: 2; grid-row: 2; }
+
+.today-together-person { text-align: center; }
+.today-together-person.bride-person { grid-column: 2; grid-row: 1; }
+.today-together-person.groom-person { grid-column: 1; grid-row: 2; }
+
+.today-together-person > span {
+  display: block;
+  color: #715d62;
+  font: 400 clamp(20px, 3vw, 27px)/1.2 'Playfair Display', Georgia, serif;
+}
+
+.today-together-person > strong {
+  display: block;
+  margin-top: 9px;
+  color: #8f5970;
+  font: 400 clamp(35px, 5.6vw, 54px)/1.05 'Great Vibes', cursive;
+  white-space: nowrap;
+}
+
+.today-together-signature {
+  min-height: clamp(49px, 7vw, 68px);
+  margin-top: 16px;
+  color: #564247;
+  font: 400 clamp(30px, 5vw, 46px)/1 'Great Vibes', cursive;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .love-story-chapter .love-story-copy,
+  .love-story-chapter .love-story-photo,
+  .love-story-chapter .love-story-marker {
+    transition: opacity 1.55s ease, transform 1.8s cubic-bezier(.2, .8, .25, 1);
+  }
+
+  .love-story-chapter:not(.is-revealed) .love-story-copy {
+    opacity: 0;
+    transform: translateX(-46px);
+  }
+
+  .love-story-chapter.is-right:not(.is-revealed) .love-story-copy { transform: translateX(46px); }
+
+  .love-story-chapter:not(.is-revealed) .love-story-photo {
+    opacity: 0;
+    transform: rotate(2.5deg) translateX(46px);
+  }
+
+  .love-story-chapter.is-right:not(.is-revealed) .love-story-photo {
+    transform: rotate(-2.5deg) translateX(-46px);
+  }
+
+  .love-story-chapter.is-revealed .love-story-photo { transform: rotate(2.5deg) translateX(0); }
+  .love-story-chapter.is-right.is-revealed .love-story-photo { transform: rotate(-2.5deg) translateX(0); }
+
+  .love-story-chapter:not(.is-revealed) .love-story-marker {
+    opacity: 0;
+    transform: translateX(-50%) scale(.45);
+  }
+}
+
 .ceremony-calendar-card {
   width: 100%;
   max-width: 510px;

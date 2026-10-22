@@ -111,6 +111,12 @@ export const wedding = {
       photo: '/photos/khoanhkhac/anh6.jpg',
     },
   ],
+  todayTogether: {
+    bridePhoto: '/photos/khoanhkhac/anh7.jpg',
+    groomPhoto: '/photos/khoanhkhac/anh8.jpg',
+    brideSignature: '',
+    groomSignature: '',
+  },
   // Nhạc nền được phát khi khách mở thiệp; nút góc phải dưới dùng để tạm dừng/phát lại.
   musicUrl: '/music/ngaydautien.mp3',
   // Ảnh xem trước khi chia sẻ link trên Zalo/Facebook, phải là URL HTTPS đầy đủ.

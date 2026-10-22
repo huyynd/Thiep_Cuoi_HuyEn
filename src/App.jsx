@@ -171,13 +171,54 @@ function WeddingCalendar({ now }) {
 
 function LoveStory() {
   const chapters = wedding.loveStory || [];
+  const storyRef = useRef(null);
+  const storyScrollYRef = useRef(window.scrollY);
+  const storyScrollDirectionRef = useRef(1);
+  const [revealedChapters, setRevealedChapters] = useState(() => new Set());
+
+  useEffect(() => {
+    const root = storyRef.current;
+    if (!root || !('IntersectionObserver' in window)) {
+      setRevealedChapters(new Set(chapters.map((_, index) => index)));
+      return undefined;
+    }
+
+    const updateDirection = () => {
+      const currentY = window.scrollY;
+      if (currentY !== storyScrollYRef.current) {
+        storyScrollDirectionRef.current = currentY > storyScrollYRef.current ? 1 : -1;
+        storyScrollYRef.current = currentY;
+      }
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      setRevealedChapters((current) => {
+        const next = new Set(current);
+        entries.forEach((entry) => {
+          const index = Number(entry.target.dataset.storyIndex);
+          if (entry.isIntersecting && storyScrollDirectionRef.current > 0) next.add(index);
+          else next.delete(index);
+        });
+        return next;
+      });
+    }, { threshold: .22, rootMargin: '0px 0px -8% 0px' });
+
+    const items = root.querySelectorAll('[data-story-index]');
+    items.forEach((item) => observer.observe(item));
+    window.addEventListener('scroll', updateDirection, { passive: true });
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', updateDirection);
+    };
+  }, [chapters.length]);
+
   if (!chapters.length) return null;
 
-  return <section className="love-story" aria-label="Hành trình tình yêu của chúng mình">
+  return <section className="love-story" ref={storyRef} aria-label="Hành trình tình yêu của chúng mình">
     <div className="love-story-kicker">OUR LOVE STORY</div>
     <div className="love-story-ornament" aria-hidden="true"><span />♥<span /></div>
     <div className="love-story-timeline">
-      {chapters.map((chapter, index) => <article className={`love-story-chapter ${index % 2 ? 'is-right' : 'is-left'}`} key={chapter.year}>
+      {chapters.map((chapter, index) => <article data-story-index={index} className={`love-story-chapter ${index % 2 ? 'is-right' : 'is-left'} ${revealedChapters.has(index) ? 'is-revealed' : ''}`} key={`${chapter.year}-${chapter.title}`}>
         <div className="love-story-copy">
           <time>{chapter.year}</time>
           <h3>{chapter.title}</h3>
@@ -188,6 +229,32 @@ function LoveStory() {
           <img src={chapter.photo} alt={`${chapter.title} của ${wedding.groom} và ${wedding.bride}`} loading="lazy" />
         </div>
       </article>)}
+    </div>
+  </section>;
+}
+
+function TodayTogether() {
+  const details = wedding.todayTogether || {};
+  return <section className="today-together" aria-label="Cô dâu và chú rể">
+    <p className="today-together-kicker">Và hôm nay</p>
+    <h2>Chúng mình chính thức về chung một nhà</h2>
+    <div className="today-together-grid">
+      <div className="today-together-photo bride-photo">
+        <img src={details.bridePhoto || '/photos/khoanhkhac/anh7.jpg'} alt={`Cô dâu ${wedding.bride}`} loading="lazy" />
+      </div>
+      <div className="today-together-person bride-person">
+        <span>Cô dâu</span>
+        <strong>{wedding.bride}</strong>
+        <div className="today-together-signature">{details.brideSignature}</div>
+      </div>
+      <div className="today-together-person groom-person">
+        <span>Chú rể</span>
+        <strong>{wedding.groom}</strong>
+        <div className="today-together-signature">{details.groomSignature}</div>
+      </div>
+      <div className="today-together-photo groom-photo">
+        <img src={details.groomPhoto || '/photos/khoanhkhac/anh8.jpg'} alt={`Chú rể ${wedding.groom}`} loading="lazy" />
+      </div>
     </div>
   </section>;
 }
@@ -450,6 +517,7 @@ export default function App() {
             <p>Đến dự ngày vui và chung vui cùng gia đình chúng mình</p>
           </div>
           <LoveStory />
+          <TodayTogether />
           <WeddingCalendar now={now} />
           <a className="down-arrow" href="#wedding-info" aria-label="Xem thông tin lễ cưới"><ChevronDown size={22}/></a>
         </div>
