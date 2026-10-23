@@ -320,17 +320,44 @@ function VenueMap({ house, label }) {
 function MomentsCarousel() {
   const photos = wedding.momentPhotos || [];
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isAutoplayPaused, setIsAutoplayPaused] = useState(false);
+  const resumeTimerRef = useRef(null);
 
   useEffect(() => {
-    if (photos.length < 2) return;
+    if (photos.length < 2 || isAutoplayPaused) return undefined;
     const timer = window.setInterval(() => {
       setActiveIndex((current) => (current + 1) % photos.length);
-    }, 3000);
+    }, 6000);
     return () => window.clearInterval(timer);
-  }, [photos.length]);
+  }, [photos.length, isAutoplayPaused]);
 
   if (!photos.length) return null;
-  const showNext = () => setActiveIndex((current) => (current + 1) % photos.length);
+
+  // Hủy bộ đếm resume nếu đang chạy
+  const clearResumeTimer = () => {
+    if (resumeTimerRef.current) {
+      window.clearTimeout(resumeTimerRef.current);
+      resumeTimerRef.current = null;
+    }
+  };
+
+  // Tạm dừng autoplay rồi tự khởi động lại sau 8 giây
+  const pauseAndResume = () => {
+    setIsAutoplayPaused(true);
+    clearResumeTimer();
+    resumeTimerRef.current = window.setTimeout(() => {
+      setIsAutoplayPaused(false);
+      resumeTimerRef.current = null;
+    }, 8000);
+  };
+
+  const showNext = () => {
+    setActiveIndex((current) => (current + 1) % photos.length);
+  };
+  const choosePhoto = (index) => {
+    pauseAndResume();
+    setActiveIndex(index);
+  };
 
   return <section className="moments-carousel section-block" aria-label="Khoảnh khắc của chúng mình">
     <img className="moments-floral" src="/photos/floral-lily-sprig.png" alt="" aria-hidden="true" />
@@ -347,7 +374,7 @@ function MomentsCarousel() {
         type="button"
         key={photo}
         className={`carousel-thumbnail ${index === activeIndex ? 'is-active' : ''}`}
-        onClick={() => setActiveIndex(index)}
+        onClick={() => choosePhoto(index)}
         aria-label={`Xem ảnh ${index + 1}`}
         aria-current={index === activeIndex ? 'true' : undefined}
       >
@@ -773,9 +800,8 @@ export default function App() {
       <section className="closing section-block">
         <img className="closing-floral" src="/photos/floral-tulip-lily-corner.png" alt="" aria-hidden="true" />
         <div className="closing-heart"><Heart size={28} strokeWidth={1.2} /></div>
-        <p>Thanh xuân sẽ đẹp hơn khi có bạn cùng chứng kiến khoảnh khắc đặc biệt này.</p>
+        <p>Chúng mình rất mong được gặp bạn trong ngày vui.</p>
         <h2>Hẹn gặp bạn nhé!</h2>
-        <div className="signature">{wedding.groom} <span>&</span> {wedding.bride}</div>
         <button className="btn btn-share" type="button" onClick={copyInviteUrl}>
           {copied ? <Check size={17} /> : <Copy size={17} />} {copied ? 'Đã sao chép link' : 'Sao chép link thiệp'}
         </button>
@@ -788,8 +814,7 @@ export default function App() {
         <div className="thanks-photo-wave thanks-photo-wave-bottom" aria-hidden="true" />
         <img className="thanks-photo-floral" src="/photos/floral-tulip-lily-corner.png" alt="" aria-hidden="true" />
         <div className="thanks-photo-content">
-          <p>Cảm ơn bạn đã ghé thăm tấm thiệp nhỏ này.</p>
-          <p>Sự hiện diện và lời chúc của bạn<br />là món quà ý nghĩa nhất với chúng mình.</p>
+          <p>Cảm ơn bạn đã ghé thăm tấm thiệp nhỏ này.<br />Sự hiện diện và lời chúc của bạn là món quà ý nghĩa nhất với chúng mình.</p>
           <div className="thanks-photo-signature">
             <span>— With love —</span>
             <strong>{wedding.groom} &amp; {wedding.bride}</strong>
