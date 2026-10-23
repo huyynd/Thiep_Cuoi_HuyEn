@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   ArrowRight, Check, ChevronDown, Copy,
   ExternalLink, Heart, MapPin, Music2, Pause, PenLine, Send, X
@@ -412,6 +413,7 @@ function Guestbook({ guest }) {
   const [guestbookError, setGuestbookError] = useState('');
   const [showAllEntries, setShowAllEntries] = useState(false);
   const guestbookRailRef = useRef(null);
+  const guestbookScrollPositionRef = useRef(0);
 
   useEffect(() => {
     if (!isGuestbookConfigured) return undefined;
@@ -440,10 +442,19 @@ function Guestbook({ guest }) {
   }, [entries, latestEntryId]);
 
   function openWriter() {
+    guestbookScrollPositionRef.current = window.scrollY;
     setName('');
     setMessage('');
     setGuestbookError('');
     setDialog('write');
+  }
+
+  function restoreGuestbookScrollPosition() {
+    const top = guestbookScrollPositionRef.current;
+    window.requestAnimationFrame(() => {
+      window.scrollTo({ top, behavior: 'auto' });
+      window.setTimeout(() => window.scrollTo({ top, behavior: 'auto' }), 120);
+    });
   }
 
   async function submitEntry(event) {
@@ -467,6 +478,7 @@ function Guestbook({ guest }) {
       setEntries((current) => [entry, ...current.filter((currentEntry) => currentEntry.id !== entry.id)]);
       setLatestEntryId(entry.id);
       setDialog(null);
+      restoreGuestbookScrollPosition();
     } catch (error) {
       console.error('Không thể gửi lời chúc:', error);
       setGuestbookError('Chưa thể gửi lời chúc. Vui lòng thử lại sau ít phút.');
@@ -515,7 +527,7 @@ function Guestbook({ guest }) {
       </>}
     </div>
 
-    {dialog && <div className="guestbook-dialog" role="presentation">
+    {dialog && createPortal(<div className="guestbook-dialog" role="presentation">
       <button className="guestbook-backdrop" type="button" aria-label="Đóng sổ lưu bút" onClick={() => setDialog(null)} />
       <div className="guestbook-dialog-panel" role="dialog" aria-modal="true" aria-labelledby="guestbook-dialog-title">
         <div className="guestbook-dialog-head">
@@ -544,7 +556,7 @@ function Guestbook({ guest }) {
           </article>) : <div className="guestbook-empty"><p>Chưa có lời chúc nào.</p><button className="btn btn-outline" type="button" onClick={openWriter}>Viết lưu bút</button></div>}
         </div>}
       </div>
-    </div>}
+    </div>, document.body)}
   </section>;
 }
 

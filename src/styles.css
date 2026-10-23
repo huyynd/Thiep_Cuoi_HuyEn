@@ -3201,7 +3201,7 @@ h2,
 
 .guestbook-dialog {
   position: fixed;
-  z-index: 50;
+  z-index: 1000;
   inset: 0;
   display: grid;
   place-items: center;
@@ -4760,4 +4760,11 @@ h2,
   .photo-cover-scroll {
     bottom: 124px;
   }
+}
+
+/* The dialog is a viewport modal, never a card inside the guestbook flow. */
+.guestbook > .guestbook-dialog {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
 }
