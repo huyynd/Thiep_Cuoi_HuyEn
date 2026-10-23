@@ -481,7 +481,7 @@ function Guestbook({ guest }) {
       restoreGuestbookScrollPosition();
     } catch (error) {
       console.error('Không thể gửi lời chúc:', error);
-      setGuestbookError('Chưa thể gửi lời chúc. Vui lòng thử lại sau ít phút.');
+      setGuestbookError(error.message || 'Chưa thể gửi lời chúc. Vui lòng thử lại sau ít phút.');
     } finally {
       setSaving(false);
     }

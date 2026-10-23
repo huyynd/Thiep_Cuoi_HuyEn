@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Check, Copy, FileUp, Link2, LoaderCircle, LogIn, LogOut, Plus, RefreshCw, Search, Send, Users } from 'lucide-react';
+import { Check, Copy, Eye, EyeOff, FileUp, Link2, LoaderCircle, LogIn, LogOut, MessageCircleHeart, Plus, RefreshCw, Search, Send, Trash2, Users } from 'lucide-react';
 import { wedding } from './config/wedding.js';
 import { createInvitation, createInvitations, listInvitations, markInvitationSent, recordInvitationCopy } from './lib/invitations.js';
+import { deleteGuestbookEntry, listGuestbookEntriesForAdmin, setGuestbookEntryHidden } from './lib/guestbookAdmin.js';
 import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
 
 function invitationUrl(invitation) {
@@ -30,6 +31,7 @@ function getNamesFromWorkbook(XLSX, workbook) {
 export default function Admin() {
   const [session, setSession] = useState(null);
   const [invitations, setInvitations] = useState([]);
+  const [guestbookEntries, setGuestbookEntries] = useState([]);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [guestName, setGuestName] = useState('');
@@ -75,7 +77,12 @@ export default function Admin() {
     setLoading(true);
     setError('');
     try {
-      setInvitations(await listInvitations());
+      const [loadedInvitations, loadedGuestbookEntries] = await Promise.all([
+        listInvitations(),
+        listGuestbookEntriesForAdmin(),
+      ]);
+      setInvitations(loadedInvitations);
+      setGuestbookEntries(loadedGuestbookEntries);
     } catch (loadError) {
       setError('Không tải được danh sách. Hãy kiểm tra tài khoản này đã được cấp quyền quản trị trong Supabase.');
       console.error(loadError);
@@ -168,6 +175,31 @@ export default function Admin() {
     }
   }
 
+  async function setGuestbookHidden(entry, isHidden) {
+    setError('');
+    try {
+      const updated = await setGuestbookEntryHidden(entry.id, isHidden);
+      setGuestbookEntries((current) => current.map((item) => item.id === updated.id ? updated : item));
+      setNotice(isHidden ? 'Đã ẩn lời chúc.' : 'Đã cho hiển thị lại lời chúc.');
+    } catch (updateError) {
+      setError('Không thể cập nhật trạng thái lời chúc.');
+      console.error(updateError);
+    }
+  }
+
+  async function removeGuestbookEntry(entry) {
+    if (!window.confirm(`Xóa vĩnh viễn lời chúc của ${entry.name}?`)) return;
+    setError('');
+    try {
+      await deleteGuestbookEntry(entry.id);
+      setGuestbookEntries((current) => current.filter((item) => item.id !== entry.id));
+      setNotice('Đã xóa lời chúc.');
+    } catch (deleteError) {
+      setError('Không thể xóa lời chúc.');
+      console.error(deleteError);
+    }
+  }
+
   if (!isSupabaseConfigured) return <main className="admin-page"><div className="admin-login"><h1>Thiếu cấu hình Supabase</h1><p>Hãy thêm biến môi trường trước khi dùng trang quản trị.</p></div></main>;
 
   if (!session) return <main className="admin-page">
@@ -219,6 +251,21 @@ export default function Admin() {
           </tr>)}</tbody>
         </table> : <p className="admin-empty">{invitations.length ? 'Không tìm thấy khách mời phù hợp.' : 'Chưa có khách mời nào. Hãy tạo link đầu tiên ở trên.'}</p>}
       </div>}
+
+      <section className="admin-guestbook">
+        <div className="admin-list-head"><h2>Lời chúc đã gửi</h2></div>
+        {loading ? null : guestbookEntries.length ? <div className="admin-guestbook-list">
+          {guestbookEntries.map((entry) => <article className={`admin-guestbook-entry ${entry.isHidden ? 'is-hidden' : ''}`} key={entry.id}>
+            <div className="admin-guestbook-entry-head"><div><strong>{entry.name}</strong><span>{readableDate(entry.createdAt)}</span></div><span className="admin-entry-status">{entry.isHidden ? 'Đã ẩn' : 'Đang hiện'}</span></div>
+            <p>{entry.message}</p>
+            <small>Gửi từ: {entry.invitationRecipient || entry.invitationSlug || 'Link chung'}</small>
+            <div className="admin-guestbook-actions">
+              <button type="button" onClick={() => setGuestbookHidden(entry, !entry.isHidden)}>{entry.isHidden ? <Eye size={16} /> : <EyeOff size={16} />}{entry.isHidden ? 'Hiện lại' : 'Ẩn'}</button>
+              <button type="button" onClick={() => removeGuestbookEntry(entry)}><Trash2 size={16} /> Xóa</button>
+            </div>
+          </article>)}
+        </div> : <p className="admin-empty"><MessageCircleHeart size={18} /> Chưa có lời chúc nào.</p>}
+      </section>
     </section>
   </main>;
 }
