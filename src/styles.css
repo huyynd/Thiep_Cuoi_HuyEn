@@ -2820,7 +2820,7 @@ h2,
 
 .guestbook-rail {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   overflow-x: auto;
   padding: 4px 1px 16px;
   scroll-snap-type: x mandatory;
@@ -2833,7 +2833,7 @@ h2,
 
 .guestbook-note-card,
 .guestbook-write-tile {
-  flex: 0 0 clamp(168px, 44vw, 245px);
+  flex: 0 0 clamp(150px, calc((100% - 12px) / 2), 245px);
   min-height: 250px;
   scroll-snap-align: start;
 }
@@ -3660,15 +3660,6 @@ h2,
   }
 
   .music-ripples i { animation: none; opacity: 0; }
-}
-
-/* Keep the invitation details compact and the calendar action legible on phones. */
-.event-card-invitation .event-actions {
-  display: flex;
-}
-
-.event-card-invitation .event-actions .btn {
-  white-space: nowrap;
 }
 
 @media (max-width: 480px) {

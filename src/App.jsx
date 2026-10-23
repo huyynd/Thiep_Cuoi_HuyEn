@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  ArrowRight, CalendarDays, Check, ChevronDown, Copy,
+  ArrowRight, Check, ChevronDown, Copy,
   ExternalLink, Heart, MapPin, Music2, Pause, PenLine, Send, X
 } from 'lucide-react';
 import { wedding } from './config/wedding.js';
@@ -78,31 +78,6 @@ function FlowerOrnament({ className = '' }) {
   return <div className={`flower-ornament ${className}`} aria-hidden="true">
     <span /><span /><span /><span /><span /><i />
   </div>;
-}
-
-function makeCalendarFile() {
-  const start = new Date(wedding.dateISO);
-  if (Number.isNaN(start.getTime())) return;
-  const end = new Date(start.getTime() + 3 * 60 * 60 * 1000);
-  const dt = (d) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
-  const safe = (s) => String(s).replaceAll('\\', '\\\\').replaceAll(',', '\\,')
-    .replaceAll(';', '\\;').replace(/\r?\n/g, '\\n');
-  const ics = [
-    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Wedding Invite//VN//EN',
-    'BEGIN:VEVENT', `UID:wedding-${dt(start)}@thiep-cuoi.local`,
-    `DTSTAMP:${dt(new Date())}`, `DTSTART:${dt(start)}`, `DTEND:${dt(end)}`,
-    `SUMMARY:${safe(`Lễ cưới ${wedding.groom} & ${wedding.bride}`)}`,
-    `LOCATION:${safe(`${wedding.venue}, ${wedding.address}`)}`,
-    'END:VEVENT', 'END:VCALENDAR'
-  ].join('\r\n');
-  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'lich-cuoi.ics';
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  setTimeout(() => URL.revokeObjectURL(link.href), 1000);
 }
 
 function WeddingCalendar({ now }) {
@@ -402,11 +377,6 @@ function WeddingEvents() {
         />
       </div>
 
-      <div className="event-actions">
-        <button className="btn btn-outline" type="button" onClick={makeCalendarFile}>
-          <CalendarDays size={16} /> Lưu vào lịch
-        </button>
-      </div>
     </div>
   </section>;
 }
@@ -525,8 +495,7 @@ function Guestbook({ guest }) {
       </div>
       {entries.length > 1 && <div className="guestbook-hint">Vuốt ngang để xem thêm lời chúc</div>}
       <div className="guestbook-links">
-        <button type="button" onClick={openWriter}>Viết</button>
-        <button type="button" onClick={() => setDialog('all')}>Xem tất cả{entries.length ? ` (${entries.length})` : ''}</button>
+        <button type="button" onClick={openWriter}>Viết lưu bút</button>
       </div>
     </div>
 
