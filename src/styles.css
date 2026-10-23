@@ -2964,6 +2964,80 @@ h2,
   transform: translateY(-1px);
 }
 
+.guestbook-expand-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 34px;
+  margin-top: 10px;
+  padding: 5px 10px;
+  border: 0;
+  color: #a27181;
+  background: transparent;
+  font: 500 16px/1.2 'Cormorant Garamond', Georgia, serif;
+  cursor: pointer;
+}
+
+.guestbook-expand-button svg {
+  transition: transform .25s ease;
+}
+
+.guestbook-expand-button.is-expanded svg {
+  transform: rotate(180deg);
+}
+
+.guestbook-inline-entries {
+  display: grid;
+  margin-top: 8px;
+  overflow: hidden;
+  text-align: left;
+  background: rgba(255, 249, 248, .82);
+  border: 1px solid rgba(221, 166, 181, .45);
+  border-radius: 18px;
+  box-shadow: 0 8px 20px rgba(125, 77, 93, .07);
+  animation: guestbookEntriesReveal .25s ease-out both;
+}
+
+.guestbook-inline-entry {
+  padding: 17px 19px;
+}
+
+.guestbook-inline-entry + .guestbook-inline-entry {
+  border-top: 1px solid rgba(221, 166, 181, .32);
+}
+
+.guestbook-inline-entry > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.guestbook-inline-entry strong {
+  color: #7c4c60;
+  font: 600 clamp(19px, 3vw, 23px)/1.2 'Cormorant Garamond', Georgia, serif;
+}
+
+.guestbook-inline-entry time {
+  flex: 0 0 auto;
+  color: #a28a92;
+  font-size: 13px;
+}
+
+.guestbook-inline-entry p {
+  margin: 8px 0 0;
+  color: #765d65;
+  font-size: 17px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+@keyframes guestbookEntriesReveal {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .guestbook-dialog {
   position: fixed;
   z-index: 50;

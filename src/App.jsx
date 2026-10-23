@@ -408,6 +408,7 @@ function Guestbook({ guest }) {
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [saving, setSaving] = useState(false);
   const [guestbookError, setGuestbookError] = useState('');
+  const [showAllEntries, setShowAllEntries] = useState(false);
   const guestbookRailRef = useRef(null);
 
   useEffect(() => {
@@ -497,6 +498,23 @@ function Guestbook({ guest }) {
       <div className="guestbook-links">
         <button type="button" onClick={openWriter}>Viết lưu bút</button>
       </div>
+      {entries.length > 0 && <>
+        <button
+          className={`guestbook-expand-button ${showAllEntries ? 'is-expanded' : ''}`}
+          type="button"
+          onClick={() => setShowAllEntries((current) => !current)}
+          aria-expanded={showAllEntries}
+          aria-controls="guestbook-all-entries"
+        >
+          {showAllEntries ? 'Thu gọn lời chúc' : `Xem tất cả lời chúc (${entries.length})`} <ChevronDown size={17} aria-hidden="true" />
+        </button>
+        {showAllEntries && <div className="guestbook-inline-entries" id="guestbook-all-entries">
+          {entries.map((entry) => <article className="guestbook-inline-entry" key={entry.id}>
+            <div><strong>{entry.name}</strong><time>{new Date(entry.createdAt).toLocaleDateString('vi-VN')}</time></div>
+            <p>{entry.message}</p>
+          </article>)}
+        </div>}
+      </>}
     </div>
 
     {dialog && <div className="guestbook-dialog" role="presentation">
