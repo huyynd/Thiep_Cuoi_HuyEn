@@ -265,6 +265,7 @@ function WeddingInfo() {
 
       <div className="family-info-grid">
         {families.map((family, index) => <div className="family-info-item" key={index}>
+          <div className="family-info-side">{index === 0 ? 'NHÀ TRAI' : 'NHÀ GÁI'}</div>
           <div className="family-info-title">{family.title}</div>
           <div className="family-info-names">
             {family.names.map((name) => <strong key={name}>{name}</strong>)}
@@ -335,6 +336,7 @@ function MomentsCarousel() {
     <div className="eyebrow">GALLERY</div>
     <h2>Khoảnh khắc của chúng mình</h2>
     <div className="carousel-shell">
+      <img className="carousel-featured-backdrop" src={photos[activeIndex]} alt="" aria-hidden="true" />
       <button className="carousel-featured" type="button" onClick={showNext} aria-label="Xem ảnh tiếp theo">
         <img className="carousel-featured-image" src={photos[activeIndex]} alt={`Khoảnh khắc của ${wedding.groom} và ${wedding.bride} ${activeIndex + 1}`} />
       </button>
@@ -363,14 +365,14 @@ function WeddingEvents() {
       <div className="corner-motif">✿</div>
       <div className="wedding-invitation-events">
         <InvitationEvent
-          title="TIỆC CƯỚI · (MỜI TIỆC)"
+          title="TIỆC CƯỚI · 27/12"
           dateISO={wedding.dateISO}
           time={wedding.partyHourLabel}
           note="Trân trọng kính mời quý khách đến nâng ly chung vui"
         />
         <div className="invitation-event-divider" aria-hidden="true" />
         <InvitationEvent
-          title="LỄ THÀNH HÔN · ĐÓN DÂU"
+          title="LỄ THÀNH HÔN · 28/12"
           dateISO={wedding.calendarDateISO || wedding.dateISO}
           time={wedding.ceremonyHourLabel}
           note="Lễ rước dâu và thành hôn của hai chúng mình"
@@ -483,20 +485,16 @@ function Guestbook({ guest }) {
     <div className="eyebrow">GUESTBOOK</div>
     <h2>Sổ lưu bút</h2>
     <div className="guestbook-card">
-      <div className="guestbook-rail" ref={guestbookRailRef} aria-label="Các lời chúc">
+      {entries.length > 0 ? <div className="guestbook-rail" ref={guestbookRailRef} aria-label="Các lời chúc">
         {entries.map((entry) => <button type="button" key={entry.id} onClick={() => openEntry(entry)} className={`guestbook-note-card ${latestEntryId === entry.id ? 'is-new' : ''}`} aria-label={`Xem lời chúc của ${entry.name}`}>
           <Heart size={22} fill="currentColor" strokeWidth={1.2} aria-hidden="true" />
           <p>{getGuestbookPreview(entry.message)}</p>
           <div className="guestbook-note-meta"><span className="guestbook-author" title={entry.name}><strong>{entry.name}</strong></span><time>{new Date(entry.createdAt).toLocaleDateString('vi-VN')}</time></div>
         </button>)}
-        <button className="guestbook-write-tile" type="button" onClick={openWriter}>
-          <PenLine size={31} strokeWidth={1.45} />
-          <span>Viết lưu bút</span>
-        </button>
-      </div>
+      </div> : <p className="guestbook-empty-note">Hãy để lại lời chúc đầu tiên dành cho Huy &amp; Yến nhé.</p>}
       {entries.length > 1 && <div className="guestbook-hint">Vuốt ngang để xem thêm lời chúc</div>}
       <div className="guestbook-links">
-        <button type="button" onClick={openWriter}>Viết lưu bút</button>
+        <button type="button" onClick={openWriter}>Gửi lời chúc đến Huy &amp; Yến</button>
       </div>
       {entries.length > 0 && <>
         <button
@@ -566,6 +564,35 @@ function InvitationEvent({ title, dateISO, time, note }) {
     <div className="invitation-event-year">{year}</div>
     <p>{note}</p>
   </article>;
+}
+
+function PaperInvitationCover() {
+  return <section className="paper-invitation-cover" id="thiep-moi" aria-label="Trang bìa thiệp mời">
+    <img
+      className="paper-invitation-cover-floral"
+      src="/photos/bouquet-tulip-panel.png"
+      alt=""
+      aria-hidden="true"
+    />
+    <div className="paper-invitation-cover-content">
+      <p className="paper-invitation-cover-kicker">WEDDING INVITATION</p>
+      <h2>
+        <span>{wedding.groom}</span>
+        <em>và</em>
+        <span>{wedding.bride}</span>
+      </h2>
+      <p className="paper-invitation-cover-message">
+        Trân trọng kính mời bạn đến chung vui<br />
+        trong ngày trọng đại của chúng mình.
+      </p>
+      <div className="paper-invitation-cover-events">
+        <p><strong>CHỦ NHẬT · 27.12.2026</strong><span>{wedding.partyHourLabel} · Tiệc cưới</span></p>
+        <p><strong>THỨ HAI · 28.12.2026</strong><span>{wedding.ceremonyHourLabel} · Lễ thành hôn</span></p>
+      </div>
+      <p className="paper-invitation-cover-place">Vĩnh Tường, Vĩnh Phúc</p>
+      <i className="paper-invitation-cover-signoff">Hẹn gặp bạn!</i>
+    </div>
+  </section>;
 }
 
 export default function App() {
@@ -694,6 +721,7 @@ export default function App() {
       </a>
     </section>
     <div className="topline">THE WEDDING INVITATION <span className="topline-dot">✦</span> A DAY TO REMEMBER</div>
+    {/* <PaperInvitationCover /> */}
     <main>
       <section className="hero" id="thiep-moi" aria-label="Thiệp mời đám cưới">
         <div className="hero-fade" aria-hidden="true" />
