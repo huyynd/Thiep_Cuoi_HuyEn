@@ -3129,14 +3129,28 @@ h2,
 
 .guestbook-inline-entries {
   display: grid;
+  max-height: min(42svh, 340px);
   margin-top: 8px;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #d9bdc7 transparent;
   text-align: left;
   background: rgba(255, 249, 248, .82);
   border: 1px solid rgba(221, 166, 181, .45);
   border-radius: 18px;
   box-shadow: 0 8px 20px rgba(125, 77, 93, .07);
   animation: guestbookEntriesReveal .25s ease-out both;
+}
+
+.guestbook-inline-entries::-webkit-scrollbar {
+  width: 5px;
+}
+
+.guestbook-inline-entries::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: #d9bdc7;
 }
 
 .guestbook-inline-entry {
