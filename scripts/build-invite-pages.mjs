@@ -27,8 +27,10 @@ for (const guest of guests) {
   html = replaceTag(html, 'content="Một lời mời cưới chân thành, dành riêng cho bạn."', `content="${escapeHtml(description)}"`);
   html = replaceTag(html, 'content="Thiệp mời dự lễ thành hôn"', `content="${escapeHtml(heading)}"`);
   html = replaceTag(html, 'content="Trân trọng kính mời bạn đến chung vui cùng chúng mình."', `content="${escapeHtml(description)}"`);
-  const imageTag = wedding.shareImageUrl ? `\n    <meta property="og:image" content="${escapeHtml(wedding.shareImageUrl)}" />` : '';
-  html = replaceTag(html, '</head>', `    <meta property="og:url" content="${escapeHtml(url)}" />${imageTag}\n  </head>`);
+  const imageTags = wedding.shareImageUrl
+    ? `\n    <meta property="og:image" content="${escapeHtml(wedding.shareImageUrl)}" />\n    <meta name="twitter:image" content="${escapeHtml(wedding.shareImageUrl)}" />`
+    : '';
+  html = replaceTag(html, '</head>', `    <meta property="og:url" content="${escapeHtml(url)}" />${imageTags}\n  </head>`);
   // Generate an index page in each guest folder so the public URL
   // `/moi/<guest-slug>` is resolved directly by Vercel (and other static
   // hosts) without relying on their optional clean-URL behaviour.

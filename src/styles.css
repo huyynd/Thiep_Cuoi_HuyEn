@@ -4697,3 +4697,53 @@ h2,
     radial-gradient(ellipse 70% 38% at 50% 50%, rgba(61, 38, 46, .44), transparent 72%),
     linear-gradient(180deg, transparent 58%, rgba(65, 40, 48, .18));
 }
+
+/* Keep the key wedding information above decorative details. */
+.photo-cover-party {
+  position: absolute;
+  z-index: 3;
+  bottom: clamp(82px, 10vw, 117px);
+  left: 50%;
+  margin: 0;
+  padding: 7px 12px;
+  border: 1px solid rgba(255, 255, 255, .46);
+  border-radius: 999px;
+  color: #fff;
+  background: rgba(84, 59, 67, .22);
+  font: 600 clamp(10px, 1.5vw, 13px)/1 'DM Sans', Arial, sans-serif;
+  letter-spacing: .08em;
+  text-align: center;
+  text-shadow: 0 1px 5px rgba(31, 17, 22, .5);
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.photo-cover-names {
+  text-shadow: 0 2px 13px rgba(0, 0, 0, .52), 0 0 2px rgba(0, 0, 0, .32);
+}
+
+.btn-primary {
+  background: #a76c82;
+}
+
+.btn-outline {
+  color: #76565f;
+  border-color: #e8cfd8;
+}
+
+.carousel-thumbnail:hover,
+.carousel-thumbnail.is-active {
+  border-color: #a76c82;
+}
+
+@media (max-width: 480px) {
+  .photo-cover-party {
+    bottom: 81px;
+    font-size: 9px;
+    letter-spacing: .06em;
+  }
+
+  .photo-cover-scroll {
+    bottom: 124px;
+  }
+}

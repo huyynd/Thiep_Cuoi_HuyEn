@@ -121,5 +121,5 @@ export const wedding = {
   musicUrl: '/music/ngaydautien.mp3',
   // Ảnh xem trước khi chia sẻ link trên Zalo/Facebook, phải là URL HTTPS đầy đủ.
   // Ví dụ: 'https://ten-mien-cua-ban.vercel.app/photos/anh-bia.jpg'
-  shareImageUrl: ''
+  shareImageUrl: 'https://thiepcuoihuyyen.vercel.app/photos/anh1.png'
 };

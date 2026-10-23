@@ -188,8 +188,8 @@ function LoveStory() {
         });
         return next;
       });
-    // Reveal the next milestone just before it reaches the visible phone frame,
-    // so the timeline never appears to have an empty gap while scrolling.
+      // Reveal the next milestone just before it reaches the visible phone frame,
+      // so the timeline never appears to have an empty gap while scrolling.
     }, { threshold: 0, rootMargin: '120px 0px' });
 
     const items = root.querySelectorAll('[data-story-index]');
@@ -716,6 +716,7 @@ export default function App() {
         <span>{wedding.groom}</span>
         <span>{wedding.bride}</span>
       </div>
+      {/* <p className="photo-cover-party">TIỆC CƯỚI · 27.12.2026 · {wedding.partyHourLabel}</p> */}
       <a className="photo-cover-scroll" href="#thiep-moi" aria-label="Xem thiệp mời">
         <ChevronDown size={22} />
       </a>
