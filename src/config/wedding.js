@@ -12,7 +12,7 @@ export const wedding = {
   partyHourLabel: '16:30',
   // Ngày lễ thành hôn & đón dâu:
   ceremonyDateLabel: 'Thứ Hai · 28 tháng 12, 2026',
-  ceremonyHourLabel: 'Lễ thành hôn & đón dâu',
+  ceremonyHourLabel: '09:30',
   // Ngày cưới hiển thị trên lịch lớn.
   calendarDateISO: '2026-12-28T00:00:00+07:00',
   // Nhãn hiển thị chung:
@@ -62,15 +62,15 @@ export const wedding = {
   photos: [],
   // Ảnh cho slideshow "Khoảnh khắc của chúng mình".
   momentPhotos: [
+    '/photos/khoanhkhac/anh9.jpg',
     '/photos/khoanhkhac/anh1.jpg',
-    '/photos/khoanhkhac/anh2.jpg',
-    '/photos/khoanhkhac/anh3.jpg',
     '/photos/khoanhkhac/anh4.jpg',
+    '/photos/khoanhkhac/anh8.jpg',
+    '/photos/khoanhkhac/anh3.jpg',
+    '/photos/khoanhkhac/anh2.jpg',
     '/photos/khoanhkhac/anh5.jpg',
     '/photos/khoanhkhac/anh6.jpg',
     '/photos/khoanhkhac/anh7.jpg',
-    '/photos/khoanhkhac/anh8.jpg',
-    '/photos/khoanhkhac/anh9.jpg',
   ],
   // Hành trình tình yêu hiển thị trước phần lịch cưới.
   loveStory: [
@@ -87,13 +87,7 @@ export const wedding = {
       photo: '/photos/khoanhkhac/anh2.jpg',
     },
     {
-      year: '2026',
-      title: 'Lời cầu hôn',
-      text: 'Năm 2026, Huy chính thức cầu hôn Yến. Một lời hứa trao tay, mở ra chương mới đầy hứa hẹn về một mái nhà chung.',
-      photo: '/photos/khoanhkhac/anh3.jpg',
-    },
-    {
-      year: 'Yêu thương',
+      year: 'Tình yêu',
       title: 'Từ bạn bè thành người thương',
       text: 'Tình bạn năm nào hóa tình yêu. Học cách lắng nghe và thấu hiểu, chúng mình thêm trân trọng từng phút giây được đồng hành.',
       photo: '/photos/khoanhkhac/anh4.jpg',
@@ -102,18 +96,24 @@ export const wedding = {
       year: 'Lời hứa',
       title: 'Cùng hướng về một mái nhà',
       text: 'Trưởng thành cùng nhau, chúng mình chọn nắm chặt tay và biến tình yêu thành lời hứa gắn bó suốt chặng đường dài phía trước.',
-      photo: '/photos/khoanhkhac/anh5.jpg',
+      photo: '/photos/khoanhkhac/anh9.jpg',
+    },
+    {
+      year: 'Năm 2026',
+      title: 'Lời cầu hôn',
+      text: 'Năm 2026, Huy chính thức cầu hôn Yến. Một lời hứa trao tay, mở ra chương mới đầy hứa hẹn về một mái nhà chung.',
+      photo: '/photos/khoanhkhac/anh8.jpg',
     },
     {
       year: 'Hôm nay',
       title: 'Về chung một nhà',
       text: 'Hôm nay, chương mới chính thức bắt đầu — không chỉ là câu chuyện đôi lứa, mà là hành trình cùng đắp xây một gia đình nhỏ ngập tràn yêu thương.',
-      photo: '/photos/khoanhkhac/anh6.jpg',
+      photo: '/photos/khoanhkhac/anh1.jpg',
     },
   ],
   todayTogether: {
-    bridePhoto: '/photos/khoanhkhac/anh7.jpg',
-    groomPhoto: '/photos/khoanhkhac/anh8.jpg',
+    bridePhoto: '/photos/khoanhkhac/anh3.jpg',
+    groomPhoto: '/photos/khoanhkhac/anh7.jpg',
     brideSignature: '/photos/chuki/chukyyen.png',
     groomSignature: '/photos/chuki/chukyhuy-transparent.png',
   },

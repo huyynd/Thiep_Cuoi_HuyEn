@@ -148,7 +148,7 @@ function WeddingCalendar({ now }) {
 
   return (
     <div className="ceremony-calendar-card" aria-label={`Lịch ngày cưới: ${dateLabel}`}>
-      <img className="calendar-floral" src="/photos/floral-lily-sprig.png" alt="" aria-hidden="true" />
+      <img className="calendar-floral" src="/photos/floral-tulip-lily-corner.png" alt="" aria-hidden="true" />
       <div className="ceremony-calendar-header">
         <div>{dateLabel}</div>
         <p>{weekdayLabel} · Ngày cưới của chúng mình</p>
@@ -213,7 +213,9 @@ function LoveStory() {
         });
         return next;
       });
-    }, { threshold: 0, rootMargin: '0px' });
+    // Reveal the next milestone just before it reaches the visible phone frame,
+    // so the timeline never appears to have an empty gap while scrolling.
+    }, { threshold: 0, rootMargin: '120px 0px' });
 
     const items = root.querySelectorAll('[data-story-index]');
     items.forEach((item) => observer.observe(item));
@@ -252,7 +254,7 @@ function TodayTogether() {
     <h2>Chúng mình chính thức về chung một nhà</h2>
     <div className="today-together-grid">
       <div className="today-together-photo bride-photo">
-        <img src={details.bridePhoto || '/photos/khoanhkhac/anh7.jpg'} alt={`Cô dâu ${wedding.bride}`} loading="lazy" />
+        <img src={details.bridePhoto || '/photos/khoanhkhac/anh3.jpg'} alt={`Cô dâu ${wedding.bride}`} loading="lazy" />
       </div>
       <div className="today-together-person bride-person">
         <span>Cô dâu</span>
@@ -269,7 +271,7 @@ function TodayTogether() {
         </div>
       </div>
       <div className="today-together-photo groom-photo">
-        <img src={details.groomPhoto || '/photos/khoanhkhac/anh8.jpg'} alt={`Chú rể ${wedding.groom}`} loading="lazy" />
+        <img src={details.groomPhoto || '/photos/khoanhkhac/anh7.jpg'} alt={`Chú rể ${wedding.groom}`} loading="lazy" />
       </div>
     </div>
   </section>;
@@ -386,14 +388,14 @@ function WeddingEvents() {
       <div className="corner-motif">✿</div>
       <div className="wedding-invitation-events">
         <InvitationEvent
-          title="TIỆC CƯỚI (MỜI TIỆC)"
+          title="TIỆC CƯỚI · (MỜI TIỆC)"
           dateISO={wedding.dateISO}
           time={wedding.partyHourLabel}
           note="Trân trọng kính mời quý khách đến nâng ly chung vui"
         />
         <div className="invitation-event-divider" aria-hidden="true" />
         <InvitationEvent
-          title="LỄ THÀNH HÔN & ĐÓN DÂU"
+          title="LỄ THÀNH HÔN · ĐÓN DÂU"
           dateISO={wedding.calendarDateISO || wedding.dateISO}
           time={wedding.ceremonyHourLabel}
           note="Lễ rước dâu và thành hôn của hai chúng mình"
@@ -402,7 +404,7 @@ function WeddingEvents() {
 
       <div className="event-actions">
         <button className="btn btn-outline" type="button" onClick={makeCalendarFile}>
-          <CalendarDays size={16} /> Lưu lịch tiệc vào điện thoại
+          <CalendarDays size={16} /> Lưu vào lịch
         </button>
       </div>
     </div>
@@ -767,8 +769,8 @@ export default function App() {
         </div>
       </section>
     </main>
-    {wedding.musicUrl && <button className="music-button" type="button" aria-label={playing ? 'Tạm dừng nhạc' : 'Phát nhạc nền'} onClick={toggleMusic}>
-      {playing ? <Pause size={20} fill="currentColor" /> : <Music2 size={20} />}
+    {wedding.musicUrl && <button className={`music-button ${playing ? 'is-playing' : ''}`} type="button" aria-label={playing ? 'Tạm dừng nhạc' : 'Phát nhạc nền'} onClick={toggleMusic}>
+      {playing ? <><span className="music-ripples" aria-hidden="true"><i /><i /><i /></span><Pause size={19} fill="currentColor" /></> : <Music2 size={20} />}
     </button>}
     <footer>Made with <Heart size={12} fill="currentColor" /> · {wedding.groom} & {wedding.bride}</footer>
   </>;

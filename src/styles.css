@@ -68,7 +68,9 @@ a:focus-visible {
 
 .photo-cover-shade {
   z-index: 1;
-  background: linear-gradient(180deg, rgba(21, 15, 15, .25), transparent 28%, transparent 63%, rgba(16, 11, 12, .54));
+  background:
+    linear-gradient(135deg, rgba(255, 249, 248, .15), rgba(243, 203, 214, .10) 48%, rgba(255, 249, 248, .08)),
+    linear-gradient(180deg, rgba(21, 15, 15, .21), transparent 28%, transparent 63%, rgba(16, 11, 12, .47));
 }
 
 .photo-cover-snow {
@@ -185,7 +187,7 @@ a:focus-visible {
   align-items: center;
   margin-top: 5vh;
   color: #fff;
-  font: 600 clamp(220px, 50vw, 420px)/.63 'Playfair Display', Georgia, serif;
+  font: 600 clamp(182px, 42vw, 350px)/.63 'Playfair Display', Georgia, serif;
   font-style: italic;
   letter-spacing: -.09em;
   text-shadow: 0 3px 18px rgba(0, 0, 0, .23);
@@ -328,7 +330,7 @@ a:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 44px 20px 40px;
+  padding: 44px clamp(28px, 5vw, 48px) 40px;
   overflow-x: clip;
   overflow-y: visible;
 }
@@ -407,7 +409,7 @@ p {
   justify-content: center;
   gap: 20px;
   color: #855063;
-  font: 500 clamp(44px, 7.5vw, 84px)/1.1 'Playfair Display', Georgia, serif;
+  font: 500 clamp(41px, 7vw, 78px)/1.1 'Playfair Display', Georgia, serif;
   letter-spacing: -.05em;
 }
 
@@ -431,8 +433,8 @@ p {
 
 .nameplate {
   margin: 22px auto 0;
-  padding: 15px 26px 17px;
-  max-width: 480px;
+  padding: 13px 26px 15px;
+  max-width: 460px;
   background: #ffffff9c;
   border: 1px solid #ffffff;
   box-shadow: 0 12px 50px #ad77851a;
@@ -453,7 +455,7 @@ p {
 
 .nameplate>strong {
   display: block;
-  font: 500 clamp(20px, 2.7vw, 28px)/1.35 'Playfair Display', Georgia, serif;
+  font: 500 clamp(19px, 2.5vw, 26px)/1.3 'Playfair Display', Georgia, serif;
   color: #884e65;
   margin: 6px 0;
   overflow-wrap: anywhere;
@@ -526,8 +528,9 @@ p {
   position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  min-height: 171px;
-  padding-bottom: 34px;
+  align-items: start;
+  min-height: 0;
+  padding-bottom: 38px;
 }
 
 .love-story-chapter:last-child { padding-bottom: 0; }
@@ -583,6 +586,7 @@ p {
 
 .love-story-photo {
   grid-column: 2;
+  align-self: center;
   justify-self: center;
   width: min(100%, 155px);
   height: 142px;
@@ -681,6 +685,8 @@ p {
   max-width: 100%;
   max-height: clamp(48px, 7vw, 68px);
   object-fit: contain;
+  /* Convert the supplied blue ink to the invitation's rose-brown ink. */
+  filter: brightness(0) saturate(100%) invert(49%) sepia(17%) saturate(1049%) hue-rotate(285deg) brightness(94%) contrast(88%);
 }
 
 .groom-person .today-together-signature {
@@ -733,7 +739,7 @@ p {
   width: 100%;
   max-width: 510px;
   margin: 26px auto 0;
-  padding: clamp(29px, 5vw, 45px) clamp(23px, 5vw, 49px) 31px;
+  padding: clamp(25px, 4.3vw, 39px) clamp(23px, 5vw, 49px) 27px;
   color: #4d4849;
   background: rgba(239, 233, 233, .95);
   border: 1px solid rgba(255, 255, 255, .75);
@@ -758,7 +764,7 @@ p {
 }
 
 .ceremony-calendar-header {
-  padding-bottom: 27px;
+  padding-bottom: 23px;
   text-align: center;
   border-bottom: 1px solid rgba(104, 91, 93, .22);
 }
@@ -771,13 +777,13 @@ p {
 }
 
 .ceremony-calendar-header p {
-  margin: 16px 0 0;
-  color: #676162;
+  margin: 13px 0 0;
+  color: #5c5658;
   font: 400 clamp(15px, 2.3vw, 20px)/1.4 'Playfair Display', Georgia, serif;
 }
 
 .ceremony-calendar-grid {
-  padding: 32px 0 29px;
+  padding: 27px 0 24px;
   border-bottom: 1px solid rgba(104, 91, 93, .22);
 }
 
@@ -790,7 +796,7 @@ p {
 }
 
 .ceremony-calendar-weekdays {
-  margin-bottom: 24px;
+  margin-bottom: 19px;
   color: #292627;
   font: 400 clamp(15px, 2.35vw, 20px)/1 'DM Sans', Arial, sans-serif;
   font-variant-numeric: tabular-nums lining-nums;
@@ -802,11 +808,11 @@ p {
 }
 
 .ceremony-calendar-days {
-  row-gap: 13px;
+  row-gap: 10px;
 }
 
 .ceremony-calendar-days>div {
-  min-height: clamp(27px, 4.3vw, 39px);
+  min-height: clamp(25px, 3.9vw, 35px);
   display: grid;
   place-items: center;
   color: #5c5657;
@@ -895,13 +901,13 @@ p {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   max-width: 295px;
-  margin: 28px auto 0;
+  margin: 24px auto 0;
 }
 
 .ceremony-calendar-countdown div {
   position: relative;
   display: grid;
-  gap: 8px;
+  gap: 6px;
   text-align: center;
 }
 
@@ -915,20 +921,20 @@ p {
 }
 
 .ceremony-calendar-countdown span {
-  color: #aaa4a5;
+  color: #8f8588;
   font-size: 14px;
 }
 
 .ceremony-calendar-countdown strong {
-  color: #4e4849;
+  color: #413a3c;
   font: 400 clamp(25px, 4vw, 33px)/1 'Playfair Display', Georgia, serif;
   font-variant-numeric: tabular-nums lining-nums;
   letter-spacing: .06em;
 }
 
 .ceremony-calendar-note {
-  margin: 29px 0 0;
-  color: #625b5c;
+  margin: 24px 0 0;
+  color: #554c4f;
   text-align: center;
   font: 400 clamp(14px, 2vw, 17px)/1.55 'Playfair Display', Georgia, serif;
 }
@@ -1356,7 +1362,7 @@ p {
 
 .family-info-item p {
   margin: 0;
-  color: #999596;
+  color: #826f75;
   font-size: clamp(15px, 2vw, 20px);
   line-height: 1.65;
 }
@@ -1388,7 +1394,7 @@ p {
 
 .couple-announcement strong {
   color: #8c272d;
-  font: 400 clamp(52px, 9vw, 99px)/.95 'Great Vibes', cursive;
+  font: 400 clamp(47px, 8.1vw, 89px)/.95 'Great Vibes', cursive;
 }
 
 .couple-announcement span {
@@ -1507,7 +1513,7 @@ h2 {
 
 .event-card-invitation {
   max-width: 720px;
-  padding: clamp(48px, 7vw, 72px) clamp(24px, 7vw, 72px) 44px;
+  padding: clamp(42px, 6vw, 60px) clamp(24px, 7vw, 72px) 36px;
 }
 
 .wedding-invitation-events {
@@ -1528,7 +1534,7 @@ h2 {
 }
 
 .invitation-event-time {
-  margin: 26px 0 24px;
+  margin: 20px 0 19px;
   color: #312d2e;
   font-size: clamp(25px, 4vw, 34px);
   font-variant-numeric: tabular-nums lining-nums;
@@ -1561,13 +1567,15 @@ h2 {
 
 .invitation-event-date .invitation-month-number {
   display: inline-block;
-  margin-left: .08em;
+  margin-left: .22em;
   color: inherit;
-  font: inherit;
-  font-size: 1.16em;
+  font-family: inherit;
+  font-size: 1em;
+  font-weight: inherit;
   font-style: normal;
   letter-spacing: inherit;
-  vertical-align: -.045em;
+  line-height: 1;
+  vertical-align: baseline;
 }
 
 .invitation-event-date strong {
@@ -1583,7 +1591,7 @@ h2 {
 }
 
 .invitation-event-year {
-  margin-top: 23px;
+  margin-top: 19px;
   color: #a09b9c;
   font-size: clamp(23px, 3.3vw, 29px);
   font-variant-numeric: tabular-nums lining-nums;
@@ -1591,7 +1599,7 @@ h2 {
 }
 
 .invitation-event p {
-  margin: 36px 0 0;
+  margin: 25px 0 0;
   color: #9a9294;
   font-size: clamp(17px, 2.6vw, 22px);
   font-style: italic;
@@ -1600,7 +1608,7 @@ h2 {
 
 .invitation-event-divider {
   height: 1px;
-  margin: 64px 0;
+  margin: 48px 0;
   background: #ced7ce;
 }
 
@@ -1968,7 +1976,7 @@ h2 {
 }
 
 .moments-carousel {
-  background: #f1ebeb;
+  background: #fff9f8;
 }
 
 .moments-carousel h2 {
@@ -1984,7 +1992,9 @@ h2 {
   margin: 36px auto 0;
   overflow: hidden;
   border-radius: 21px;
-  background: #aaa7a4;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(255, 255, 255, .88), transparent 48%),
+    linear-gradient(135deg, #fbe9ed, #fff9f8 52%, #f4dfe5);
   box-shadow: 0 10px 28px rgba(72, 56, 58, .12);
 }
 
@@ -2003,7 +2013,7 @@ h2 {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  background: #aaa7a4;
+  background: transparent;
 }
 
 .carousel-thumbnails {
@@ -2232,15 +2242,56 @@ h2 {
   z-index: 20;
   right: 20px;
   bottom: 22px;
-  background: #995f75;
+  overflow: hidden;
+  background: rgba(221, 166, 181, .78);
   color: white;
-  border: 0;
+  border: 1px solid rgba(255, 249, 248, .7);
   border-radius: 50%;
   display: grid;
   place-items: center;
-  width: 49px;
-  height: 49px;
-  box-shadow: 0 5px 18px #633b4c44;
+  width: 50px;
+  height: 50px;
+  box-shadow: 0 5px 18px rgba(118, 86, 95, .18);
+  backdrop-filter: blur(8px);
+  transition: background .25s ease, transform .25s ease, box-shadow .25s ease;
+}
+
+.music-button:hover {
+  background: rgba(211, 143, 164, .88);
+  box-shadow: 0 7px 20px rgba(118, 86, 95, .24);
+  transform: translateY(-1px);
+}
+
+.music-button > svg {
+  position: relative;
+  z-index: 1;
+}
+
+.music-ripples {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.music-ripples i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgba(255, 255, 255, .72);
+  border-radius: 50%;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(.4);
+  animation: musicRipple 1.75s ease-out infinite;
+}
+
+.music-ripples i:nth-child(2) { animation-delay: .58s; }
+.music-ripples i:nth-child(3) { animation-delay: 1.16s; }
+
+@keyframes musicRipple {
+  0% { opacity: .55; transform: translate(-50%, -50%) scale(.42); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(2.45); }
 }
 
 footer {
@@ -2319,12 +2370,12 @@ h2,
   .hero {
     min-height: 745px;
     min-height: min(830px, calc(100svh - 38px));
-    padding: 68px 16px 48px;
+    padding: 68px 24px 48px;
   }
 
   .hero h1 {
     gap: 12px;
-    font-size: clamp(42px, 14vw, 58px);
+    font-size: clamp(39px, 13vw, 54px);
   }
 
   .hero-subtitle {
@@ -2343,7 +2394,7 @@ h2,
 
   .nameplate {
     margin-top: 33px;
-    padding: 24px 18px;
+    padding: 21px 18px;
     border-radius: 70px 70px 15px 15px / 32px 32px 15px 15px;
   }
 
@@ -2409,7 +2460,7 @@ h2,
 
   .photo-cover-date {
     margin-top: 3vh;
-    font-size: clamp(220px, 58vw, 300px);
+    font-size: clamp(185px, 49vw, 250px);
   }
 
   .photo-cover-names {
@@ -2427,7 +2478,7 @@ h2,
   }
 
   .wedding-info {
-    padding: 70px 19px;
+    padding: 70px 13px;
   }
 
   .calendar-tulip-bouquet {
@@ -2445,7 +2496,7 @@ h2,
   }
 
   .family-info-item {
-    padding: 0 10px;
+    padding: 0 6px;
   }
 
   .family-info-item+.family-info-item {
@@ -2468,8 +2519,9 @@ h2,
   }
 
   .family-info-item p {
-    font-size: 13px;
-    line-height: 1.55;
+    color: #806c73;
+    font-size: 14px;
+    line-height: 1.48;
   }
 
   .wedding-announcement {
@@ -2492,7 +2544,7 @@ h2,
   .hero {
     min-height: 690px;
     min-height: min(790px, calc(100svh - 34px));
-    padding: 54px 15px 38px;
+    padding: 54px 25px 38px;
   }
 
   .hero-fade {
@@ -2516,7 +2568,7 @@ h2,
   .hero h1 {
     margin-top: 11px;
     gap: 8px;
-    font-size: clamp(39px, 13.5vw, 50px);
+    font-size: clamp(36px, 12.5vw, 47px);
   }
 
   .hero h1 em {
@@ -2531,7 +2583,7 @@ h2,
 
   .nameplate {
     margin-top: 27px;
-    padding: 20px 15px 19px;
+    padding: 18px 15px 17px;
   }
 
   .nameplate>span {
@@ -2539,8 +2591,8 @@ h2,
   }
 
   .nameplate>strong {
-    font-size: clamp(21px, 7vw, 27px);
-    line-height: 1.25;
+    font-size: clamp(20px, 6.4vw, 25px);
+    line-height: 1.2;
   }
 
   .nameplate>p {
@@ -2753,6 +2805,7 @@ h2,
 .guestbook {
   background: #fffdfc;
   text-align: center;
+  padding-bottom: 56px;
 }
 
 .guestbook > h2 {
@@ -2888,18 +2941,27 @@ h2,
 
 .guestbook-links {
   display: flex;
-  justify-content: flex-end;
-  gap: 30px;
-  margin-top: 28px;
+  justify-content: center;
+  gap: 11px;
+  margin-top: 12px;
 }
 
 .guestbook-links button {
-  padding: 0;
-  border: 0;
-  color: #563d46;
-  background: transparent;
-  font: 600 clamp(19px, 2.7vw, 23px)/1.2 'Cormorant Garamond', Georgia, serif;
+  min-height: 39px;
+  padding: 7px 16px;
+  border: 1px solid #d8a6b6;
+  border-radius: 999px;
+  color: #76565f;
+  background: rgba(255, 249, 248, .84);
+  font: 600 clamp(17px, 2.5vw, 20px)/1.2 'Cormorant Garamond', Georgia, serif;
   cursor: pointer;
+  transition: background .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.guestbook-links button:hover {
+  border-color: #bd7c93;
+  background: #fff;
+  transform: translateY(-1px);
 }
 
 .guestbook-dialog {
@@ -3322,6 +3384,7 @@ h2,
   top: -35px;
   right: -31px;
   width: clamp(148px, 21vw, 248px);
+  --floral-opacity: .78;
 }
 
 .hero-floral-bottom {
@@ -3369,7 +3432,7 @@ h2,
   top: 30px;
   right: -66px;
   width: clamp(178px, 27vw, 270px);
-  --floral-opacity: .25;
+  --floral-opacity: .34;
   transform: rotate(12deg);
 }
 
@@ -3422,12 +3485,12 @@ h2,
 
 .ceremony-calendar-card > .calendar-floral {
   position: absolute;
-  right: -42px;
-  bottom: -65px;
+  right: -66px;
+  bottom: -93px;
   z-index: 0;
-  width: clamp(142px, 22vw, 212px);
-  --floral-opacity: .17;
-  transform: rotate(-4deg);
+  width: clamp(165px, 25vw, 235px);
+  --floral-opacity: .28;
+  transform: scaleX(-1) rotate(-7deg);
 }
 
 .love-story,
@@ -3508,7 +3571,7 @@ h2,
     top: -20px;
     right: -28px;
     width: 132px;
-    --floral-opacity: .66;
+    --floral-opacity: .78;
   }
 
   .hero-floral-bottom {
@@ -3544,9 +3607,9 @@ h2,
   }
 
   .ceremony-calendar-card > .calendar-floral {
-    right: -35px;
-    bottom: -51px;
-    width: 125px;
+    right: -54px;
+    bottom: -74px;
+    width: 142px;
   }
 
   .love-story-floral {
@@ -3594,5 +3657,93 @@ h2,
   .closing-floral {
     animation: none;
     opacity: var(--floral-opacity, .7);
+  }
+
+  .music-ripples i { animation: none; opacity: 0; }
+}
+
+/* Keep the invitation details compact and the calendar action legible on phones. */
+.event-card-invitation .event-actions {
+  display: flex;
+}
+
+.event-card-invitation .event-actions .btn {
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .today-together h2 {
+    font-size: clamp(18px, 4.5vw, 20px);
+    letter-spacing: -.055em;
+    white-space: nowrap;
+  }
+
+  .love-story {
+    padding: 34px 9px 38px;
+  }
+
+  .love-story-kicker {
+    font-size: 28px;
+  }
+
+  .love-story-ornament {
+    margin: 12px 0 29px;
+  }
+
+  .love-story-chapter {
+    min-height: 0;
+    padding-bottom: 35px;
+  }
+
+  .love-story-copy {
+    padding-right: 11px;
+  }
+
+  .love-story-chapter.is-right .love-story-copy {
+    padding-left: 11px;
+  }
+
+  .love-story-copy time {
+    font-size: 25px;
+  }
+
+  .love-story-copy h3 {
+    margin: 8px 0;
+    font-size: 21px;
+  }
+
+  .love-story-copy p {
+    font-size: 15px;
+    line-height: 1.48;
+  }
+
+  .love-story-photo {
+    width: 110px;
+    height: 106px;
+    margin-left: 11px;
+  }
+
+  .love-story-chapter.is-right .love-story-photo {
+    margin-right: 11px;
+  }
+
+  .event-card.event-card-invitation {
+    padding: 29px 17px 26px;
+  }
+
+  .invitation-event-time {
+    margin: 17px 0 16px;
+  }
+
+  .invitation-event-year {
+    margin-top: 17px;
+  }
+
+  .invitation-event p {
+    margin-top: 21px;
+  }
+
+  .invitation-event-divider {
+    margin: 38px 0;
   }
 }
