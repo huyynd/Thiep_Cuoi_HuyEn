@@ -671,6 +671,7 @@ export default function App() {
     let resumeTimerId = null;
     let lastAnimationTime = 0;
     let lastAutomaticScrollAt = 0;
+    let pendingScrollPixels = 0;
 
     const isTyping = () => {
       const activeElement = document.activeElement;
@@ -692,6 +693,7 @@ export default function App() {
       if (animationFrameId) window.cancelAnimationFrame(animationFrameId);
       animationFrameId = null;
       lastAnimationTime = 0;
+      pendingScrollPixels = 0;
     };
 
     const autoScroll = (timestamp) => {
@@ -702,9 +704,14 @@ export default function App() {
       if (!lastAnimationTime) lastAnimationTime = timestamp;
       const elapsed = Math.min(timestamp - lastAnimationTime, 80);
       lastAnimationTime = timestamp;
-      lastAutomaticScrollAt = Date.now();
       // 24 px/s keeps the invitation comfortable to read on a phone.
-      window.scrollBy({ top: (elapsed / 1000) * 24, left: 0, behavior: 'auto' });
+      pendingScrollPixels += (elapsed / 1000) * 24;
+      const scrollStep = Math.floor(pendingScrollPixels);
+      if (scrollStep > 0) {
+        pendingScrollPixels -= scrollStep;
+        lastAutomaticScrollAt = Date.now();
+        window.scrollBy({ top: scrollStep, left: 0, behavior: 'auto' });
+      }
       animationFrameId = window.requestAnimationFrame(autoScroll);
     };
 
