@@ -664,6 +664,91 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+    if (reducedMotion?.matches) return undefined;
+
+    let animationFrameId = null;
+    let resumeTimerId = null;
+    let lastAnimationTime = 0;
+    let lastAutomaticScrollAt = 0;
+
+    const isTyping = () => {
+      const activeElement = document.activeElement;
+      return activeElement instanceof HTMLInputElement
+        || activeElement instanceof HTMLTextAreaElement
+        || activeElement instanceof HTMLSelectElement
+        || activeElement?.getAttribute?.('contenteditable') === 'true';
+    };
+
+    const canScrollAutomatically = () => {
+      const maxScrollTop = document.documentElement.scrollHeight - window.innerHeight;
+      return !document.hidden
+        && !isTyping()
+        && !document.querySelector('.guestbook-dialog')
+        && window.scrollY < maxScrollTop - 2;
+    };
+
+    const stopAutoScroll = () => {
+      if (animationFrameId) window.cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+      lastAnimationTime = 0;
+    };
+
+    const autoScroll = (timestamp) => {
+      if (!canScrollAutomatically()) {
+        stopAutoScroll();
+        return;
+      }
+      if (!lastAnimationTime) lastAnimationTime = timestamp;
+      const elapsed = Math.min(timestamp - lastAnimationTime, 80);
+      lastAnimationTime = timestamp;
+      lastAutomaticScrollAt = Date.now();
+      // 24 px/s keeps the invitation comfortable to read on a phone.
+      window.scrollBy({ top: (elapsed / 1000) * 24, left: 0, behavior: 'auto' });
+      animationFrameId = window.requestAnimationFrame(autoScroll);
+    };
+
+    const startAutoScroll = () => {
+      window.clearTimeout(resumeTimerId);
+      if (!animationFrameId && canScrollAutomatically()) {
+        animationFrameId = window.requestAnimationFrame(autoScroll);
+      }
+    };
+
+    const pauseForReading = () => {
+      stopAutoScroll();
+      window.clearTimeout(resumeTimerId);
+      // After a manual interaction, give the guest ten seconds before continuing.
+      resumeTimerId = window.setTimeout(startAutoScroll, 10_000);
+    };
+
+    const handleScroll = () => {
+      // Ignore the scroll events produced by our own animation.
+      if (Date.now() - lastAutomaticScrollAt < 180) return;
+      pauseForReading();
+    };
+    const handleVisibilityChange = () => {
+      if (document.hidden) stopAutoScroll();
+      else pauseForReading();
+    };
+
+    const interactionEvents = ['wheel', 'touchstart', 'pointerdown', 'keydown'];
+    interactionEvents.forEach((eventName) => window.addEventListener(eventName, pauseForReading, { passive: true }));
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    // Begin gently after the opening cover has had a moment to settle.
+    resumeTimerId = window.setTimeout(startAutoScroll, 1800);
+
+    return () => {
+      stopAutoScroll();
+      window.clearTimeout(resumeTimerId);
+      interactionEvents.forEach((eventName) => window.removeEventListener(eventName, pauseForReading));
+      window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
