@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Check, Copy, Eye, EyeOff, FileUp, Link2, LoaderCircle, LogIn, LogOut, MessageCircleHeart, Plus, RefreshCw, Search, Send, Trash2, Users } from 'lucide-react';
 import { wedding } from './config/wedding.js';
-import { createInvitation, createInvitations, listInvitations, markInvitationSent, recordInvitationCopy } from './lib/invitations.js';
+import { createInvitation, createInvitations, deleteInvitation, deleteInvitations, listInvitations, markInvitationSent, recordInvitationCopy } from './lib/invitations.js';
 import { deleteGuestbookEntry, listGuestbookEntriesForAdmin, setGuestbookEntryHidden } from './lib/guestbookAdmin.js';
 import { getSupabase, isSupabaseConfigured } from './lib/supabase.js';
 
@@ -41,6 +41,8 @@ export default function Admin() {
   const [notice, setNotice] = useState('');
   const [copiedId, setCopiedId] = useState(null);
   const [importing, setImporting] = useState(false);
+  const [deletingInvitationId, setDeletingInvitationId] = useState(null);
+  const [deletingAllInvitations, setDeletingAllInvitations] = useState(false);
   const [search, setSearch] = useState('');
   const fileInputRef = useRef(null);
 
@@ -175,6 +177,41 @@ export default function Admin() {
     }
   }
 
+  async function removeInvitation(invitation) {
+    const confirmed = window.confirm(`Xóa link mời của “${invitation.name}”? Link này sẽ không mở được nữa.`);
+    if (!confirmed) return;
+    setDeletingInvitationId(invitation.id);
+    setError('');
+    try {
+      await deleteInvitation(invitation.id);
+      setInvitations((current) => current.filter((item) => item.id !== invitation.id));
+      setNotice(`Đã xóa link của ${invitation.name}.`);
+    } catch (deleteError) {
+      setError('Không thể xóa link này. Vui lòng thử lại.');
+      console.error(deleteError);
+    } finally {
+      setDeletingInvitationId(null);
+    }
+  }
+
+  async function removeAllInvitations() {
+    if (!invitations.length) return;
+    const confirmed = window.confirm(`Xóa toàn bộ ${invitations.length} link mời? Các link sẽ không mở được nữa và thao tác này không thể hoàn tác.`);
+    if (!confirmed) return;
+    setDeletingAllInvitations(true);
+    setError('');
+    try {
+      await deleteInvitations(invitations.map((item) => item.id));
+      setInvitations([]);
+      setNotice('Đã xóa toàn bộ danh sách link mời.');
+    } catch (deleteError) {
+      setError('Không thể xóa toàn bộ danh sách. Vui lòng thử lại.');
+      console.error(deleteError);
+    } finally {
+      setDeletingAllInvitations(false);
+    }
+  }
+
   async function setGuestbookHidden(entry, isHidden) {
     setError('');
     try {
@@ -235,12 +272,12 @@ export default function Admin() {
         <p>Mã khách sẽ tự tăng. File Excel dùng cột <b>ten_hien_thi</b>, <b>Tên khách mời</b>, <b>Họ và tên</b>, hoặc cột đầu tiên chứa tên.</p>
       </form>
 
-      <div className="admin-list-head"><h2>Danh sách link</h2><div className="admin-table-tools"><label className="admin-search"><Search size={17} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Tìm tên khách..." aria-label="Tìm khách mời" /></label><button className="admin-icon-button" type="button" onClick={loadInvitations} aria-label="Tải lại danh sách"><RefreshCw size={18} /></button></div></div>
+      <div className="admin-list-head"><h2>Danh sách link</h2><div className="admin-table-tools"><label className="admin-search"><Search size={17} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Tìm tên khách..." aria-label="Tìm khách mời" /></label><button className="admin-icon-button" type="button" onClick={loadInvitations} aria-label="Tải lại danh sách"><RefreshCw size={18} /></button><button className="admin-delete-all" type="button" onClick={removeAllInvitations} disabled={!invitations.length || deletingAllInvitations}>{deletingAllInvitations ? 'Đang xóa...' : 'Xóa tất cả'}</button></div></div>
       {notice && <p className="admin-notice" role="status">{notice}</p>}
       {error && <p className="admin-error" role="alert">{error}</p>}
       {loading ? <div className="admin-loading"><LoaderCircle className="spin" size={25} /> Đang tải...</div> : <div className="admin-table-wrap">
         {filteredInvitations.length ? <table className="admin-table">
-          <thead><tr><th>Mã</th><th>Khách mời</th><th>Đường link</th><th>Copy</th><th>Trạng thái</th><th aria-label="Thao tác" /></tr></thead>
+          <thead><tr><th>Mã</th><th>Khách mời</th><th>Đường link</th><th>Copy</th><th>Trạng thái</th><th aria-label="Sao chép link" /><th aria-label="Xóa link" /></tr></thead>
           <tbody>{filteredInvitations.map((invitation) => <tr key={invitation.id}>
             <td><span className="admin-code">{invitation.guestCode}</span></td>
             <td className="admin-guest-name">{invitation.name}</td>
@@ -248,6 +285,7 @@ export default function Admin() {
             <td><strong className="admin-copy-count">{invitation.copyCount}</strong><span className="admin-copy-label">lần</span></td>
             <td><label className="admin-sent"><input type="checkbox" checked={Boolean(invitation.sentAt)} onChange={() => toggleSent(invitation)} /><span>{invitation.sentAt ? 'Đã gửi' : 'Chưa gửi'}</span></label>{invitation.sentAt && <small>{readableDate(invitation.sentAt)}</small>}</td>
             <td><button type="button" className="admin-copy" onClick={() => copyLink(invitation)}>{copiedId === invitation.id ? <Check size={17} /> : <Copy size={17} />}{copiedId === invitation.id ? 'Đã copy' : 'Copy'}</button></td>
+            <td><button type="button" className="admin-delete" onClick={() => removeInvitation(invitation)} disabled={deletingInvitationId === invitation.id}>{deletingInvitationId === invitation.id ? 'Đang xóa...' : <><Trash2 size={16} /> Xóa</>}</button></td>
           </tr>)}</tbody>
         </table> : <p className="admin-empty">{invitations.length ? 'Không tìm thấy khách mời phù hợp.' : 'Chưa có khách mời nào. Hãy tạo link đầu tiên ở trên.'}</p>}
       </div>}

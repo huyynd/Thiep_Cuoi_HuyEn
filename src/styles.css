@@ -3727,9 +3727,49 @@ h2,
   background: #efd9e1;
 }
 
+.admin-delete-all,
+.admin-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid #d8a8b8;
+  border-radius: 8px;
+  color: #8c5068;
+  background: #fff8fa;
+  font: 700 12px/1 'Montserrat', Arial, sans-serif;
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease, color .2s ease;
+}
+
+.admin-delete-all {
+  min-height: 38px;
+  padding: 0 12px;
+}
+
+.admin-delete {
+  min-width: 66px;
+  padding: 9px 10px;
+}
+
+.admin-delete-all:hover:not(:disabled),
+.admin-delete:hover:not(:disabled) {
+  border-color: #b66a85;
+  color: #fff;
+  background: #a46178;
+}
+
+.admin-delete-all:disabled,
+.admin-delete:disabled {
+  cursor: wait;
+  opacity: .62;
+}
+
 .admin-table-wrap {
   margin-top: 17px;
-  overflow-x: auto;
+  /* Header and ten rows remain visible; more links scroll inside this panel. */
+  max-height: 1216px;
+  overflow: auto;
   border: 1px solid #eadbe0;
   border-radius: 11px;
   background: #fff;
@@ -3744,6 +3784,9 @@ h2,
 }
 
 .admin-table th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
   padding: 13px 15px;
   border-bottom: 1px solid #e9d9de;
   color: #9b6378;

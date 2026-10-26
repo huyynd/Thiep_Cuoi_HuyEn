@@ -75,3 +75,20 @@ export async function recordInvitationCopy(id) {
   if (error) throw error;
   return mapInvitation(data?.[0]);
 }
+
+export async function deleteInvitation(id) {
+  const { error } = await getSupabase()
+    .from('invitations')
+    .delete()
+    .eq('id', id);
+  if (error) throw error;
+}
+
+export async function deleteInvitations(ids) {
+  if (!ids.length) return;
+  const { error } = await getSupabase()
+    .from('invitations')
+    .delete()
+    .in('id', ids);
+  if (error) throw error;
+}
