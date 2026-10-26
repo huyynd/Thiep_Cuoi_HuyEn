@@ -519,6 +519,12 @@ function Guestbook({ guest }) {
     setDialog('detail');
   }
 
+  function toggleAllEntries() {
+    setShowAllEntries((current) => !current);
+    // Let the page-level gentle auto-scroll restart its five-second timer.
+    window.dispatchEvent(new Event('invitation:activity'));
+  }
+
   return <section className="guestbook section-block" aria-label="Sổ lưu bút">
     <img className="guestbook-floral" src="/photos/floral-lily-sprig.png" alt="" aria-hidden="true" />
     <div className="eyebrow">GUESTBOOK</div>
@@ -539,7 +545,7 @@ function Guestbook({ guest }) {
         <button
           className={`guestbook-expand-button ${showAllEntries ? 'is-expanded' : ''}`}
           type="button"
-          onClick={() => setShowAllEntries((current) => !current)}
+          onClick={toggleAllEntries}
           aria-expanded={showAllEntries}
           aria-controls="guestbook-all-entries"
         >
@@ -717,6 +723,8 @@ export default function App() {
 
     const startAutoScroll = () => {
       window.clearTimeout(resumeTimerId);
+      // The guestbook list continues normally; only its open detail/write
+      // dialog pauses automatic scrolling via canScrollAutomatically().
       if (!animationFrameId && canScrollAutomatically()) {
         animationFrameId = window.requestAnimationFrame(autoScroll);
       }
@@ -725,8 +733,8 @@ export default function App() {
     const pauseForReading = () => {
       stopAutoScroll();
       window.clearTimeout(resumeTimerId);
-      // After a manual interaction, give the guest ten seconds before continuing.
-      resumeTimerId = window.setTimeout(startAutoScroll, 10_000);
+      // After a manual interaction, give the guest five seconds before continuing.
+      resumeTimerId = window.setTimeout(startAutoScroll, 5_000);
     };
 
     const handleScroll = () => {
@@ -742,15 +750,18 @@ export default function App() {
     const interactionEvents = ['wheel', 'touchstart', 'pointerdown', 'keydown'];
     interactionEvents.forEach((eventName) => window.addEventListener(eventName, pauseForReading, { passive: true }));
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('invitation:activity', pauseForReading);
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    // Begin gently after the opening cover has had a moment to settle.
-    resumeTimerId = window.setTimeout(startAutoScroll, 1800);
+    // Start as soon as the invitation has rendered. The five-second delay only
+    // applies after the guest has manually interacted with the page.
+    startAutoScroll();
 
     return () => {
       stopAutoScroll();
       window.clearTimeout(resumeTimerId);
       interactionEvents.forEach((eventName) => window.removeEventListener(eventName, pauseForReading));
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('invitation:activity', pauseForReading);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);

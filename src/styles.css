@@ -489,8 +489,8 @@ p {
 
 .love-story {
   width: min(100%, 620px);
-  margin: 52px auto 0;
-  padding: clamp(38px, 6vw, 60px) clamp(18px, 4vw, 42px) clamp(34px, 5vw, 54px);
+  margin: 36px auto 0;
+  padding: clamp(27px, 4.2vw, 42px) clamp(18px, 4vw, 42px) clamp(24px, 3.5vw, 38px);
   color: #684f56;
   overflow: hidden;
   background:
@@ -629,8 +629,8 @@ p {
 
 .today-together {
   width: min(100%, 620px);
-  margin: 52px auto 0;
-  padding: clamp(41px, 6vw, 65px) clamp(22px, 5vw, 47px) clamp(45px, 6vw, 68px);
+  margin: 36px auto 0;
+  padding: clamp(29px, 4.2vw, 46px) clamp(22px, 5vw, 47px) clamp(32px, 4.2vw, 48px);
   color: #4e3f43;
   background:
     radial-gradient(circle at 3% 12%, rgba(224, 185, 199, .18), transparent 25%),
@@ -648,7 +648,7 @@ p {
 }
 
 .today-together h2 {
-  margin: 18px 0 clamp(39px, 6vw, 58px);
+  margin: 14px 0 clamp(27px, 4.2vw, 41px);
   color: #75495b;
   font: 400 clamp(23px, 3.8vw, 32px)/1.35 'Cormorant Garamond', Georgia, serif;
   text-align: center;
@@ -1391,7 +1391,7 @@ p {
 .wedding-info {
   position: relative;
   overflow: hidden;
-  padding: clamp(76px, 10vw, 124px) 22px;
+  padding: clamp(53px, 7vw, 87px) 22px;
   text-align: center;
   background: #ede7e7;
   color: #4f4b4c;
@@ -1419,7 +1419,7 @@ p {
 .family-info-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin: clamp(55px, 8vw, 82px) auto 0;
+  margin: clamp(39px, 5.6vw, 57px) auto 0;
   max-width: 690px;
 }
 
@@ -1463,7 +1463,7 @@ p {
 }
 
 .wedding-announcement {
-  margin: clamp(59px, 9vw, 95px) auto 0;
+  margin: clamp(41px, 6.3vw, 67px) auto 0;
   color: #595556;
   font: 500 clamp(18px, 2.6vw, 27px)/1.45 'Cormorant Garamond', Georgia, serif;
   letter-spacing: .11em;
@@ -1479,7 +1479,7 @@ p {
 }
 
 .couple-announcement {
-  margin-top: clamp(66px, 10vw, 108px);
+  margin-top: clamp(46px, 7vw, 76px);
 }
 
 .couple-announcement>div {
@@ -1508,7 +1508,7 @@ p {
 
 .section-block {
   text-align: center;
-  padding: 87px 22px;
+  padding: 61px 22px;
 }
 
 .eyebrow {
@@ -2221,7 +2221,7 @@ h2 {
 
 .closing {
   background: #fffaf9;
-  padding-bottom: 94px;
+  padding-bottom: 66px;
 }
 
 .closing-heart {
@@ -2536,7 +2536,7 @@ h2,
   }
 
   .section-block {
-    padding: 73px 19px;
+    padding: 51px 19px;
   }
 
   .event-card {
@@ -2601,7 +2601,7 @@ h2,
   }
 
   .wedding-info {
-    padding: 70px 13px;
+    padding: 49px 13px;
   }
 
   .calendar-tulip-bouquet {
@@ -2615,7 +2615,7 @@ h2,
   .family-info-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0;
-    margin-top: 48px;
+    margin-top: 34px;
   }
 
   .family-info-item {
@@ -2648,13 +2648,13 @@ h2,
   }
 
   .wedding-announcement {
-    margin-top: 52px;
+    margin-top: 36px;
     font-size: 18px;
     letter-spacing: .08em;
   }
 
   .couple-announcement {
-    margin-top: 62px;
+    margin-top: 43px;
   }
 
   .topline {
@@ -2772,7 +2772,7 @@ h2,
   }
 
   .section-block {
-    padding: 62px 16px;
+    padding: 43px 16px;
   }
 
   .eyebrow {
@@ -2822,8 +2822,8 @@ h2,
   }
 
   .countdown-section {
-    padding-top: 70px;
-    padding-bottom: 74px;
+    padding-top: 49px;
+    padding-bottom: 52px;
   }
 
   .counter-grid {
@@ -2866,7 +2866,7 @@ h2,
   }
 
   .closing {
-    padding-bottom: 82px;
+    padding-bottom: 57px;
   }
 
   .closing>p {
@@ -2928,7 +2928,7 @@ h2,
 .guestbook {
   background: #fffdfc;
   text-align: center;
-  padding-bottom: 56px;
+  padding-bottom: 39px;
 }
 
 .guestbook>h2 {
