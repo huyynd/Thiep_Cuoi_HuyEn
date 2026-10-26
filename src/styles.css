@@ -4758,6 +4758,21 @@ h2,
     linear-gradient(180deg, transparent 58%, rgba(65, 40, 48, .18));
 }
 
+/* Keep the hand-off from guestbook to venue concise on phone screens. */
+@media (max-width: 720px) {
+  .guestbook.section-block {
+    padding-bottom: 19px;
+  }
+
+  .wedding-venues.section-block {
+    padding-top: 22px;
+  }
+
+  .wedding-venues .event-card {
+    margin-top: 16px;
+  }
+}
+
 /* Keep the key wedding information above decorative details. */
 .photo-cover-party {
   position: absolute;
