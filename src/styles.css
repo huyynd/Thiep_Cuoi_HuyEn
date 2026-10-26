@@ -4754,6 +4754,7 @@ h2,
 
 .thanks-photo-overlay {
   background:
+    linear-gradient(135deg, rgba(255, 249, 248, .18), rgba(243, 203, 214, .16) 48%, rgba(255, 249, 248, .11)),
     radial-gradient(ellipse 70% 38% at 50% 50%, rgba(61, 38, 46, .44), transparent 72%),
     linear-gradient(180deg, transparent 58%, rgba(65, 40, 48, .18));
 }
