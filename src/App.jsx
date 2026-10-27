@@ -312,7 +312,7 @@ function VenueMap({ house, label }) {
       <iframe title={`Bản đồ ${title}`} src={mapUrl} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
     </div>
     {house.mapsUrl && <a className="btn btn-primary btn-venue-map" target="_blank" rel="noreferrer noopener" href={house.mapsUrl}>
-      <MapPin size={16} /> Chỉ đường đến {label.toLowerCase()} <ExternalLink size={14} />
+      <MapPin size={16} /> Mở chỉ đường đến {label.toLowerCase()} <ExternalLink size={14} />
     </a>}
   </article>;
 }
@@ -321,41 +321,41 @@ function MomentsCarousel() {
   const photos = wedding.momentPhotos || [];
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoplayPaused, setIsAutoplayPaused] = useState(false);
-  const resumeTimerRef = useRef(null);
+  const thumbnailsRef = useRef(null);
+  const thumbnailScrollLeftRef = useRef(0);
+
+  const preserveThumbnailPosition = () => {
+    if (thumbnailsRef.current) thumbnailScrollLeftRef.current = thumbnailsRef.current.scrollLeft;
+  };
 
   useEffect(() => {
     if (photos.length < 2 || isAutoplayPaused) return undefined;
     const timer = window.setInterval(() => {
+      preserveThumbnailPosition();
       setActiveIndex((current) => (current + 1) % photos.length);
     }, 6000);
     return () => window.clearInterval(timer);
   }, [photos.length, isAutoplayPaused]);
 
+  useEffect(() => {
+    if (thumbnailsRef.current) thumbnailsRef.current.scrollLeft = thumbnailScrollLeftRef.current;
+  }, [activeIndex]);
+
   if (!photos.length) return null;
 
-  // Hủy bộ đếm resume nếu đang chạy
-  const clearResumeTimer = () => {
-    if (resumeTimerRef.current) {
-      window.clearTimeout(resumeTimerRef.current);
-      resumeTimerRef.current = null;
-    }
-  };
-
-  // Tạm dừng autoplay rồi tự khởi động lại sau 8 giây
-  const pauseAndResume = () => {
+  // A guest's manual choice should remain on screen for them to enjoy.
+  const pauseAutoplay = () => {
     setIsAutoplayPaused(true);
-    clearResumeTimer();
-    resumeTimerRef.current = window.setTimeout(() => {
-      setIsAutoplayPaused(false);
-      resumeTimerRef.current = null;
-    }, 8000);
   };
 
   const showNext = () => {
+    pauseAutoplay();
+    preserveThumbnailPosition();
     setActiveIndex((current) => (current + 1) % photos.length);
   };
   const choosePhoto = (index) => {
-    pauseAndResume();
+    pauseAutoplay();
+    preserveThumbnailPosition();
     setActiveIndex(index);
   };
 
@@ -369,7 +369,7 @@ function MomentsCarousel() {
         <img className="carousel-featured-image" src={photos[activeIndex]} alt={`Khoảnh khắc của ${wedding.groom} và ${wedding.bride} ${activeIndex + 1}`} />
       </button>
     </div>
-    <div className="carousel-thumbnails" aria-label="Chọn ảnh">
+    <div className="carousel-thumbnails" ref={thumbnailsRef} aria-label="Chọn ảnh" onPointerDown={pauseAutoplay} onScroll={preserveThumbnailPosition}>
       {photos.map((photo, index) => <button
         type="button"
         key={photo}
@@ -393,14 +393,14 @@ function WeddingEvents() {
       <div className="corner-motif">✿</div>
       <div className="wedding-invitation-events">
         <InvitationEvent
-          title="TIỆC CƯỚI · 27/12"
+          title="TIỆC CƯỚI · 27.12.2026"
           dateISO={wedding.dateISO}
           time={wedding.partyHourLabel}
           note="Trân trọng kính mời quý khách đến nâng ly chung vui"
         />
         <div className="invitation-event-divider" aria-hidden="true" />
         <InvitationEvent
-          title="LỄ THÀNH HÔN · 28/12"
+          title="LỄ THÀNH HÔN · 28.12.2026"
           dateISO={wedding.calendarDateISO || wedding.dateISO}
           time={wedding.ceremonyHourLabel}
           note="Lễ rước dâu và thành hôn của hai chúng mình"
@@ -438,9 +438,12 @@ function Guestbook({ guest }) {
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [saving, setSaving] = useState(false);
   const [guestbookError, setGuestbookError] = useState('');
+  const [guestbookLoadError, setGuestbookLoadError] = useState('');
+  const [guestbookSuccess, setGuestbookSuccess] = useState('');
   const [showAllEntries, setShowAllEntries] = useState(false);
   const guestbookRailRef = useRef(null);
   const guestbookScrollPositionRef = useRef(0);
+  const guestbookSuccessTimerRef = useRef(null);
 
   useEffect(() => {
     if (!isGuestbookConfigured) return undefined;
@@ -448,9 +451,13 @@ function Guestbook({ guest }) {
     const loadEntries = async () => {
       try {
         const loadedEntries = await getGuestbookEntries();
-        if (active) setEntries(loadedEntries);
+        if (active) {
+          setEntries(loadedEntries);
+          setGuestbookLoadError('');
+        }
       } catch (error) {
         console.error('Không thể tải sổ lưu bút:', error);
+        if (active) setGuestbookLoadError('Chưa thể tải lời chúc. Vui lòng kiểm tra kết nối và thử lại sau.');
       }
     };
 
@@ -460,6 +467,10 @@ function Guestbook({ guest }) {
       active = false;
       window.clearInterval(pollId);
     };
+  }, []);
+
+  useEffect(() => () => {
+    if (guestbookSuccessTimerRef.current) window.clearTimeout(guestbookSuccessTimerRef.current);
   }, []);
 
   useEffect(() => {
@@ -490,8 +501,17 @@ function Guestbook({ guest }) {
     const trimmedMessage = message.trim();
     if (!trimmedName || !trimmedMessage) return;
 
-    setSaving(true);
     setGuestbookError('');
+    if (!isGuestbookConfigured) {
+      setGuestbookError('Sổ lưu bút hiện chưa sẵn sàng. Vui lòng thử lại sau ít phút.');
+      return;
+    }
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      setGuestbookError('Bạn đang ngoại tuyến. Hãy kiểm tra kết nối mạng rồi gửi lại nhé.');
+      return;
+    }
+
+    setSaving(true);
     try {
       const entry = await createGuestbookEntry({
         name: trimmedName,
@@ -506,9 +526,18 @@ function Guestbook({ guest }) {
       setLatestEntryId(entry.id);
       setDialog(null);
       restoreGuestbookScrollPosition();
+      setGuestbookSuccess(`Cảm ơn ${entry.name}! Lời chúc của bạn đã được gửi.`);
+      if (guestbookSuccessTimerRef.current) window.clearTimeout(guestbookSuccessTimerRef.current);
+      guestbookSuccessTimerRef.current = window.setTimeout(() => {
+        setGuestbookSuccess('');
+        guestbookSuccessTimerRef.current = null;
+      }, 4500);
     } catch (error) {
       console.error('Không thể gửi lời chúc:', error);
-      setGuestbookError(error.message || 'Chưa thể gửi lời chúc. Vui lòng thử lại sau ít phút.');
+      const isOffline = typeof navigator !== 'undefined' && !navigator.onLine;
+      setGuestbookError(isOffline
+        ? 'Bạn đang ngoại tuyến. Hãy kiểm tra kết nối mạng rồi gửi lại nhé.'
+        : 'Chưa thể gửi lời chúc. Vui lòng kiểm tra kết nối mạng và thử lại sau ít phút.');
     } finally {
       setSaving(false);
     }
@@ -530,6 +559,7 @@ function Guestbook({ guest }) {
     <div className="eyebrow">GUESTBOOK</div>
     <h2>Sổ lưu bút</h2>
     <div className="guestbook-card">
+      {guestbookLoadError && <p className="guestbook-load-error" role="status">{guestbookLoadError}</p>}
       {entries.length > 0 ? <div className="guestbook-rail" ref={guestbookRailRef} aria-label="Các lời chúc">
         {entries.map((entry) => <button type="button" key={entry.id} onClick={() => openEntry(entry)} className={`guestbook-note-card ${latestEntryId === entry.id ? 'is-new' : ''}`} aria-label={`Xem lời chúc của ${entry.name}`}>
           <Heart size={22} fill="currentColor" strokeWidth={1.2} aria-hidden="true" />
@@ -559,6 +589,8 @@ function Guestbook({ guest }) {
         </div>}
       </>}
     </div>
+
+    {guestbookSuccess && <div className="guestbook-success-toast" role="status" aria-live="polite"><Check size={18} aria-hidden="true" />{guestbookSuccess}</div>}
 
     {dialog && createPortal(<div className="guestbook-dialog" role="presentation">
       <button className="guestbook-backdrop" type="button" aria-label="Đóng sổ lưu bút" onClick={() => setDialog(null)} />
@@ -646,6 +678,7 @@ export default function App() {
   const [now, setNow] = useState(Date.now());
   const [copied, setCopied] = useState(false);
   const [playing, setPlaying] = useState(false);
+  const [autoScrollEnabled, setAutoScrollEnabled] = useState(false);
   const audioRef = useRef(null);
 
   useEffect(() => {
@@ -670,6 +703,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (!autoScrollEnabled) return undefined;
     const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
     if (reducedMotion?.matches) return undefined;
 
@@ -764,7 +798,7 @@ export default function App() {
       window.removeEventListener('invitation:activity', pauseForReading);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, []);
+  }, [autoScrollEnabled]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -809,6 +843,10 @@ export default function App() {
       try { await audio.play(); setPlaying(true); }
       catch { setPlaying(false); alert('Trình duyệt không phát được nhạc. Hãy kiểm tra file nhạc.'); }
     } else { audio.pause(); setPlaying(false); }
+  }
+
+  function toggleAutoScroll() {
+    setAutoScrollEnabled((current) => !current);
   }
 
   async function copyInviteUrl() {
@@ -882,6 +920,7 @@ export default function App() {
             <p>Đến dự ngày vui và chung vui cùng gia đình chúng mình</p>
           </div>
           <WeddingCalendar now={now} />
+          <a className="hero-venue-shortcut" href="#dia-diem"><MapPin size={15} /> Xem địa điểm tổ chức</a>
           <a className="down-arrow" href="#thong-tin" aria-label="Xem lịch tiệc và địa điểm"><ChevronDown size={22} /></a>
         </div>
       </section>
@@ -917,17 +956,25 @@ export default function App() {
         <div className="thanks-photo-wave thanks-photo-wave-bottom" aria-hidden="true" />
         <img className="thanks-photo-floral" src="/photos/floral-tulip-lily-corner.png" alt="" aria-hidden="true" />
         <div className="thanks-photo-content">
-          <p>Cảm ơn bạn đã ghé thăm tấm thiệp nhỏ này.<br />Sự hiện diện và lời chúc của bạn là món quà ý nghĩa nhất với chúng mình.</p>
-          <div className="thanks-photo-signature">
-            <span>— With love —</span>
-            <strong>{wedding.groom} &amp; {wedding.bride}</strong>
-          </div>
+          <p>Cảm ơn bạn đã cùng chúng mình lưu giữ ngày vui này.</p>
         </div>
       </section>
     </main>
-    {wedding.musicUrl && <button className={`music-button ${playing ? 'is-playing' : ''}`} type="button" aria-label={playing ? 'Tạm dừng nhạc' : 'Phát nhạc nền'} onClick={toggleMusic}>
-      {playing ? <><span className="music-ripples" aria-hidden="true"><i /><i /><i /></span><Pause size={19} fill="currentColor" /></> : <Music2 size={20} />}
-    </button>}
+    <div className="floating-controls">
+      <button
+        className={`auto-scroll-button ${autoScrollEnabled ? 'is-active' : ''}`}
+        type="button"
+        aria-label={autoScrollEnabled ? 'Tắt chế độ tự xem thiệp' : 'Bật chế độ tự xem thiệp'}
+        aria-pressed={autoScrollEnabled}
+        title={autoScrollEnabled ? 'Tắt tự xem thiệp' : 'Tự xem thiệp'}
+        onClick={toggleAutoScroll}
+      >
+        <ChevronDown size={20} aria-hidden="true" />
+      </button>
+      {wedding.musicUrl && <button className={`music-button ${playing ? 'is-playing' : ''}`} type="button" aria-label={playing ? 'Tạm dừng nhạc' : 'Phát nhạc nền'} onClick={toggleMusic}>
+        {playing ? <><span className="music-ripples" aria-hidden="true"><i /><i /><i /></span><Pause size={19} fill="currentColor" /></> : <Music2 size={20} />}
+      </button>}
+    </div>
     <footer>Made with <Heart size={12} fill="currentColor" /> · {wedding.groom} & {wedding.bride}</footer>
   </>;
 }

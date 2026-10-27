@@ -96,6 +96,11 @@ a:focus-visible {
   animation: coverSnowfall var(--snow-duration) linear var(--snow-delay) infinite;
 }
 
+/* Keep the cover personal: a light dusting, not a screen of falling dots. */
+.photo-cover-snow span:nth-child(n + 17) {
+  display: none;
+}
+
 /* Hiệu ứng hoa rơi — tạm tắt, có thể bỏ comment để bật lại.
 .petal-fall {
   position: fixed;
@@ -1457,9 +1462,10 @@ p {
 
 .family-info-item p {
   margin: 0;
-  color: #725d65;
-  font-size: clamp(15px, 2vw, 20px);
-  line-height: 1.65;
+  color: #684c57;
+  font-size: clamp(16px, 2.1vw, 20px);
+  font-weight: 500;
+  line-height: 1.55;
 }
 
 .wedding-announcement {
@@ -4419,8 +4425,34 @@ h2,
 }
 
 .photo-cover-date {
-  font-size: clamp(155px, 35.7vw, 298px);
-  margin-top: 4vh;
+  position: absolute;
+  right: clamp(21px, 5vw, 62px);
+  bottom: clamp(66px, 12svh, 130px);
+  left: clamp(21px, 5vw, 62px);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: clamp(8px, 2.6vw, 22px);
+  margin: 0;
+  font-size: clamp(112px, 24vw, 190px);
+  line-height: .75;
+  letter-spacing: -.1em;
+}
+
+.photo-cover-date::before,
+.photo-cover-date::after,
+.cover-date-month::before,
+.cover-date-month::after {
+  display: none;
+}
+
+.photo-cover-date span + span {
+  margin-top: 0;
+}
+
+.cover-date-month {
+  font-size: 1em;
+  letter-spacing: -.1em;
 }
 
 .ceremony-calendar-card {
@@ -4478,7 +4510,18 @@ h2,
 
 @media (max-width: 480px) {
   .photo-cover-date {
-    font-size: clamp(157px, 41.65vw, 213px);
+    bottom: clamp(60px, 9svh, 88px);
+    font-size: clamp(105px, 24vw, 140px);
+  }
+
+  .hero h1 {
+    padding-inline: 10px;
+    gap: 7px;
+    font-size: clamp(33px, 10.8vw, 43px);
+  }
+
+  .hero h1 em {
+    font-size: clamp(38px, 11.5vw, 45px);
   }
 
   .family-info-side {
@@ -4684,7 +4727,9 @@ h2,
 .carousel-thumbnails {
   gap: 14px;
   padding-bottom: 4px;
+  -ms-overflow-style: none;
   scrollbar-width: none;
+  overflow-anchor: none;
 }
 
 .carousel-thumbnails::-webkit-scrollbar {
@@ -4698,6 +4743,46 @@ h2,
 .carousel-thumbnail img {
   object-fit: contain;
   background: #fbe9ed;
+}
+
+.guestbook-load-error {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border: 1px solid rgba(184, 107, 132, .38);
+  border-radius: 12px;
+  color: #8b4962;
+  background: rgba(255, 249, 248, .84);
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.guestbook-success-toast {
+  position: fixed;
+  z-index: 1100;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(76px, calc(env(safe-area-inset-bottom) + 64px));
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  max-width: min(360px, calc(100vw - 32px));
+  padding: 12px 16px;
+  border: 1px solid rgba(203, 155, 171, .62);
+  border-radius: 14px;
+  color: #6f4d58;
+  background: rgba(255, 249, 248, .96);
+  box-shadow: 0 10px 28px rgba(105, 69, 81, .18);
+  font: 600 16px/1.35 'Cormorant Garamond', Georgia, serif;
+  animation: guestbookToastIn .25s ease-out both;
+}
+
+.guestbook-success-toast svg {
+  flex: 0 0 auto;
+  color: #b5778e;
+}
+
+@keyframes guestbookToastIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .guestbook {
@@ -4926,4 +5011,189 @@ h2,
 .admin-guestbook-actions button:hover {
   border-color: #a7677d;
   background: #f9edf0;
+}
+
+/* Controls stay together: the subtle arrow lets each guest opt into auto viewing. */
+.floating-controls {
+  position: fixed;
+  z-index: 20;
+  right: 20px;
+  bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.floating-controls .music-button {
+  position: relative;
+  right: auto;
+  bottom: auto;
+}
+
+.auto-scroll-button {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid rgba(184, 122, 145, .38);
+  border-radius: 50%;
+  color: #9d657c;
+  background: rgba(255, 250, 251, .58);
+  box-shadow: 0 3px 12px rgba(118, 86, 95, .11);
+  backdrop-filter: blur(8px);
+  opacity: .8;
+  transition: color .2s ease, background .2s ease, border-color .2s ease, opacity .2s ease, transform .2s ease;
+}
+
+.auto-scroll-button:hover {
+  opacity: 1;
+  border-color: rgba(164, 97, 120, .65);
+  background: rgba(255, 248, 250, .84);
+  transform: translateY(-1px);
+}
+
+.auto-scroll-button.is-active {
+  color: #fff;
+  border-color: rgba(255, 250, 251, .72);
+  background: rgba(180, 116, 139, .72);
+  opacity: .95;
+}
+
+@media (max-width: 480px) {
+  .floating-controls {
+    right: max(14px, env(safe-area-inset-right));
+    bottom: max(14px, env(safe-area-inset-bottom));
+    gap: 7px;
+  }
+
+  .floating-controls .music-button {
+    width: 43px;
+    height: 43px;
+  }
+
+  .auto-scroll-button {
+    width: 43px;
+    height: 43px;
+  }
+}
+
+/* A compact shortcut keeps practical directions within reach from the start. */
+.hero-venue-shortcut {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin: 15px auto 0;
+  padding: 8px 14px;
+  border: 1px solid rgba(183, 119, 141, .48);
+  border-radius: 999px;
+  color: #86586a;
+  background: rgba(255, 249, 248, .66);
+  box-shadow: 0 4px 13px rgba(128, 84, 99, .08);
+  font: 600 15px/1 'Cormorant Garamond', Georgia, serif;
+  text-decoration: none;
+}
+
+.hero-venue-shortcut:hover {
+  background: rgba(255, 253, 252, .94);
+}
+
+.venue-map-card .btn-venue-map {
+  min-width: min(100%, 280px);
+  min-height: 46px;
+  font-size: clamp(17px, 2.5vw, 20px);
+}
+
+/* Keep the final thank-you brief, with contrast only behind the white text. */
+.thanks-photo-overlay {
+  background:
+    linear-gradient(135deg, rgba(255, 249, 248, .13), rgba(243, 203, 214, .1) 48%, rgba(255, 249, 248, .08)),
+    radial-gradient(ellipse 76% 40% at 50% 50%, rgba(49, 31, 37, .6), transparent 74%),
+    linear-gradient(180deg, rgba(39, 24, 30, .08), transparent 32%, transparent 65%, rgba(45, 27, 34, .28));
+}
+
+.thanks-photo-content>p {
+  max-width: 560px;
+  margin-inline: auto;
+  padding: 16px 22px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(34, 20, 26, .48) 17%, rgba(34, 20, 26, .48) 83%, transparent);
+  text-shadow: 0 2px 9px rgba(24, 12, 17, .92), 0 1px 2px rgba(24, 12, 17, .85);
+}
+
+@media (max-width: 480px) {
+  .hero-venue-shortcut {
+    margin-top: 12px;
+    padding: 7px 12px;
+    font-size: 14px;
+  }
+
+  .venue-map-card .btn-venue-map {
+    width: min(100%, 310px);
+  }
+
+  .thanks-photo-content>p {
+    padding: 14px 17px;
+    border-radius: 20px;
+  }
+}
+
+/* Final mobile reading refinements: equal rhythm for the six Love Story
+   milestones and stronger, more legible family addresses. */
+@media (max-width: 480px) {
+  .love-story-chapter {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    padding-bottom: 32px;
+  }
+
+  .love-story-chapter.is-right {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .love-story-copy {
+    padding-right: 34px;
+  }
+
+  .love-story-chapter.is-right .love-story-copy {
+    padding-left: 34px;
+  }
+
+  .love-story-copy time {
+    font-size: 24px;
+  }
+
+  .love-story-copy h3 {
+    font-size: 19px;
+    line-height: 1.16;
+  }
+
+  .love-story-copy p {
+    font-size: 14.5px;
+    line-height: 1.45;
+  }
+
+  .love-story-photo {
+    width: 100px;
+    height: 100px;
+    margin-left: 8px;
+  }
+
+  .love-story-chapter.is-right .love-story-photo {
+    margin-right: 8px;
+  }
+
+  .family-info-item {
+    padding: 0 8px;
+  }
+
+  .family-info-names strong {
+    font-size: 19px;
+  }
+
+  .family-info-item p {
+    color: #6a4f59;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.52;
+  }
 }
