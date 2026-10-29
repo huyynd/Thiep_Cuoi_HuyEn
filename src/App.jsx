@@ -704,8 +704,6 @@ export default function App() {
 
   useEffect(() => {
     if (!autoScrollEnabled) return undefined;
-    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-    if (reducedMotion?.matches) return undefined;
 
     let animationFrameId = null;
     let resumeTimerId = null;
@@ -722,11 +720,12 @@ export default function App() {
     };
 
     const canScrollAutomatically = () => {
-      const maxScrollTop = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollingElement = document.scrollingElement || document.documentElement;
+      const maxScrollTop = scrollingElement.scrollHeight - window.innerHeight;
       return !document.hidden
         && !isTyping()
         && !document.querySelector('.guestbook-dialog')
-        && window.scrollY < maxScrollTop - 2;
+        && scrollingElement.scrollTop < maxScrollTop - 2;
     };
 
     const stopAutoScroll = () => {
@@ -749,8 +748,12 @@ export default function App() {
       const scrollStep = Math.floor(pendingScrollPixels);
       if (scrollStep > 0) {
         pendingScrollPixels -= scrollStep;
+        const scrollingElement = document.scrollingElement || document.documentElement;
+        const maxScrollTop = scrollingElement.scrollHeight - window.innerHeight;
         lastAutomaticScrollAt = Date.now();
-        window.scrollBy({ top: scrollStep, left: 0, behavior: 'auto' });
+        // Writing directly to the scrolling element is more reliable than
+        // window.scrollBy() inside iOS/Facebook/Zalo in-app browsers.
+        scrollingElement.scrollTop = Math.min(scrollingElement.scrollTop + scrollStep, maxScrollTop);
       }
       animationFrameId = window.requestAnimationFrame(autoScroll);
     };
@@ -772,8 +775,12 @@ export default function App() {
     };
 
     const handleScroll = () => {
-      // Ignore the scroll events produced by our own animation.
-      if (Date.now() - lastAutomaticScrollAt < 180) return;
+      // touchstart/pointerdown/wheel stops the animation before a real manual
+      // scroll. While the animation frame is still active, every scroll event
+      // is therefore one produced by the automatic movement itself. iOS may
+      // dispatch those events late, so a short time threshold alone is not
+      // reliable and previously made auto-scroll pause after its first pixel.
+      if (animationFrameId || Date.now() - lastAutomaticScrollAt < 350) return;
       pauseForReading();
     };
     const handleVisibilityChange = () => {
