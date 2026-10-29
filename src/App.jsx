@@ -705,11 +705,12 @@ export default function App() {
   useEffect(() => {
     if (!autoScrollEnabled) return undefined;
 
-    let animationFrameId = null;
+    let autoScrollTimerId = null;
     let resumeTimerId = null;
-    let lastAnimationTime = 0;
     let lastAutomaticScrollAt = 0;
     let pendingScrollPixels = 0;
+    const autoScrollIntervalMs = 50;
+    const autoScrollSpeed = 24;
 
     const isTyping = () => {
       const activeElement = document.activeElement;
@@ -722,48 +723,49 @@ export default function App() {
     const canScrollAutomatically = () => {
       const scrollingElement = document.scrollingElement || document.documentElement;
       const maxScrollTop = scrollingElement.scrollHeight - window.innerHeight;
-      return !document.hidden
-        && !isTyping()
+      return !isTyping()
         && !document.querySelector('.guestbook-dialog')
         && scrollingElement.scrollTop < maxScrollTop - 2;
     };
 
     const stopAutoScroll = () => {
-      if (animationFrameId) window.cancelAnimationFrame(animationFrameId);
-      animationFrameId = null;
-      lastAnimationTime = 0;
+      if (autoScrollTimerId) window.clearInterval(autoScrollTimerId);
+      autoScrollTimerId = null;
       pendingScrollPixels = 0;
     };
 
-    const autoScroll = (timestamp) => {
+    const autoScroll = () => {
       if (!canScrollAutomatically()) {
         stopAutoScroll();
         return;
       }
-      if (!lastAnimationTime) lastAnimationTime = timestamp;
-      const elapsed = Math.min(timestamp - lastAnimationTime, 80);
-      lastAnimationTime = timestamp;
-      // 24 px/s keeps the invitation comfortable to read on a phone.
-      pendingScrollPixels += (elapsed / 1000) * 24;
+      // A small fixed timer is more dependable than requestAnimationFrame in
+      // mobile Chrome/Coc Coc and social-app browsers. The speed remains the
+      // same gentle 24 px/s used on desktop.
+      pendingScrollPixels += (autoScrollIntervalMs / 1000) * autoScrollSpeed;
       const scrollStep = Math.floor(pendingScrollPixels);
       if (scrollStep > 0) {
         pendingScrollPixels -= scrollStep;
         const scrollingElement = document.scrollingElement || document.documentElement;
         const maxScrollTop = scrollingElement.scrollHeight - window.innerHeight;
+        const nextScrollTop = Math.min(scrollingElement.scrollTop + scrollStep, maxScrollTop);
         lastAutomaticScrollAt = Date.now();
-        // Writing directly to the scrolling element is more reliable than
-        // window.scrollBy() inside iOS/Facebook/Zalo in-app browsers.
-        scrollingElement.scrollTop = Math.min(scrollingElement.scrollTop + scrollStep, maxScrollTop);
+        window.scrollTo(0, nextScrollTop);
+        // Some embedded mobile browsers expose the correct scrolling element
+        // but ignore window.scrollTo; keep this as a synchronous fallback.
+        if (Math.abs(scrollingElement.scrollTop - nextScrollTop) > 0.5) {
+          scrollingElement.scrollTop = nextScrollTop;
+        }
       }
-      animationFrameId = window.requestAnimationFrame(autoScroll);
     };
 
     const startAutoScroll = () => {
       window.clearTimeout(resumeTimerId);
       // The guestbook list continues normally; only its open detail/write
       // dialog pauses automatic scrolling via canScrollAutomatically().
-      if (!animationFrameId && canScrollAutomatically()) {
-        animationFrameId = window.requestAnimationFrame(autoScroll);
+      if (!autoScrollTimerId && canScrollAutomatically()) {
+        autoScrollTimerId = window.setInterval(autoScroll, autoScrollIntervalMs);
+        autoScroll();
       }
     };
 
@@ -775,12 +777,9 @@ export default function App() {
     };
 
     const handleScroll = () => {
-      // touchstart/pointerdown/wheel stops the animation before a real manual
-      // scroll. While the animation frame is still active, every scroll event
-      // is therefore one produced by the automatic movement itself. iOS may
-      // dispatch those events late, so a short time threshold alone is not
-      // reliable and previously made auto-scroll pause after its first pixel.
-      if (animationFrameId || Date.now() - lastAutomaticScrollAt < 350) return;
+      // touchstart/pointerdown/wheel stops the timer before a real manual
+      // scroll. While it is active, every scroll event comes from auto-scroll.
+      if (autoScrollTimerId || Date.now() - lastAutomaticScrollAt < 500) return;
       pauseForReading();
     };
     const handleVisibilityChange = () => {
