@@ -1006,7 +1006,7 @@ export default function App() {
 
       <WeddingInfo />
 
-      <LoveStory />
+      {/* <LoveStory /> */}
 
       <TodayTogether />
 
