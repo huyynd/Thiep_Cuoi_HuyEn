@@ -23,14 +23,10 @@ for (const guest of guests) {
   const description = `Trân trọng kính mời ${guest.name} đến chung vui cùng ${wedding.groom} và ${wedding.bride} vào ${wedding.dateLabel}.`;
   const url = `${wedding.siteUrl.replace(/\/+$/, '')}/moi/${guest.slug}`;
   let html = index;
-  html = replaceTag(html, '<title>Thiệp cưới của chúng mình</title>', `<title>${escapeHtml(heading)}</title>`);
-  html = replaceTag(html, 'content="Một lời mời cưới chân thành, dành riêng cho bạn."', `content="${escapeHtml(description)}"`);
-  html = replaceTag(html, 'content="Thiệp mời dự lễ thành hôn"', `content="${escapeHtml(heading)}"`);
-  html = replaceTag(html, 'content="Trân trọng kính mời bạn đến chung vui cùng chúng mình."', `content="${escapeHtml(description)}"`);
-  const imageTags = wedding.shareImageUrl
-    ? `\n    <meta property="og:image" content="${escapeHtml(wedding.shareImageUrl)}" />\n    <meta name="twitter:image" content="${escapeHtml(wedding.shareImageUrl)}" />`
-    : '';
-  html = replaceTag(html, '</head>', `    <meta property="og:url" content="${escapeHtml(url)}" />${imageTags}\n  </head>`);
+  html = replaceTag(html, '<title>Đức Huy &amp; Bùi Yến</title>', `<title>${escapeHtml(heading)}</title>`);
+  html = replaceTag(html, 'content="Trân trọng kính mời bạn đến chung vui cùng Đức Huy và Bùi Yến."', `content="${escapeHtml(description)}"`);
+  html = replaceTag(html, 'content="Đức Huy &amp; Bùi Yến"', `content="${escapeHtml(heading)}"`);
+  html = replaceTag(html, 'content="https://thiepcuoihuyyen.vercel.app/"', `content="${escapeHtml(url)}"`);
   // Generate an index page in each guest folder so the public URL
   // `/moi/<guest-slug>` is resolved directly by Vercel (and other static
   // hosts) without relying on their optional clean-URL behaviour.
