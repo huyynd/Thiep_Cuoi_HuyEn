@@ -2230,6 +2230,233 @@ h2 {
   padding-bottom: 66px;
 }
 
+.wedding-gift {
+  position: relative;
+  overflow: hidden;
+  padding-block: 54px 58px;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255, 255, 255, .82), transparent 42%),
+    #fbe9ed;
+}
+
+.wedding-gift h2 {
+  margin-bottom: 12px;
+}
+
+.wedding-gift-intro {
+  max-width: 570px;
+  margin: 0 auto 22px;
+  color: #80636d;
+  font-size: clamp(16px, 2.3vw, 19px);
+  line-height: 1.65;
+}
+
+.gift-box-toggle {
+  display: inline-grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 8px 22px 12px;
+  border: 0;
+  color: #ad6e86;
+  background: transparent;
+}
+
+.gift-box-toggle strong {
+  color: #875567;
+  font: 600 17px/1.2 'Cormorant Garamond', Georgia, serif;
+  letter-spacing: .02em;
+}
+
+.gift-line-box {
+  position: relative;
+  display: block;
+  width: 92px;
+  height: 82px;
+  filter: drop-shadow(0 5px 7px rgba(142, 87, 106, .1));
+}
+
+.gift-line-box i {
+  position: absolute;
+  display: block;
+  border: 2px solid currentColor;
+  background: rgba(255, 249, 248, .36);
+  transition: transform .42s cubic-bezier(.2, .85, .32, 1.2);
+}
+
+.gift-box-body {
+  right: 10px;
+  bottom: 3px;
+  left: 10px;
+  height: 50px;
+  border-radius: 2px 2px 7px 7px;
+}
+
+.gift-box-lid {
+  top: 26px;
+  right: 5px;
+  left: 5px;
+  z-index: 2;
+  height: 17px;
+  border-radius: 5px 5px 2px 2px;
+  background: rgba(255, 249, 248, .72) !important;
+  transform-origin: 18% 100%;
+}
+
+.gift-box-ribbon {
+  top: 27px;
+  bottom: 3px;
+  left: 39px;
+  z-index: 3;
+  width: 15px;
+  border-block: 0 !important;
+  background: transparent !important;
+}
+
+.gift-box-bow {
+  top: 7px;
+  z-index: 1;
+  width: 25px;
+  height: 23px;
+  background: transparent !important;
+}
+
+.gift-box-bow-left {
+  left: 23px;
+  border-radius: 18px 18px 3px 18px;
+  transform: rotate(19deg);
+}
+
+.gift-box-bow-right {
+  right: 23px;
+  border-radius: 18px 18px 18px 3px;
+  transform: rotate(-19deg);
+}
+
+.gift-box-toggle:hover .gift-line-box {
+  color: #9e5f77;
+}
+
+.gift-box-toggle.is-open .gift-box-lid {
+  transform: translate(-8px, -15px) rotate(-8deg);
+}
+
+.gift-box-toggle.is-open .gift-box-ribbon {
+  transform: translateY(3px);
+}
+
+.gift-box-toggle.is-open .gift-box-bow-left {
+  transform: translate(-7px, -13px) rotate(5deg);
+}
+
+.gift-box-toggle.is-open .gift-box-bow-right {
+  transform: translate(-7px, -13px) rotate(-31deg);
+}
+
+.gift-qr-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  width: min(680px, 100%);
+  margin: 14px auto 0;
+  animation: giftQrReveal .38s ease-out both;
+}
+
+.gift-qr-card {
+  min-width: 0;
+  padding: 19px;
+  border: 1px solid rgba(221, 166, 181, .52);
+  border-radius: 22px;
+  background: rgba(255, 253, 252, .91);
+  box-shadow: 0 10px 27px rgba(121, 76, 92, .08);
+}
+
+.gift-qr-card h3 {
+  margin: 0 0 13px;
+  color: #875367;
+  font: 600 clamp(21px, 3vw, 27px)/1.2 'Cormorant Garamond', Georgia, serif;
+}
+
+.gift-qr-card img {
+  display: block;
+  width: 100%;
+  max-width: 250px;
+  aspect-ratio: 1;
+  margin: 0 auto;
+  border: 1px solid rgba(221, 166, 181, .34);
+  border-radius: 15px;
+  background: #fff;
+  object-fit: contain;
+}
+
+.gift-qr-download {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 15px;
+  padding: 9px 17px;
+  border: 1px solid rgba(174, 105, 131, .56);
+  border-radius: 999px;
+  color: #875367;
+  background: #fff9f8;
+  font: 600 14px/1 'DM Sans', Arial, sans-serif;
+  text-decoration: none;
+  transition: color .2s ease, background .2s ease, transform .2s ease;
+}
+
+.gift-qr-download:hover {
+  color: #fff;
+  background: #a96d83;
+  transform: translateY(-1px);
+}
+
+@keyframes giftQrReveal {
+  from { opacity: 0; transform: translateY(-12px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 480px) {
+  .wedding-gift {
+    padding: 43px 12px 47px;
+  }
+
+  .wedding-gift-intro {
+    max-width: 330px;
+    margin-bottom: 15px;
+    font-size: 15.5px;
+  }
+
+  .gift-line-box {
+    transform: scale(.9);
+  }
+
+  .gift-qr-grid {
+    gap: 9px;
+  }
+
+  .gift-qr-card {
+    padding: 12px 9px 14px;
+    border-radius: 17px;
+  }
+
+  .gift-qr-card h3 {
+    margin-bottom: 9px;
+    font-size: 20px;
+  }
+
+  .gift-qr-card img {
+    border-radius: 10px;
+  }
+
+  .gift-qr-download {
+    min-height: 36px;
+    margin-top: 11px;
+    padding: 8px 10px;
+    font-size: 11.5px;
+  }
+}
+
 .closing-heart {
   display: flex;
   justify-content: center;
@@ -2379,48 +2606,54 @@ h2 {
   transform: translateY(-1px);
 }
 
+.music-button.is-playing {
+  background: rgba(157, 91, 116, .9);
+  box-shadow: 0 5px 18px rgba(118, 62, 83, .24), inset 0 0 0 5px rgba(255, 249, 248, .08);
+}
+
 .music-button>svg {
   position: relative;
   z-index: 1;
 }
 
-.music-ripples {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+.music-equalizer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  height: 25px;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
 }
 
-.music-ripples i {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 14px;
+.music-equalizer i {
+  width: 4px;
+  height: 7px;
+  border-radius: 999px;
+  background: currentColor;
+  transform-origin: center bottom;
+  animation: musicEqualizer .8s ease-in-out infinite alternate;
+}
+
+.music-equalizer i:nth-child(2) {
+  height: 17px;
+  animation-delay: -.42s;
+}
+
+.music-equalizer i:nth-child(3) {
+  height: 24px;
+  animation-delay: -.68s;
+}
+
+.music-equalizer i:nth-child(4) {
   height: 14px;
-  border: 1px solid rgba(255, 255, 255, .72);
-  border-radius: 50%;
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(.4);
-  animation: musicRipple 1.75s ease-out infinite;
+  animation-delay: -.2s;
 }
 
-.music-ripples i:nth-child(2) {
-  animation-delay: .58s;
-}
-
-.music-ripples i:nth-child(3) {
-  animation-delay: 1.16s;
-}
-
-@keyframes musicRipple {
-  0% {
-    opacity: .55;
-    transform: translate(-50%, -50%) scale(.42);
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(2.45);
-  }
+@keyframes musicEqualizer {
+  0% { transform: scaleY(.42); }
+  45% { transform: scaleY(.82); }
+  100% { transform: scaleY(1); }
 }
 
 footer {
@@ -4334,9 +4567,9 @@ h2,
     opacity: var(--floral-opacity, .7);
   }
 
-  .music-ripples i {
+  .music-equalizer i {
     animation: none;
-    opacity: 0;
+    transform: scaleY(.78);
   }
 }
 
@@ -5017,7 +5250,7 @@ h2,
 .floating-controls {
   position: fixed;
   z-index: 20;
-  right: 20px;
+  right: 10px;
   bottom: 22px;
   display: flex;
   align-items: center;
@@ -5028,6 +5261,50 @@ h2,
   position: relative;
   right: auto;
   bottom: auto;
+}
+
+.music-control-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.music-hint {
+  position: absolute;
+  right: calc(100% + 11px);
+  bottom: 50%;
+  width: max-content;
+  max-width: min(310px, calc(100vw - 128px));
+  padding: 10px 17px;
+  border: 1px solid rgba(190, 116, 141, .62);
+  border-radius: 999px;
+  color: #76565f;
+  background: rgba(255, 249, 248, .96);
+  box-shadow: 0 7px 22px rgba(118, 86, 95, .15);
+  font: 600 16px/1.25 'Cormorant Garamond', Georgia, serif;
+  letter-spacing: .01em;
+  text-align: center;
+  pointer-events: none;
+  transform: translateY(50%);
+  animation: musicHintIn .26s ease-out both;
+}
+
+.music-hint::after {
+  position: absolute;
+  right: -6px;
+  bottom: 50%;
+  width: 11px;
+  height: 11px;
+  content: '';
+  border-top: 1px solid rgba(190, 116, 141, .62);
+  border-right: 1px solid rgba(190, 116, 141, .62);
+  background: rgba(255, 249, 248, .96);
+  transform: translateY(50%) rotate(45deg);
+}
+
+@keyframes musicHintIn {
+  from { opacity: 0; transform: translate(10px, 50%); }
+  to { opacity: 1; transform: translate(0, 50%); }
 }
 
 .auto-scroll-button {
@@ -5061,7 +5338,7 @@ h2,
 
 @media (max-width: 480px) {
   .floating-controls {
-    right: max(14px, env(safe-area-inset-right));
+    right: max(7px, env(safe-area-inset-right));
     bottom: max(14px, env(safe-area-inset-bottom));
     gap: 7px;
   }
@@ -5069,6 +5346,13 @@ h2,
   .floating-controls .music-button {
     width: 43px;
     height: 43px;
+  }
+
+  .music-hint {
+    right: calc(100% + 9px);
+    max-width: calc(100vw - 118px);
+    padding: 9px 14px;
+    font-size: 15px;
   }
 
   .auto-scroll-button {

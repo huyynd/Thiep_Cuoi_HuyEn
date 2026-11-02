@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
-  ArrowRight, Check, ChevronDown, Copy,
-  ExternalLink, Heart, MapPin, Music2, Pause, PenLine, Send, X
+  ArrowRight, Check, ChevronDown, Copy, Download,
+  ExternalLink, Heart, MapPin, Music2, PenLine, Send, X
 } from 'lucide-react';
 import { wedding } from './config/wedding.js';
 import { createGuestbookEntry, getGuestbookEntries, isGuestbookConfigured } from './lib/guestbook.js';
@@ -425,6 +425,46 @@ function WeddingVenues() {
   </section>;
 }
 
+function WeddingGift() {
+  const [isOpen, setIsOpen] = useState(false);
+  const qrCodes = [
+    { label: 'Chú rể Đức Huy', src: '/photos/maqr/maqrnhatrai.png', download: 'ma-qr-chu-re-duc-huy.png' },
+    { label: 'Cô dâu Bùi Yến', src: '/photos/maqr/maqrnhagai.png', download: 'ma-qr-co-dau-bui-yen.png' },
+  ];
+
+  return <section className="wedding-gift section-block" aria-labelledby="wedding-gift-title">
+    <div className="eyebrow">GIFT OF LOVE</div>
+    <h2 id="wedding-gift-title">Chút quà gửi thương</h2>
+    <p className="wedding-gift-intro">Sự hiện diện của bạn đã là món quà quý giá nhất. Nếu muốn gửi thêm một chút yêu thương, chúng mình xin trân trọng đón nhận.</p>
+    <button
+      className={`gift-box-toggle ${isOpen ? 'is-open' : ''}`}
+      type="button"
+      aria-expanded={isOpen}
+      aria-controls="wedding-gift-qr"
+      onClick={() => setIsOpen((current) => !current)}
+    >
+      <span className="gift-line-box" aria-hidden="true">
+        <i className="gift-box-body" />
+        <i className="gift-box-lid" />
+        <i className="gift-box-ribbon" />
+        <i className="gift-box-bow gift-box-bow-left" />
+        <i className="gift-box-bow gift-box-bow-right" />
+      </span>
+      <strong>{isOpen ? 'Khép hộp quà' : 'Mở hộp quà'}</strong>
+    </button>
+
+    {isOpen && <div className="gift-qr-grid" id="wedding-gift-qr">
+      {qrCodes.map((qr) => <article className="gift-qr-card" key={qr.label}>
+        <h3>{qr.label}</h3>
+        <img src={qr.src} alt={`Mã QR mừng cưới ${qr.label.toLowerCase()}`} />
+        <a className="gift-qr-download" href={qr.src} download={qr.download} target="_blank" rel="noreferrer">
+          <Download size={15} aria-hidden="true" /> Tải mã QR
+        </a>
+      </article>)}
+    </div>}
+  </section>;
+}
+
 function getGuestbookPreview(message) {
   return message.length > 80 ? `${message.slice(0, 80).trimEnd()}…` : message;
 }
@@ -678,8 +718,10 @@ export default function App() {
   const [now, setNow] = useState(Date.now());
   const [copied, setCopied] = useState(false);
   const [playing, setPlaying] = useState(false);
+  const [showMusicHint, setShowMusicHint] = useState(false);
   const [autoScrollEnabled, setAutoScrollEnabled] = useState(false);
   const audioRef = useRef(null);
+  const musicHintShownRef = useRef(false);
 
   useEffect(() => {
     if (!invitationSlug) {
@@ -807,18 +849,45 @@ export default function App() {
   }, [autoScrollEnabled]);
 
   useEffect(() => {
+    if (!wedding.musicUrl || guest === undefined || guest === false || musicHintShownRef.current) return;
+    musicHintShownRef.current = true;
+    setShowMusicHint(true);
+  }, [guest]);
+
+  useEffect(() => {
+    if (!showMusicHint) return undefined;
+
+    const hideHint = () => setShowMusicHint(false);
+    const hideTimer = window.setTimeout(hideHint, 2_000);
+    const userScrollEvents = ['wheel', 'touchmove'];
+
+    userScrollEvents.forEach((eventName) => window.addEventListener(eventName, hideHint, { passive: true }));
+    return () => {
+      window.clearTimeout(hideTimer);
+      userScrollEvents.forEach((eventName) => window.removeEventListener(eventName, hideHint));
+    };
+  }, [showMusicHint]);
+
+  useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
     audio.volume = 0.35;
-    const syncPlaying = () => setPlaying(!audio.paused);
+    const syncPlaying = () => {
+      const isPlaying = !audio.paused;
+      setPlaying(isPlaying);
+    };
     const interactionEvents = ['pointerdown', 'touchstart', 'keydown'];
     const removeInteractionListeners = () => {
       interactionEvents.forEach((eventName) => {
         document.removeEventListener(eventName, startMusic, true);
       });
     };
-    const startMusic = async () => {
+    const startMusic = async (event) => {
+      // The music button handles its own click. Skipping it here prevents the
+      // mobile gesture listener from playing on pointerdown and immediately
+      // pausing again in the button's click handler.
+      if (event?.target instanceof Element && event.target.closest('.music-button')) return;
       try {
         await audio.play();
         setPlaying(true);
@@ -840,11 +909,12 @@ export default function App() {
       audio.removeEventListener('play', syncPlaying);
       audio.removeEventListener('pause', syncPlaying);
     };
-  }, []);
+  }, [guest]);
 
   async function toggleMusic() {
     const audio = audioRef.current;
     if (!audio) return;
+    setShowMusicHint(false);
     if (audio.paused) {
       try { await audio.play(); setPlaying(true); }
       catch { setPlaying(false); alert('Trình duyệt không phát được nhạc. Hãy kiểm tra file nhạc.'); }
@@ -878,7 +948,6 @@ export default function App() {
     </main>;
   }
 
-  const recipient = guest?.name || 'Quý khách';
   const coverDate = getCoverDate(wedding.calendarDateISO || wedding.dateISO);
 
   return <>
@@ -919,12 +988,14 @@ export default function App() {
           <div className="hero-rule"><Heart size={21} fill="#b57487" strokeWidth={1.4} /></div>
           <h1><span>{wedding.groom}</span><em>&</em><span>{wedding.bride}</span></h1>
           <p className="hero-subtitle">CHÚNG MÌNH SẮP VỀ CHUNG MỘT NHÀ</p>
+          {/* Khối tên khách mời được tạm ẩn để dùng một đường link chung cho mọi người.
           <div className="nameplate">
             <div className="nameplate-leaf">✦</div>
             <span>Trân trọng kính mời</span>
-            <strong>{recipient}</strong>
+            <strong>Quý khách</strong>
             <p>Đến dự ngày vui và chung vui cùng gia đình chúng mình</p>
           </div>
+          */}
           <WeddingCalendar now={now} />
           <a className="hero-venue-shortcut" href="#dia-diem"><MapPin size={15} /> Xem địa điểm tổ chức</a>
           <a className="down-arrow" href="#thong-tin" aria-label="Xem lịch tiệc và địa điểm"><ChevronDown size={22} /></a>
@@ -944,6 +1015,8 @@ export default function App() {
       <Guestbook guest={guest || null} />
 
       <WeddingVenues />
+
+      <WeddingGift />
 
       <section className="closing section-block">
         <img className="closing-floral" src="/photos/floral-tulip-lily-corner.png" alt="" aria-hidden="true" />
@@ -967,6 +1040,14 @@ export default function App() {
       </section>
     </main>
     <div className="floating-controls">
+      {wedding.musicUrl && <div className="music-control-wrap">
+        {showMusicHint && <div className="music-hint" role="status">Chạm vào đây nếu bạn muốn phát nhạc!</div>}
+        <button className={`music-button ${playing ? 'is-playing' : ''}`} type="button" aria-label={playing ? 'Tạm dừng nhạc' : 'Phát nhạc nền'} onClick={toggleMusic}>
+          {playing
+            ? <span className="music-equalizer" aria-hidden="true"><i /><i /><i /><i /></span>
+            : <Music2 size={20} />}
+        </button>
+      </div>}
       <button
         className={`auto-scroll-button ${autoScrollEnabled ? 'is-active' : ''}`}
         type="button"
@@ -977,9 +1058,6 @@ export default function App() {
       >
         <ChevronDown size={20} aria-hidden="true" />
       </button>
-      {wedding.musicUrl && <button className={`music-button ${playing ? 'is-playing' : ''}`} type="button" aria-label={playing ? 'Tạm dừng nhạc' : 'Phát nhạc nền'} onClick={toggleMusic}>
-        {playing ? <><span className="music-ripples" aria-hidden="true"><i /><i /><i /></span><Pause size={19} fill="currentColor" /></> : <Music2 size={20} />}
-      </button>}
     </div>
     <footer>Made with <Heart size={12} fill="currentColor" /> · {wedding.groom} & {wedding.bride}</footer>
   </>;
