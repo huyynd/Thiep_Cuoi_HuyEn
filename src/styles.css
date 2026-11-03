@@ -44,6 +44,12 @@ a:focus-visible {
 }
 
 .photo-cover {
+  --cover-image-x: 50%;
+  --cover-image-y: 50%;
+  --cover-date-bottom: clamp(88px, 12svh, 138px);
+  --cover-names-bottom: clamp(78px, 9vw, 110px);
+  --cover-shade-top: .21;
+  --cover-shade-bottom: .47;
   position: relative;
   isolation: isolate;
   min-height: 100svh;
@@ -66,14 +72,14 @@ a:focus-visible {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: var(--cover-image-x) var(--cover-image-y);
 }
 
 .photo-cover-shade {
   z-index: 1;
   background:
     linear-gradient(135deg, rgba(255, 249, 248, .15), rgba(243, 203, 214, .10) 48%, rgba(255, 249, 248, .08)),
-    linear-gradient(180deg, rgba(21, 15, 15, .21), transparent 28%, transparent 63%, rgba(16, 11, 12, .47));
+    linear-gradient(180deg, rgb(21 15 15 / var(--cover-shade-top)), transparent 28%, transparent 63%, rgb(16 11 12 / var(--cover-shade-bottom)));
 }
 
 .photo-cover-snow {
@@ -285,7 +291,7 @@ a:focus-visible {
 .photo-cover-names {
   position: absolute;
   z-index: 3;
-  bottom: clamp(39px, 7vw, 80px);
+  bottom: var(--cover-names-bottom);
   left: clamp(32px, 5vw, 62px);
   right: clamp(32px, 5vw, 62px);
   display: flex;
@@ -4661,22 +4667,45 @@ h2,
 .photo-cover-shade {
   background:
     linear-gradient(135deg, rgba(255, 249, 248, .15), rgba(243, 203, 214, .10) 48%, rgba(255, 249, 248, .08)),
-    linear-gradient(180deg, rgba(21, 15, 15, .21), transparent 28%, transparent 60%, rgba(119, 89, 96, .38) 83%, rgba(251, 233, 237, .5));
+    linear-gradient(180deg, rgb(21 15 15 / var(--cover-shade-top)), transparent 28%, transparent 60%, rgba(119, 89, 96, .38) 83%, rgb(251 233 237 / var(--cover-shade-bottom)));
 }
 
 .photo-cover-date {
   position: absolute;
   right: clamp(21px, 5vw, 62px);
-  bottom: clamp(66px, 12svh, 130px);
+  bottom: var(--cover-date-bottom);
   left: clamp(21px, 5vw, 62px);
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: clamp(8px, 2.6vw, 22px);
+  display: grid;
+  justify-items: center;
+  gap: 10px;
   margin: 0;
   font-size: clamp(112px, 24vw, 190px);
   line-height: .75;
   letter-spacing: -.1em;
+}
+
+.photo-cover-date-numbers {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: clamp(2px, .7vw, 7px);
+}
+
+.cover-date-separator {
+  align-self: center;
+  margin: 0 .01em;
+  color: rgba(255, 255, 255, .88);
+  font: 400 .2em/1 'Cormorant Garamond', Georgia, serif;
+  letter-spacing: 0;
+  text-shadow: 0 2px 8px rgba(24, 14, 15, .32);
+  transform: translateY(.05em);
+}
+
+.photo-cover-date small {
+  color: rgba(255, 255, 255, .94);
+  font: 600 clamp(9px, 1.5vw, 13px)/1.2 'DM Sans', Arial, sans-serif;
+  letter-spacing: .25em;
+  text-shadow: 0 2px 10px rgba(24, 14, 15, .48);
 }
 
 .photo-cover-date::before,
@@ -4749,9 +4778,14 @@ h2,
 }
 
 @media (max-width: 480px) {
+  .photo-cover {
+    --cover-date-bottom: clamp(104px, 13svh, 132px);
+    --cover-names-bottom: 92px;
+  }
+
   .photo-cover-date {
-    bottom: clamp(60px, 9svh, 88px);
-    font-size: clamp(105px, 24vw, 140px);
+    font-size: clamp(82px, 21vw, 112px);
+    gap: 8px;
   }
 
   .hero h1 {
@@ -5365,6 +5399,11 @@ h2,
   .auto-scroll-button {
     width: 43px;
     height: 43px;
+  }
+
+  /* Keep both names above the fixed music and auto-scroll controls. */
+  .photo-cover-names {
+    bottom: var(--cover-names-bottom);
   }
 }
 

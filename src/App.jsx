@@ -964,18 +964,20 @@ export default function App() {
         <span>TOGETHER</span>
       </div>
       <div className="photo-cover-date" aria-label={`Ngày cưới ${coverDate.day} tháng ${coverDate.month} năm ${coverDate.fullYear}`}>
-        <span className="cover-date-day">{coverDate.day}</span>
-        <span className="cover-date-month">{coverDate.month}</span>
-        <span className="cover-date-year">{coverDate.year}</span>
+        <div className="photo-cover-date-numbers">
+          <span className="cover-date-day">{coverDate.day}</span>
+          <i className="cover-date-separator" aria-hidden="true">.</i>
+          <span className="cover-date-month">{coverDate.month}</span>
+          <i className="cover-date-separator" aria-hidden="true">.</i>
+          <span className="cover-date-year">{coverDate.year}</span>
+        </div>
+        <small>LỄ THÀNH HÔN</small>
       </div>
       <div className="photo-cover-names">
         <span>{wedding.groom}</span>
         <span>{wedding.bride}</span>
       </div>
       {/* <p className="photo-cover-party">TIỆC CƯỚI · 27.12.2026 · {wedding.partyHourLabel}</p> */}
-      <a className="photo-cover-scroll" href="#thiep-moi" aria-label="Xem thiệp mời">
-        <ChevronDown size={22} />
-      </a>
     </section>
     <div className="topline">THE WEDDING INVITATION <span className="topline-dot">✦</span> A DAY TO REMEMBER</div>
     {/* <PaperInvitationCover /> */}
@@ -999,7 +1001,6 @@ export default function App() {
           */}
           <WeddingCalendar now={now} />
           <a className="hero-venue-shortcut" href="#dia-diem"><MapPin size={15} /> Xem địa điểm tổ chức</a>
-          <a className="down-arrow" href="#thong-tin" aria-label="Xem lịch tiệc và địa điểm"><ChevronDown size={22} /></a>
         </div>
       </section>
 
