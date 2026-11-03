@@ -270,15 +270,15 @@
   width: min(100%, 420px);
   min-height: 48px;
   padding: 11px 21px;
-  border-color: #a96d83;
+  border-color: #c394a5;
   color: #fff;
-  background: #a96d83;
-  box-shadow: 0 7px 18px rgba(118, 86, 95, .13);
+  background: #bd899c;
+  box-shadow: 0 7px 18px rgba(118, 86, 95, .09);
 }
 
 .guestbook .guestbook-links button:hover {
   color: #fff;
-  background: #966176;
+  background: #ae7b8e;
 }
 
 .guestbook .guestbook-expand-button {
@@ -6065,4 +6065,173 @@ h2,
 .wedding-venues .venue-map-card {
   background: rgba(255, 255, 255, .72);
   border-color: rgba(221, 166, 181, .22);
+}
+
+/* Visible gallery scrollbar in the same rose-pastel palette. */
+.moments-carousel .carousel-thumbnails {
+  padding-bottom: 18px;
+  scrollbar-color: #b9879a #f5e5ea;
+  scrollbar-width: auto;
+}
+
+.moments-carousel .carousel-thumbnails::-webkit-scrollbar {
+  display: block;
+  height: 18px;
+}
+
+.moments-carousel .carousel-thumbnails::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: #f5e5ea;
+  box-shadow: inset 0 0 0 1px rgba(185, 135, 154, .1);
+}
+
+.moments-carousel .carousel-thumbnails::-webkit-scrollbar-thumb {
+  min-width: 62px;
+  border: 3px solid #f5e5ea;
+  border-radius: 999px;
+  background: #b9879a;
+  background-clip: padding-box;
+}
+
+.moments-carousel .carousel-thumbnails::-webkit-scrollbar-thumb:hover {
+  background: #a87588;
+  background-clip: padding-box;
+}
+
+.moments-carousel .carousel-thumbnails::-webkit-scrollbar-button:single-button:horizontal {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background-color: #f5e5ea;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 10px 10px;
+}
+
+.moments-carousel .carousel-thumbnails::-webkit-scrollbar-button:single-button:horizontal:decrement {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M8 2 4 6l4 4' fill='none' stroke='%23966f7e' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.moments-carousel .carousel-thumbnails::-webkit-scrollbar-button:single-button:horizontal:increment {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='m4 2 4 4-4 4' fill='none' stroke='%23966f7e' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.moments-carousel .carousel-thumbnails::-webkit-scrollbar-button:single-button:horizontal:hover {
+  background-color: #ecd7de;
+}
+
+/* Cross-browser custom gallery scrollbar with persistent arrow buttons. */
+.moments-carousel .carousel-thumbnails {
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.moments-carousel .carousel-thumbnails::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-scrollbar {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) 22px;
+  align-items: center;
+  gap: 5px;
+  width: min(100%, 790px);
+  margin: 10px auto 0;
+  padding: 3px 4px;
+  border: 0;
+  border-radius: 12px;
+  background: #fff9f8;
+  box-shadow: none;
+}
+
+.carousel-scrollbar > button {
+  display: grid;
+  width: 22px;
+  height: 18px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  color: #966f7e;
+  background: transparent;
+  transition: opacity .2s ease, color .2s ease, background .2s ease, transform .2s ease;
+}
+
+.carousel-scrollbar > button svg {
+  display: none;
+}
+
+.carousel-scrollbar > button::before {
+  width: 9px;
+  height: 11px;
+  content: '';
+  background: center / contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 18'%3E%3Cpath d='M3 2.5L11.5 9 3 15.5Z' fill='%239d7c88' stroke='%239d7c88' stroke-width='3' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+.carousel-scrollbar > button:first-child::before {
+  transform: rotate(180deg);
+}
+
+.carousel-scrollbar > button:last-child::before {
+  transform: none;
+}
+
+.carousel-scrollbar > button:hover:not(:disabled) {
+  color: #7d5363;
+  background: transparent;
+}
+
+.carousel-scrollbar > button:disabled {
+  opacity: .62;
+  cursor: default;
+}
+
+.carousel-scroll-track {
+  position: relative;
+  height: 11px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 999px;
+  background: #efe2e7;
+  box-shadow: inset 0 1px 2px rgba(118, 86, 95, .08);
+  cursor: pointer;
+}
+
+.carousel-scroll-thumb {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  min-width: 54px;
+  border-radius: 999px;
+  background: #aa8995;
+  box-shadow: none;
+  cursor: grab;
+  touch-action: none;
+}
+
+.carousel-scroll-thumb:active {
+  background: #987783;
+  cursor: grabbing;
+}
+
+@media (max-width: 480px) {
+  .carousel-scrollbar {
+    grid-template-columns: 22px minmax(0, 1fr) 22px;
+    gap: 5px;
+  }
+
+  .carousel-scrollbar > button {
+    width: 22px;
+    height: 18px;
+  }
+
+  .carousel-scroll-track {
+    height: 11px;
+  }
+
+  .carousel-scroll-thumb {
+    top: 0;
+    bottom: 0;
+  }
 }

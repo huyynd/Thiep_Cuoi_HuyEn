@@ -321,33 +321,49 @@ function MomentsCarousel() {
   const photos = wedding.momentPhotos || [];
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoplayPaused, setIsAutoplayPaused] = useState(false);
-  const [isMobile, setIsMobile] = useState(() => window.matchMedia('(max-width: 720px)').matches);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [thumbnailScroll, setThumbnailScroll] = useState({ left: 0, max: 0, viewport: 1, content: 1 });
   const thumbnailsRef = useRef(null);
   const thumbnailScrollLeftRef = useRef(0);
   const touchStartXRef = useRef(null);
   const didSwipeRef = useRef(false);
+  const scrollbarDragRef = useRef(null);
 
   const preserveThumbnailPosition = () => {
-    if (thumbnailsRef.current) thumbnailScrollLeftRef.current = thumbnailsRef.current.scrollLeft;
+    const element = thumbnailsRef.current;
+    if (!element) return;
+    thumbnailScrollLeftRef.current = element.scrollLeft;
+    setThumbnailScroll({
+      left: element.scrollLeft,
+      max: Math.max(0, element.scrollWidth - element.clientWidth),
+      viewport: element.clientWidth,
+      content: element.scrollWidth,
+    });
   };
 
   useEffect(() => {
-    const media = window.matchMedia('(max-width: 720px)');
-    const updateMobileState = () => setIsMobile(media.matches);
-    updateMobileState();
-    media.addEventListener?.('change', updateMobileState);
-    return () => media.removeEventListener?.('change', updateMobileState);
-  }, []);
+    const element = thumbnailsRef.current;
+    if (!element) return undefined;
+    const update = () => preserveThumbnailPosition();
+    const frame = window.requestAnimationFrame(update);
+    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(update) : null;
+    observer?.observe(element);
+    window.addEventListener('resize', update);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer?.disconnect();
+      window.removeEventListener('resize', update);
+    };
+  }, [photos.length]);
 
   useEffect(() => {
-    if (photos.length < 2 || isAutoplayPaused || isMobile || isLightboxOpen) return undefined;
+    if (photos.length < 2 || isAutoplayPaused || isLightboxOpen) return undefined;
     const timer = window.setInterval(() => {
       preserveThumbnailPosition();
       setActiveIndex((current) => (current + 1) % photos.length);
     }, 6000);
     return () => window.clearInterval(timer);
-  }, [photos.length, isAutoplayPaused, isMobile, isLightboxOpen]);
+  }, [photos.length, isAutoplayPaused, isLightboxOpen]);
 
   useEffect(() => {
     if (thumbnailsRef.current) thumbnailsRef.current.scrollLeft = thumbnailScrollLeftRef.current;
@@ -387,6 +403,47 @@ function MomentsCarousel() {
     setActiveIndex(index);
   };
 
+  const scrollThumbnails = (direction) => {
+    pauseAutoplay();
+    const element = thumbnailsRef.current;
+    if (!element) return;
+    element.scrollBy({ left: direction * Math.max(120, element.clientWidth * .72), behavior: 'smooth' });
+  };
+
+  const seekThumbnailScroll = (event) => {
+    const element = thumbnailsRef.current;
+    if (!element || thumbnailScroll.max <= 0) return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const ratio = Math.min(1, Math.max(0, (event.clientX - bounds.left) / bounds.width));
+    element.scrollTo({ left: ratio * thumbnailScroll.max, behavior: 'smooth' });
+    pauseAutoplay();
+  };
+
+  const startScrollbarDrag = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    pauseAutoplay();
+    const track = event.currentTarget.parentElement;
+    scrollbarDragRef.current = {
+      startX: event.clientX,
+      startScroll: thumbnailScroll.left,
+      travel: Math.max(1, track.clientWidth - event.currentTarget.offsetWidth),
+    };
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+  };
+
+  const moveScrollbarDrag = (event) => {
+    const drag = scrollbarDragRef.current;
+    const element = thumbnailsRef.current;
+    if (!drag || !element || thumbnailScroll.max <= 0) return;
+    element.scrollLeft = drag.startScroll + ((event.clientX - drag.startX) / drag.travel) * thumbnailScroll.max;
+  };
+
+  const stopScrollbarDrag = (event) => {
+    scrollbarDragRef.current = null;
+    event.currentTarget.releasePointerCapture?.(event.pointerId);
+  };
+
   const handleTouchStart = (event) => {
     touchStartXRef.current = event.touches[0]?.clientX ?? null;
     didSwipeRef.current = false;
@@ -413,6 +470,10 @@ function MomentsCarousel() {
   };
 
   const counter = `${String(activeIndex + 1).padStart(2, '0')} / ${String(photos.length).padStart(2, '0')}`;
+  const thumbWidthPercent = Math.min(100, Math.max(18, (thumbnailScroll.viewport / thumbnailScroll.content) * 100));
+  const thumbLeftPercent = thumbnailScroll.max > 0
+    ? (thumbnailScroll.left / thumbnailScroll.max) * (100 - thumbWidthPercent)
+    : 0;
 
   return <section className="moments-carousel section-block" aria-label="Khoảnh khắc của chúng mình">
     <img className="moments-floral" src="/photos/floral-lily-sprig.png" alt="" aria-hidden="true" />
@@ -424,7 +485,6 @@ function MomentsCarousel() {
         <img className="carousel-featured-image" src={photos[activeIndex]} alt={`Khoảnh khắc của ${wedding.groom} và ${wedding.bride} ${activeIndex + 1}`} />
       </button>
     </div>
-    <div className="carousel-caption"><strong>{counter}</strong><span>Vuốt để xem ảnh · Chạm để phóng to</span></div>
     <div className="carousel-thumbnails" ref={thumbnailsRef} aria-label="Chọn ảnh" onPointerDown={pauseAutoplay} onScroll={preserveThumbnailPosition}>
       {photos.map((photo, index) => <button
         type="button"
@@ -436,6 +496,27 @@ function MomentsCarousel() {
       >
         <img src={photo} alt="" />
       </button>)}
+    </div>
+    <div className="carousel-scrollbar" aria-label="Cuộn danh sách ảnh">
+      <button type="button" onClick={() => scrollThumbnails(-1)} disabled={thumbnailScroll.left <= 1} aria-label="Cuộn ảnh sang trái"><ChevronLeft size={19} /></button>
+      <div className="carousel-scroll-track" onClick={seekThumbnailScroll}>
+        <span
+          className="carousel-scroll-thumb"
+          role="scrollbar"
+          tabIndex="0"
+          aria-label="Vị trí danh sách ảnh"
+          aria-valuemin="0"
+          aria-valuemax={Math.round(thumbnailScroll.max)}
+          aria-valuenow={Math.round(thumbnailScroll.left)}
+          style={{ width: `${thumbWidthPercent}%`, left: `${thumbLeftPercent}%` }}
+          onClick={(event) => event.stopPropagation()}
+          onPointerDown={startScrollbarDrag}
+          onPointerMove={moveScrollbarDrag}
+          onPointerUp={stopScrollbarDrag}
+          onPointerCancel={stopScrollbarDrag}
+        />
+      </div>
+      <button type="button" onClick={() => scrollThumbnails(1)} disabled={thumbnailScroll.left >= thumbnailScroll.max - 1} aria-label="Cuộn ảnh sang phải"><ChevronRight size={19} /></button>
     </div>
     {isLightboxOpen && createPortal(<div className="gallery-lightbox" role="dialog" aria-modal="true" aria-label="Xem ảnh cưới toàn màn hình">
       <button className="gallery-lightbox-backdrop" type="button" aria-label="Đóng ảnh" onClick={() => setIsLightboxOpen(false)} />
