@@ -417,6 +417,7 @@ function WeddingVenues() {
     <div className="event-card event-card-venues">
       <div className="event-label">LOCATION</div>
       <h3 className="venues-title">Địa điểm tổ chức</h3>
+      {/* <p className="venues-guide">Quý khách vui lòng chọn địa điểm nhà trai hoặc nhà gái phù hợp để xem chỉ đường.</p> */}
       <div className="venues-grid">
         <VenueMap house={wedding.groomHouse} label="Nhà trai" />
         <VenueMap house={wedding.brideHouse} label="Nhà gái" />

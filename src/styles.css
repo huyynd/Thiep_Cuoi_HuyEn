@@ -1814,8 +1814,15 @@ h2 {
 
 .venues-title {
   font: 500 clamp(23px, 3.3vw, 30px) 'Cormorant Garamond', Georgia, serif;
-  margin: 8px 0 18px;
+  margin: 8px 0 10px;
   color: #7b4c60;
+}
+
+.venues-guide {
+  max-width: 520px;
+  margin: 0 auto;
+  color: #8c717c;
+  font: 400 clamp(14px, 2vw, 16px)/1.5 'DM Sans', Arial, sans-serif;
 }
 
 /* 2 Venue Boxes (Nhà Trai & Nhà Gái) */
@@ -2450,9 +2457,9 @@ h2 {
   }
 
   .gift-qr-download {
-    min-height: 36px;
+    min-height: 44px;
     margin-top: 11px;
-    padding: 8px 10px;
+    padding: 10px 12px;
     font-size: 11.5px;
   }
 }
