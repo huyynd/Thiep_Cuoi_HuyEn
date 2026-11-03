@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
-  ArrowRight, Check, ChevronDown, Copy, Download,
+  ArrowRight, Check, ChevronDown, ChevronLeft, ChevronRight, Download,
   ExternalLink, Heart, MapPin, Music2, PenLine, Send, X
 } from 'lucide-react';
 import { wedding } from './config/wedding.js';
@@ -321,25 +321,53 @@ function MomentsCarousel() {
   const photos = wedding.momentPhotos || [];
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoplayPaused, setIsAutoplayPaused] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia('(max-width: 720px)').matches);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const thumbnailsRef = useRef(null);
   const thumbnailScrollLeftRef = useRef(0);
+  const touchStartXRef = useRef(null);
+  const didSwipeRef = useRef(false);
 
   const preserveThumbnailPosition = () => {
     if (thumbnailsRef.current) thumbnailScrollLeftRef.current = thumbnailsRef.current.scrollLeft;
   };
 
   useEffect(() => {
-    if (photos.length < 2 || isAutoplayPaused) return undefined;
+    const media = window.matchMedia('(max-width: 720px)');
+    const updateMobileState = () => setIsMobile(media.matches);
+    updateMobileState();
+    media.addEventListener?.('change', updateMobileState);
+    return () => media.removeEventListener?.('change', updateMobileState);
+  }, []);
+
+  useEffect(() => {
+    if (photos.length < 2 || isAutoplayPaused || isMobile || isLightboxOpen) return undefined;
     const timer = window.setInterval(() => {
       preserveThumbnailPosition();
       setActiveIndex((current) => (current + 1) % photos.length);
     }, 6000);
     return () => window.clearInterval(timer);
-  }, [photos.length, isAutoplayPaused]);
+  }, [photos.length, isAutoplayPaused, isMobile, isLightboxOpen]);
 
   useEffect(() => {
     if (thumbnailsRef.current) thumbnailsRef.current.scrollLeft = thumbnailScrollLeftRef.current;
   }, [activeIndex]);
+
+  useEffect(() => {
+    if (!isLightboxOpen) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') setIsLightboxOpen(false);
+      if (event.key === 'ArrowLeft') setActiveIndex((current) => (current - 1 + photos.length) % photos.length);
+      if (event.key === 'ArrowRight') setActiveIndex((current) => (current + 1) % photos.length);
+    };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isLightboxOpen, photos.length]);
 
   if (!photos.length) return null;
 
@@ -348,10 +376,10 @@ function MomentsCarousel() {
     setIsAutoplayPaused(true);
   };
 
-  const showNext = () => {
+  const movePhoto = (step) => {
     pauseAutoplay();
     preserveThumbnailPosition();
-    setActiveIndex((current) => (current + 1) % photos.length);
+    setActiveIndex((current) => (current + step + photos.length) % photos.length);
   };
   const choosePhoto = (index) => {
     pauseAutoplay();
@@ -359,16 +387,44 @@ function MomentsCarousel() {
     setActiveIndex(index);
   };
 
+  const handleTouchStart = (event) => {
+    touchStartXRef.current = event.touches[0]?.clientX ?? null;
+    didSwipeRef.current = false;
+    pauseAutoplay();
+  };
+
+  const handleTouchEnd = (event) => {
+    if (touchStartXRef.current == null) return;
+    const endX = event.changedTouches[0]?.clientX ?? touchStartXRef.current;
+    const distance = endX - touchStartXRef.current;
+    touchStartXRef.current = null;
+    if (Math.abs(distance) < 42) return;
+    didSwipeRef.current = true;
+    movePhoto(distance < 0 ? 1 : -1);
+  };
+
+  const openLightbox = () => {
+    if (didSwipeRef.current) {
+      didSwipeRef.current = false;
+      return;
+    }
+    pauseAutoplay();
+    setIsLightboxOpen(true);
+  };
+
+  const counter = `${String(activeIndex + 1).padStart(2, '0')} / ${String(photos.length).padStart(2, '0')}`;
+
   return <section className="moments-carousel section-block" aria-label="Khoảnh khắc của chúng mình">
     <img className="moments-floral" src="/photos/floral-lily-sprig.png" alt="" aria-hidden="true" />
-    <div className="eyebrow">GALLERY</div>
+    <div className="eyebrow">OUR MOMENTS</div>
     <h2>Khoảnh khắc của chúng mình</h2>
+    <p className="moments-intro">Những khoảnh khắc đẹp trên hành trình yêu thương</p>
     <div className="carousel-shell">
-      <img className="carousel-featured-backdrop" src={photos[activeIndex]} alt="" aria-hidden="true" />
-      <button className="carousel-featured" type="button" onClick={showNext} aria-label="Xem ảnh tiếp theo">
+      <button className="carousel-featured" type="button" onClick={openLightbox} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} aria-label="Mở ảnh toàn màn hình">
         <img className="carousel-featured-image" src={photos[activeIndex]} alt={`Khoảnh khắc của ${wedding.groom} và ${wedding.bride} ${activeIndex + 1}`} />
       </button>
     </div>
+    <div className="carousel-caption"><strong>{counter}</strong><span>Vuốt để xem ảnh · Chạm để phóng to</span></div>
     <div className="carousel-thumbnails" ref={thumbnailsRef} aria-label="Chọn ảnh" onPointerDown={pauseAutoplay} onScroll={preserveThumbnailPosition}>
       {photos.map((photo, index) => <button
         type="button"
@@ -381,6 +437,16 @@ function MomentsCarousel() {
         <img src={photo} alt="" />
       </button>)}
     </div>
+    {isLightboxOpen && createPortal(<div className="gallery-lightbox" role="dialog" aria-modal="true" aria-label="Xem ảnh cưới toàn màn hình">
+      <button className="gallery-lightbox-backdrop" type="button" aria-label="Đóng ảnh" onClick={() => setIsLightboxOpen(false)} />
+      <button className="gallery-lightbox-close" type="button" aria-label="Đóng" onClick={() => setIsLightboxOpen(false)}><X size={27} /></button>
+      {photos.length > 1 && <button className="gallery-lightbox-nav is-prev" type="button" aria-label="Ảnh trước" onClick={() => movePhoto(-1)}><ChevronLeft size={28} /></button>}
+      <figure className="gallery-lightbox-figure" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+        <img src={photos[activeIndex]} alt={`Khoảnh khắc ${activeIndex + 1} của ${wedding.groom} và ${wedding.bride}`} />
+        <figcaption>{counter}</figcaption>
+      </figure>
+      {photos.length > 1 && <button className="gallery-lightbox-nav is-next" type="button" aria-label="Ảnh tiếp theo" onClick={() => movePhoto(1)}><ChevronRight size={28} /></button>}
+    </div>, document.body)}
   </section>;
 }
 
@@ -466,8 +532,13 @@ function WeddingGift() {
   </section>;
 }
 
-function getGuestbookPreview(message) {
-  return message.length > 80 ? `${message.slice(0, 80).trimEnd()}…` : message;
+function getGuestbookPreview(message, limit = 100) {
+  return message.length > limit ? `${message.slice(0, limit).trimEnd()}…` : message;
+}
+
+function formatGuestbookTimestamp(value) {
+  const date = new Date(value);
+  return `${date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })} ${date.toLocaleDateString('vi-VN')}`;
 }
 
 function Guestbook({ guest }) {
@@ -481,8 +552,6 @@ function Guestbook({ guest }) {
   const [guestbookError, setGuestbookError] = useState('');
   const [guestbookLoadError, setGuestbookLoadError] = useState('');
   const [guestbookSuccess, setGuestbookSuccess] = useState('');
-  const [showAllEntries, setShowAllEntries] = useState(false);
-  const guestbookRailRef = useRef(null);
   const guestbookScrollPositionRef = useRef(0);
   const guestbookSuccessTimerRef = useRef(null);
 
@@ -513,12 +582,6 @@ function Guestbook({ guest }) {
   useEffect(() => () => {
     if (guestbookSuccessTimerRef.current) window.clearTimeout(guestbookSuccessTimerRef.current);
   }, []);
-
-  useEffect(() => {
-    if (latestEntryId && guestbookRailRef.current) {
-      guestbookRailRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-    }
-  }, [entries, latestEntryId]);
 
   function openWriter() {
     guestbookScrollPositionRef.current = window.scrollY;
@@ -589,46 +652,22 @@ function Guestbook({ guest }) {
     setDialog('detail');
   }
 
-  function toggleAllEntries() {
-    setShowAllEntries((current) => !current);
-    // Let the page-level gentle auto-scroll restart its five-second timer.
-    window.dispatchEvent(new Event('invitation:activity'));
-  }
-
   return <section className="guestbook section-block" aria-label="Sổ lưu bút">
     <img className="guestbook-floral" src="/photos/floral-lily-sprig.png" alt="" aria-hidden="true" />
     <div className="eyebrow">GUESTBOOK</div>
-    <h2>Sổ lưu bút</h2>
+    <h2>Lời chúc gửi chúng mình</h2>
+    <p className="guestbook-intro">Mỗi lời chúc là một kỷ niệm đẹp mà chúng mình luôn trân quý.</p>
     <div className="guestbook-card">
       {guestbookLoadError && <p className="guestbook-load-error" role="status">{guestbookLoadError}</p>}
-      {entries.length > 0 ? <div className="guestbook-rail" ref={guestbookRailRef} aria-label="Các lời chúc">
-        {entries.map((entry) => <button type="button" key={entry.id} onClick={() => openEntry(entry)} className={`guestbook-note-card ${latestEntryId === entry.id ? 'is-new' : ''}`} aria-label={`Xem lời chúc của ${entry.name}`}>
-          <Heart size={22} fill="currentColor" strokeWidth={1.2} aria-hidden="true" />
-          <p>{getGuestbookPreview(entry.message)}</p>
-          <div className="guestbook-note-meta"><span className="guestbook-author" title={entry.name}><strong>{entry.name}</strong></span><time>{new Date(entry.createdAt).toLocaleDateString('vi-VN')}</time></div>
-        </button>)}
-      </div> : <p className="guestbook-empty-note">Hãy để lại lời chúc đầu tiên dành cho Huy &amp; Yến nhé.</p>}
-      {entries.length > 1 && <div className="guestbook-hint">Vuốt ngang để xem thêm lời chúc</div>}
+      {entries.length > 0 ? <div className="guestbook-scroll-list" tabIndex="0" aria-label={`Danh sách ${entries.length} lời chúc`}>
+        {entries.map((entry) => <article key={entry.id} className={`guestbook-scroll-entry ${latestEntryId === entry.id ? 'is-new' : ''}`}>
+          <div><strong>{entry.name}</strong><time>{formatGuestbookTimestamp(entry.createdAt)}</time></div>
+          <p>{entry.message}</p>
+        </article>)}
+      </div> : <p className="guestbook-empty-note">Chưa có lời chúc nào. Hãy gửi lời chúc đầu tiên dành cho Huy &amp; Yến nhé.</p>}
       <div className="guestbook-links">
         <button type="button" onClick={openWriter}>Gửi lời chúc đến Huy &amp; Yến</button>
       </div>
-      {entries.length > 0 && <>
-        <button
-          className={`guestbook-expand-button ${showAllEntries ? 'is-expanded' : ''}`}
-          type="button"
-          onClick={toggleAllEntries}
-          aria-expanded={showAllEntries}
-          aria-controls="guestbook-all-entries"
-        >
-          {showAllEntries ? 'Thu gọn lời chúc' : `Xem tất cả lời chúc (${entries.length})`} <ChevronDown size={17} aria-hidden="true" />
-        </button>
-        {showAllEntries && <div className="guestbook-inline-entries" id="guestbook-all-entries">
-          {entries.map((entry) => <article className="guestbook-inline-entry" key={entry.id}>
-            <div><strong>{entry.name}</strong><time>{new Date(entry.createdAt).toLocaleDateString('vi-VN')}</time></div>
-            <p>{entry.message}</p>
-          </article>)}
-        </div>}
-      </>}
     </div>
 
     {guestbookSuccess && <div className="guestbook-success-toast" role="status" aria-live="polite"><Check size={18} aria-hidden="true" />{guestbookSuccess}</div>}
@@ -717,7 +756,6 @@ export default function App() {
   const invitationSlug = getInvitationSlug();
   const [guest, setGuest] = useState(() => invitationSlug ? undefined : null);
   const [now, setNow] = useState(Date.now());
-  const [copied, setCopied] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [showMusicHint, setShowMusicHint] = useState(false);
   const [autoScrollEnabled, setAutoScrollEnabled] = useState(false);
@@ -768,6 +806,7 @@ export default function App() {
       const maxScrollTop = scrollingElement.scrollHeight - window.innerHeight;
       return !isTyping()
         && !document.querySelector('.guestbook-dialog')
+        && !document.querySelector('.gallery-lightbox')
         && scrollingElement.scrollTop < maxScrollTop - 2;
     };
 
@@ -926,16 +965,6 @@ export default function App() {
     setAutoScrollEnabled((current) => !current);
   }
 
-  async function copyInviteUrl() {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2200);
-    } catch {
-      window.prompt('Sao chép đường link này:', window.location.href);
-    }
-  }
-
   if (invitationSlug && guest === undefined) {
     return <main className="notfound"><Heart size={34} color="#b87389" /><h1>Đang mở thiệp mời…</h1><p>Chúng mình đang chuẩn bị lời mời dành riêng cho bạn.</p></main>;
   }
@@ -1025,9 +1054,6 @@ export default function App() {
         <div className="closing-heart"><Heart size={28} strokeWidth={1.2} /></div>
         <p>Chúng mình rất mong được gặp bạn trong ngày vui.</p>
         <h2>Hẹn gặp bạn nhé!</h2>
-        <button className="btn btn-share" type="button" onClick={copyInviteUrl}>
-          {copied ? <Check size={17} /> : <Copy size={17} />} {copied ? 'Đã sao chép link' : 'Sao chép link thiệp'}
-        </button>
       </section>
 
       <section className="thanks-photo" aria-label="Lời cảm ơn">
