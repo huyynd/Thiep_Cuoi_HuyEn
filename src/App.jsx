@@ -127,7 +127,7 @@ function WeddingCalendar({ now }) {
       <img className="calendar-floral" src="/photos/floral-tulip-lily-corner.png" alt="" aria-hidden="true" />
       <div className="ceremony-calendar-header">
         <div>{dateLabel}</div>
-        <p>{weekdayLabel} · Ngày cưới của chúng mình</p>
+        <p>{weekdayLabel} · Lễ thành hôn · {wedding.ceremonyHourLabel}</p>
       </div>
 
       <div className="ceremony-calendar-grid">
@@ -162,7 +162,7 @@ function WeddingCalendar({ now }) {
           <strong>{String(item.value).padStart(2, '0')}</strong>
         </div>)}
       </div>
-      <p className="ceremony-calendar-note">Đếm ngược đến ngày cưới của {wedding.groom} và {wedding.bride}.</p>
+      <p className="ceremony-calendar-note">Đếm ngược đến ngày thành hôn của {wedding.groom} &amp; {wedding.bride}.</p>
     </div>
   );
 }
@@ -393,17 +393,17 @@ function WeddingEvents() {
       <div className="corner-motif">✿</div>
       <div className="wedding-invitation-events">
         <InvitationEvent
-          title="TIỆC CƯỚI · 27.12.2026"
+          title="TIỆC MỜI KHÁCH"
           dateISO={wedding.dateISO}
           time={wedding.partyHourLabel}
-          note="Trân trọng kính mời quý khách đến nâng ly chung vui"
+          note="Trân trọng kính mời quý khách đến dự tiệc và chung vui cùng hai gia đình"
         />
         <div className="invitation-event-divider" aria-hidden="true" />
         <InvitationEvent
-          title="LỄ THÀNH HÔN · 28.12.2026"
+          title="LỄ THÀNH HÔN & ĐÓN DÂU"
           dateISO={wedding.calendarDateISO || wedding.dateISO}
           time={wedding.ceremonyHourLabel}
-          note="Lễ rước dâu và thành hôn của hai chúng mình"
+          note="Nghi lễ thành hôn và đón dâu của hai gia đình"
         />
       </div>
 
