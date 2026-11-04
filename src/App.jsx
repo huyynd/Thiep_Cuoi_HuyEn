@@ -619,7 +619,7 @@ function getGuestbookPreview(message, limit = 100) {
 
 function formatGuestbookTimestamp(value) {
   const date = new Date(value);
-  return `${date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })} ${date.toLocaleDateString('vi-VN')}`;
+  return `${date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', hour12: false })} · ${date.toLocaleDateString('vi-VN')}`;
 }
 
 function Guestbook({ guest }) {
@@ -740,14 +740,15 @@ function Guestbook({ guest }) {
     <p className="guestbook-intro">Mỗi lời chúc là một kỷ niệm đẹp mà chúng mình luôn trân quý.</p>
     <div className="guestbook-card">
       {guestbookLoadError && <p className="guestbook-load-error" role="status">{guestbookLoadError}</p>}
-      {entries.length > 0 ? <div className="guestbook-scroll-list" tabIndex="0" aria-label={`Danh sách ${entries.length} lời chúc`}>
-        {entries.map((entry) => <article key={entry.id} className={`guestbook-scroll-entry ${latestEntryId === entry.id ? 'is-new' : ''}`}>
+      {entries.length > 0 ? <div className="guestbook-preview-list" aria-label="Những lời chúc mới nhất">
+        {entries.slice(0, 3).map((entry) => <article key={entry.id} className={`guestbook-preview-entry ${latestEntryId === entry.id ? 'is-new' : ''} ${entry.name.length > 24 ? 'has-long-name' : ''}`}>
           <div><strong>{entry.name}</strong><time>{formatGuestbookTimestamp(entry.createdAt)}</time></div>
-          <p>{entry.message}</p>
+          <p>{getGuestbookPreview(entry.message, 150)}</p>
         </article>)}
       </div> : <p className="guestbook-empty-note">Chưa có lời chúc nào. Hãy gửi lời chúc đầu tiên dành cho Huy &amp; Yến nhé.</p>}
       <div className="guestbook-links">
-        <button type="button" onClick={openWriter}>Gửi lời chúc đến Huy &amp; Yến</button>
+        <button className="guestbook-write-button" type="button" onClick={openWriter}>Gửi lời chúc đến Huy &amp; Yến</button>
+        {entries.length > 3 && <button className="guestbook-view-all-button" type="button" onClick={() => setDialog('all')}>Xem tất cả lời chúc ({entries.length})</button>}
       </div>
     </div>
 
@@ -777,7 +778,7 @@ function Guestbook({ guest }) {
           <div><strong>— {selectedEntry.name} —</strong><time>{new Date(selectedEntry.createdAt).toLocaleDateString('vi-VN')}</time></div>
         </article> : <div className="guestbook-entries">
           {entries.length ? entries.map((entry) => <article key={entry.id} className="guestbook-entry">
-            <div><strong>{entry.name}</strong><time>{new Date(entry.createdAt).toLocaleDateString('vi-VN')}</time></div>
+            <div><strong>{entry.name}</strong><time>{formatGuestbookTimestamp(entry.createdAt)}</time></div>
             <p>{entry.message}</p>
           </article>) : <div className="guestbook-empty"><p>Chưa có lời chúc nào.</p><button className="btn btn-outline" type="button" onClick={openWriter}>Viết lưu bút</button></div>}
         </div>}
