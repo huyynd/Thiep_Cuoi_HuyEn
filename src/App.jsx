@@ -741,10 +741,10 @@ function Guestbook({ guest }) {
     <div className="guestbook-card">
       {guestbookLoadError && <p className="guestbook-load-error" role="status">{guestbookLoadError}</p>}
       {entries.length > 0 ? <div className="guestbook-preview-list" aria-label="Những lời chúc mới nhất">
-        {entries.slice(0, 3).map((entry) => <article key={entry.id} className={`guestbook-preview-entry ${latestEntryId === entry.id ? 'is-new' : ''} ${entry.name.length > 24 ? 'has-long-name' : ''}`}>
+        {entries.slice(0, 3).map((entry) => <button type="button" key={entry.id} className={`guestbook-preview-entry ${latestEntryId === entry.id ? 'is-new' : ''} ${entry.name.length > 24 ? 'has-long-name' : ''}`} onClick={() => openEntry(entry)} aria-label={`Xem đầy đủ lời chúc của ${entry.name}`}>
           <div><strong>{entry.name}</strong><time>{formatGuestbookTimestamp(entry.createdAt)}</time></div>
           <p>{getGuestbookPreview(entry.message, 150)}</p>
-        </article>)}
+        </button>)}
       </div> : <p className="guestbook-empty-note">Chưa có lời chúc nào. Hãy gửi lời chúc đầu tiên dành cho Huy &amp; Yến nhé.</p>}
       <div className="guestbook-links">
         <button className="guestbook-write-button" type="button" onClick={openWriter}>Gửi lời chúc đến Huy &amp; Yến</button>
@@ -775,7 +775,7 @@ function Guestbook({ guest }) {
         </form> : dialog === 'detail' && selectedEntry ? <article className="guestbook-detail">
           <Heart size={25} fill="currentColor" strokeWidth={1.2} aria-hidden="true" />
           <p>{selectedEntry.message}</p>
-          <div><strong>— {selectedEntry.name} —</strong><time>{new Date(selectedEntry.createdAt).toLocaleDateString('vi-VN')}</time></div>
+          <div><strong>— {selectedEntry.name} —</strong><time>{formatGuestbookTimestamp(selectedEntry.createdAt)}</time></div>
         </article> : <div className="guestbook-entries">
           {entries.length ? entries.map((entry) => <article key={entry.id} className="guestbook-entry">
             <div><strong>{entry.name}</strong><time>{formatGuestbookTimestamp(entry.createdAt)}</time></div>

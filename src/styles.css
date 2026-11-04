@@ -6285,12 +6285,26 @@ h2,
 }
 
 .guestbook-preview-entry {
+  width: 100%;
   padding: 16px 18px;
   border: 1px solid rgba(169, 109, 131, .34);
   border-radius: 16px;
   color: #6f4656;
   background: rgba(255, 249, 248, .9);
   box-shadow: 0 5px 16px rgba(118, 86, 95, .045);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .2s ease, background .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+.guestbook-preview-entry:hover,
+.guestbook-preview-entry:focus-visible {
+  border-color: rgba(169, 109, 131, .58);
+  outline: none;
+  background: #fffaf9;
+  box-shadow: 0 8px 21px rgba(118, 86, 95, .08);
+  transform: translateY(-1px);
 }
 
 .guestbook-preview-entry > div {
