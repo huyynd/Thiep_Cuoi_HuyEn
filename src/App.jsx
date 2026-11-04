@@ -328,6 +328,7 @@ function MomentsCarousel() {
   const touchStartXRef = useRef(null);
   const didSwipeRef = useRef(false);
   const scrollbarDragRef = useRef(null);
+  const autoplayResumeTimerRef = useRef(null);
 
   const preserveThumbnailPosition = () => {
     const element = thumbnailsRef.current;
@@ -361,9 +362,13 @@ function MomentsCarousel() {
     const timer = window.setInterval(() => {
       preserveThumbnailPosition();
       setActiveIndex((current) => (current + 1) % photos.length);
-    }, 6000);
+    }, 5000);
     return () => window.clearInterval(timer);
   }, [photos.length, isAutoplayPaused, isLightboxOpen]);
+
+  useEffect(() => () => {
+    if (autoplayResumeTimerRef.current) window.clearTimeout(autoplayResumeTimerRef.current);
+  }, []);
 
   useEffect(() => {
     if (thumbnailsRef.current) thumbnailsRef.current.scrollLeft = thumbnailScrollLeftRef.current;
@@ -373,7 +378,10 @@ function MomentsCarousel() {
     if (!isLightboxOpen) return undefined;
     const previousOverflow = document.body.style.overflow;
     const handleKeyDown = (event) => {
-      if (event.key === 'Escape') setIsLightboxOpen(false);
+      if (event.key === 'Escape') {
+        setIsLightboxOpen(false);
+        setIsAutoplayPaused(false);
+      }
       if (event.key === 'ArrowLeft') setActiveIndex((current) => (current - 1 + photos.length) % photos.length);
       if (event.key === 'ArrowRight') setActiveIndex((current) => (current + 1) % photos.length);
     };
@@ -387,13 +395,24 @@ function MomentsCarousel() {
 
   if (!photos.length) return null;
 
-  // A guest's manual choice should remain on screen for them to enjoy.
+  // Keep a manually selected photo for six seconds, then continue the loop.
   const pauseAutoplay = () => {
     setIsAutoplayPaused(true);
+    if (autoplayResumeTimerRef.current) window.clearTimeout(autoplayResumeTimerRef.current);
+    autoplayResumeTimerRef.current = window.setTimeout(() => {
+      preserveThumbnailPosition();
+      setActiveIndex((current) => (current + 1) % photos.length);
+      setIsAutoplayPaused(false);
+      autoplayResumeTimerRef.current = null;
+    }, 6000);
   };
 
   const movePhoto = (step) => {
     pauseAutoplay();
+    preserveThumbnailPosition();
+    setActiveIndex((current) => (current + step + photos.length) % photos.length);
+  };
+  const moveLightboxPhoto = (step) => {
     preserveThumbnailPosition();
     setActiveIndex((current) => (current + step + photos.length) % photos.length);
   };
@@ -457,7 +476,8 @@ function MomentsCarousel() {
     touchStartXRef.current = null;
     if (Math.abs(distance) < 42) return;
     didSwipeRef.current = true;
-    movePhoto(distance < 0 ? 1 : -1);
+    if (isLightboxOpen) moveLightboxPhoto(distance < 0 ? 1 : -1);
+    else movePhoto(distance < 0 ? 1 : -1);
   };
 
   const openLightbox = () => {
@@ -465,11 +485,19 @@ function MomentsCarousel() {
       didSwipeRef.current = false;
       return;
     }
-    pauseAutoplay();
+    if (autoplayResumeTimerRef.current) {
+      window.clearTimeout(autoplayResumeTimerRef.current);
+      autoplayResumeTimerRef.current = null;
+    }
+    setIsAutoplayPaused(true);
     setIsLightboxOpen(true);
   };
 
-  const counter = `${String(activeIndex + 1).padStart(2, '0')} / ${String(photos.length).padStart(2, '0')}`;
+  const closeLightbox = () => {
+    setIsLightboxOpen(false);
+    setIsAutoplayPaused(false);
+  };
+
   const thumbWidthPercent = Math.min(100, Math.max(18, (thumbnailScroll.viewport / thumbnailScroll.content) * 100));
   const thumbLeftPercent = thumbnailScroll.max > 0
     ? (thumbnailScroll.left / thumbnailScroll.max) * (100 - thumbWidthPercent)
@@ -519,14 +547,23 @@ function MomentsCarousel() {
       <button type="button" onClick={() => scrollThumbnails(1)} disabled={thumbnailScroll.left >= thumbnailScroll.max - 1} aria-label="Cuộn ảnh sang phải"><ChevronRight size={19} /></button>
     </div>
     {isLightboxOpen && createPortal(<div className="gallery-lightbox" role="dialog" aria-modal="true" aria-label="Xem ảnh cưới toàn màn hình">
-      <button className="gallery-lightbox-backdrop" type="button" aria-label="Đóng ảnh" onClick={() => setIsLightboxOpen(false)} />
-      <button className="gallery-lightbox-close" type="button" aria-label="Đóng" onClick={() => setIsLightboxOpen(false)}><X size={27} /></button>
-      {photos.length > 1 && <button className="gallery-lightbox-nav is-prev" type="button" aria-label="Ảnh trước" onClick={() => movePhoto(-1)}><ChevronLeft size={28} /></button>}
+      <button className="gallery-lightbox-backdrop" type="button" aria-label="Đóng ảnh" onClick={closeLightbox} />
+      <button className="gallery-lightbox-close" type="button" aria-label="Đóng" onClick={closeLightbox}><X size={27} /></button>
+      {photos.length > 1 && <button className="gallery-lightbox-nav is-prev" type="button" aria-label="Ảnh trước" onClick={() => moveLightboxPhoto(-1)}><ChevronLeft size={28} /></button>}
       <figure className="gallery-lightbox-figure" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
         <img src={photos[activeIndex]} alt={`Khoảnh khắc ${activeIndex + 1} của ${wedding.groom} và ${wedding.bride}`} />
-        <figcaption>{counter}</figcaption>
+        <div className="gallery-lightbox-thumbnails" aria-label="Chọn ảnh chi tiết" onTouchStart={(event) => event.stopPropagation()} onTouchEnd={(event) => event.stopPropagation()}>
+          {photos.map((photo, index) => <button
+            type="button"
+            key={photo}
+            className={index === activeIndex ? 'is-active' : ''}
+            onClick={() => setActiveIndex(index)}
+            aria-label={`Xem ảnh ${index + 1}`}
+            aria-current={index === activeIndex ? 'true' : undefined}
+          ><img src={photo} alt="" /></button>)}
+        </div>
       </figure>
-      {photos.length > 1 && <button className="gallery-lightbox-nav is-next" type="button" aria-label="Ảnh tiếp theo" onClick={() => movePhoto(1)}><ChevronRight size={28} /></button>}
+      {photos.length > 1 && <button className="gallery-lightbox-nav is-next" type="button" aria-label="Ảnh tiếp theo" onClick={() => moveLightboxPhoto(1)}><ChevronRight size={28} /></button>}
     </div>, document.body)}
   </section>;
 }

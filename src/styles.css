@@ -112,26 +112,70 @@
   z-index: 1;
   grid-column: 2;
   display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
   gap: 12px;
+  align-self: stretch;
+  align-items: center;
   justify-items: center;
   min-width: 0;
+  height: 100%;
   margin: 0;
   touch-action: pan-y;
 }
 
-.gallery-lightbox-figure img {
+.gallery-lightbox-figure > img {
   display: block;
   max-width: 100%;
-  max-height: calc(100svh - 100px);
+  max-height: calc(100svh - 170px);
   border-radius: 12px;
   object-fit: contain;
   box-shadow: 0 16px 46px rgba(0, 0, 0, .28);
 }
 
-.gallery-lightbox-figure figcaption {
-  color: rgba(255, 255, 255, .88);
-  font: 600 13px/1 'DM Sans', Arial, sans-serif;
-  letter-spacing: .1em;
+.gallery-lightbox-thumbnails {
+  align-self: end;
+  display: flex;
+  width: min(100%, 720px);
+  gap: 8px;
+  padding: 2px;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  touch-action: pan-x;
+}
+
+.gallery-lightbox-thumbnails::-webkit-scrollbar {
+  display: none;
+}
+
+.gallery-lightbox-thumbnails button {
+  flex: 0 0 64px;
+  width: 64px;
+  height: 58px;
+  padding: 3px;
+  overflow: hidden;
+  scroll-snap-align: start;
+  border: 1px solid rgba(255, 255, 255, .25);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, .08);
+  opacity: .66;
+  cursor: pointer;
+}
+
+.gallery-lightbox-thumbnails button.is-active {
+  border-color: rgba(255, 255, 255, .86);
+  box-shadow: 0 0 0 1px rgba(221, 166, 181, .58);
+  opacity: 1;
+}
+
+.gallery-lightbox-thumbnails img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, .06);
+  object-fit: contain;
 }
 
 .gallery-lightbox-close,
@@ -143,11 +187,22 @@
   height: 44px;
   padding: 0;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, .36);
+  border: 1px solid rgba(255, 255, 255, .25);
   border-radius: 50%;
   color: #fff;
-  background: rgba(255, 255, 255, .1);
+  background: rgba(255, 255, 255, .06);
   backdrop-filter: blur(7px);
+  opacity: .48;
+  transition: opacity .2s ease, background .2s ease, border-color .2s ease;
+}
+
+.gallery-lightbox-nav:hover,
+.gallery-lightbox-nav:focus-visible,
+.gallery-lightbox-nav:active {
+  border-color: rgba(255, 255, 255, .46);
+  outline: none;
+  background: rgba(255, 255, 255, .13);
+  opacity: .9;
 }
 
 .gallery-lightbox-close {
